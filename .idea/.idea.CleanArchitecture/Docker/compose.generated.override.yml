@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  web.api:
+    build:
+      context: "P:\\CleanArchitecture"
+      dockerfile: "src/Web.Api/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/Web.Api.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "web.api:dev"
+    ports: []
+    volumes:
+    - "P:\\CleanArchitecture\\src\\Web.Api:/app:rw"
+    - "P:\\CleanArchitecture:/src:rw"
+    - "C:\\Users\\moham\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"
