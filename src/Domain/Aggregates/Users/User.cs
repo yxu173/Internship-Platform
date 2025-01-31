@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Users;
+namespace Domain.Aggregates.Users;
 
 public sealed class User : IdentityUser<Guid>
 {
@@ -8,7 +8,8 @@ public sealed class User : IdentityUser<Guid>
     {
     }
 
-    public string FullName { get; private set; }
+    public string? LinkedInUrl { get; private set; }
+    public string? GitHubUrl { get; private set; }
     public static User Create(string email, string userName)
     {
         return new User

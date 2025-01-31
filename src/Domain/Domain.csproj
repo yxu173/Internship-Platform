@@ -14,4 +14,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Aggregates\Internship\" />
+    <Folder Include="Aggregates\Payment\" />
+    <Folder Include="Aggregates\Roadmap\" />
+  </ItemGroup>
+
 </Project>
