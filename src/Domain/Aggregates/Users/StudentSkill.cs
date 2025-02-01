@@ -3,7 +3,7 @@ using Domain.Enums;
 
 namespace Domain.Aggregates.Users;
 
-public class StudentSkill : BaseEntity
+public sealed class StudentSkill : BaseEntity
 {
     public Guid StudentId { get; private set; }
     public Guid SkillId { get; private set; }

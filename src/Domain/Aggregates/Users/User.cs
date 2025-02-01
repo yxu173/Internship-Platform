@@ -1,22 +1,86 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
+using SharedKernel;
+
 
 namespace Domain.Aggregates.Users;
 
 public sealed class User : IdentityUser<Guid>
 {
-    private User()
-    {
-    }
-
     public string? LinkedInUrl { get; private set; }
     public string? GitHubUrl { get; private set; }
-    public static User Create(string email, string userName)
+    public StudentProfile? StudentProfile { get; private set; }
+    public CompanyProfile? CompanyProfile { get; private set; }
+    public bool ProfileComplete { get; private set; } = false; 
+
+    private User() { }
+
+    private User(string email, string userName)
     {
-        return new User
+        Email = email;
+        UserName = userName;
+    }
+
+
+
+    public static Result<User> Create(string email, string userName)
+    {
+        try
         {
-            Id = Guid.NewGuid(),
-            Email = email,
-            UserName = userName
-        };
+            return Result.Success(new User(email.Trim(), userName.Trim()));
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<User>(Error.Validation("User.Create", ex.Message));
+        }
+    }
+
+    public Result CreateStudentProfile(
+          string fullName,
+          EgyptianUniversity university,
+          string faculty,
+          int graduationYear,
+          int age,
+          Gender gender,
+          string phoneNumber)
+    {
+
+
+        var profileResult = StudentProfile.Create(
+            fullName, university, faculty, graduationYear,
+            age, gender, phoneNumber);
+
+        if (profileResult.IsFailure)
+            return profileResult;
+
+        StudentProfile = profileResult.Value;
+        ProfileComplete = true;
+        return Result.Success();
+    }
+
+
+    public Result CreateCompanyProfile(
+      string companyName,
+      string taxId,
+      Governorate governorate,
+      string industry)
+    {
+
+        if (CompanyProfile != null)
+            return Result.Failure(DomainErrors.CompanyErrors.AlreadyRegistered);
+
+        var profileResult = CompanyProfile.Create(companyName, taxId, governorate, industry);
+        if (profileResult.IsFailure)
+            return profileResult;
+
+        CompanyProfile = profileResult.Value;
+        ProfileComplete = true;
+        return Result.Success();
+    }
+
+    public void UpdateSocialLinks(string? linkedInUrl, string? gitHubUrl)
+    {
+        LinkedInUrl = linkedInUrl?.Trim();
+        GitHubUrl = gitHubUrl?.Trim();
     }
 }

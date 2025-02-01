@@ -11,4 +11,9 @@ public static class CompanyErrors
     public static Error InvalidTaxIdFormat => Error.BadRequest(
         "Company.InvalidTaxIdFormat",
         "The tax id format is invalid");
+
+
+    public static Error AlreadyRegistered => Error.Conflict(
+        "Company.AlreadyRegistered",
+        "The company is already registered");
 }

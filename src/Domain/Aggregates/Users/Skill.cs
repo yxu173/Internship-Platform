@@ -1,18 +1,30 @@
 ﻿using Domain.Common;
+using SharedKernel;
 
 namespace Domain.Aggregates.Users;
 
-public class Skill : BaseEntity
+public sealed class Skill : BaseEntity
 {
-    public string Name { get; private set; }
-    public ICollection<StudentSkill> StudentSkills { get; private set; } = new List<StudentSkill>();
+    private readonly List<StudentSkill> _studentSkills = new();
 
-    private Skill()
+    public string Name { get; private set; }
+    public IReadOnlyCollection<StudentSkill> StudentSkills => _studentSkills.AsReadOnly();
+
+    private Skill() { }
+
+    private Skill(string name)
     {
     }
 
-    public Skill(string name)
+    public static Result<Skill> Create(string name)
     {
-        Name = name;
+        try
+        {
+            return Result.Success(new Skill(name.Trim()));
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure<Skill>(Error.Validation("Skill.Create", ex.Message));
+        }
     }
 }

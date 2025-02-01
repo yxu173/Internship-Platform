@@ -7,39 +7,35 @@ namespace Domain.Aggregates.Users;
 
 public sealed class StudentProfile : BaseAuditableEntity
 {
-    public string FullName { get; }
-    public string? Faculty { get; }
-    public int Age { get; }
-    public string? Bio { get; }
-    public Gender Gender { get; }
-    public string? PhoneNumber { get; }
-    public string? ProfilePictureUrl { get; }
+    private readonly List<StudentSkill> _skills = new();
 
-    public EgyptianUniversity University { get; }
-    public int GraduationYear { get; }
-    public List<StudentSkill> Skills { get; } = new();
+    public string FullName { get; private set; }
+    public string Faculty { get; private set; }
+    public int Age { get; private set; }
+    public string Bio { get; private set; }
+    public Gender Gender { get; private set; }
+    public PhoneNumber PhoneNumber { get; private set; }
+    public string ProfilePictureUrl { get; private set; }
+    public EgyptianUniversity University { get; private set; }
+    public Year GraduationYear { get; private set; }
+    public IReadOnlyList<StudentSkill> Skills => _skills.AsReadOnly();
 
-
-    public StudentProfile(
+    private StudentProfile(
         string fullName,
         EgyptianUniversity university,
         string faculty,
-        int graduationYear,
+        Year graduationYear,
         int age,
-        string bio,
         Gender gender,
-        string phoneNumber,
-        string profilePictureUrl)
+        PhoneNumber phoneNumber)
     {
         FullName = fullName;
         University = university;
         Faculty = faculty;
         GraduationYear = graduationYear;
         Age = age;
-        Bio = bio;
         Gender = gender;
         PhoneNumber = phoneNumber;
-        ProfilePictureUrl = profilePictureUrl;
     }
 
     public static Result<StudentProfile> Create(
@@ -48,12 +44,10 @@ public sealed class StudentProfile : BaseAuditableEntity
         string faculty,
         int graduationYear,
         int age,
-        string bio,
         Gender gender,
-        string phoneNumber,
-        string profilePictureUrl)
+        string phoneNumber)
     {
-        var phoneResult = ValueObjects.PhoneNumber.Create(phoneNumber);
+        var phoneResult = PhoneNumber.Create(phoneNumber);
         if (phoneResult.IsFailure)
             return Result.Failure<StudentProfile>(phoneResult.Error);
 
@@ -61,16 +55,14 @@ public sealed class StudentProfile : BaseAuditableEntity
         if (graduationYearResult.IsFailure)
             return Result.Failure<StudentProfile>(graduationYearResult.Error);
 
-
-        return new StudentProfile(
-            fullName.Trim(), university,
+        return Result.Success(new StudentProfile(
+            fullName.Trim(),
+            university,
             faculty,
-            graduationYear,
+            graduationYearResult.Value,
             age,
-            bio,
             gender,
-            phoneNumber,
-            profilePictureUrl);
+            phoneResult.Value));
     }
 
     public Result AddSkill(Skill skill)
@@ -78,7 +70,7 @@ public sealed class StudentProfile : BaseAuditableEntity
         if (Skills.Any(s => s.SkillId == skill.Id))
             return Result.Failure(DomainErrors.StudentErrors.DuplicateSkill);
 
-        Skills.Add(new StudentSkill(Id, skill.Id));
+        _skills.Add(new StudentSkill(Id, skill.Id));
         return Result.Success();
     }
 }
