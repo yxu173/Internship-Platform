@@ -7,15 +7,16 @@ namespace Domain.Aggregates.Users;
 
 public sealed class StudentProfile : BaseAuditableEntity
 {
+    private StudentProfile() { }
     private readonly List<StudentSkill> _skills = new();
-
+    public Guid UserId { get; private set; }
     public string FullName { get; private set; }
     public string Faculty { get; private set; }
     public int Age { get; private set; }
-    public string Bio { get; private set; }
+    public string? Bio { get; private set; }
     public Gender Gender { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
-    public string ProfilePictureUrl { get; private set; }
+    public string? ProfilePictureUrl { get; private set; }
     public EgyptianUniversity University { get; private set; }
     public Year GraduationYear { get; private set; }
     public IReadOnlyList<StudentSkill> Skills => _skills.AsReadOnly();
@@ -36,6 +37,7 @@ public sealed class StudentProfile : BaseAuditableEntity
         Age = age;
         Gender = gender;
         PhoneNumber = phoneNumber;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public static Result<StudentProfile> Create(

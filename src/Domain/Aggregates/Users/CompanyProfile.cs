@@ -7,12 +7,14 @@ namespace Domain.Aggregates.Users;
 
 public sealed class CompanyProfile : BaseAuditableEntity
 {
+    private CompanyProfile() { }
+    public Guid UserId { get; private set; }
     public string CompanyName { get; private set; }
     public EgyptianTaxId TaxId { get; private set; }
     public string Industry { get; private set; }
-    public string WebsiteUrl { get; private set; }
-    public string Description { get; private set; }
-    public CompanySize Size { get; private set; }
+    public string? WebsiteUrl { get; private set; }
+    public string? Description { get; private set; }
+    public CompanySize? Size { get; private set; }
     public Governorate Governorate { get; private set; }
 
 
@@ -45,7 +47,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
             taxIdResult.Value,
             governorate,
             industry.Trim()
-          ));
+        ));
     }
 
     public Result UpdateDetails(

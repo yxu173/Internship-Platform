@@ -22,7 +22,57 @@ namespace Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Users.Role", b =>
+            modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Governorate")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Industry")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Size")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("CompanyProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,8 +83,9 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
@@ -42,14 +93,105 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Users.User", b =>
+            modelBuilder.Entity("Domain.Aggregates.Users.Skill", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Skills", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Faculty")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("StudentProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>
+                {
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SkillId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("StudentId", "SkillId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("StudentSkills", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,11 +211,13 @@ namespace Infrastructure.Database.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                    b.Property<string>("GitHubUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -92,17 +236,10 @@ namespace Infrastructure.Database.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Provider")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProviderUserId")
-                        .HasColumnType("text");
+                    b.Property<bool>("ProfileComplete")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -116,6 +253,9 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -123,7 +263,10 @@ namespace Infrastructure.Database.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -229,9 +372,110 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Users.User", null)
+                        .WithOne("CompanyProfile")
+                        .HasForeignKey("Domain.Aggregates.Users.CompanyProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.EgyptianTaxId", "TaxId", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)")
+                                .HasColumnName("TaxId");
+
+                            b1.HasKey("CompanyProfileId");
+
+                            b1.ToTable("CompanyProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyProfileId");
+                        });
+
+                    b.Navigation("TaxId")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Users.User", null)
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("Domain.Aggregates.Users.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<Guid>("StudentProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(15)
+                                .HasColumnType("character varying(15)")
+                                .HasColumnName("PhoneNumber");
+
+                            b1.HasKey("StudentProfileId");
+
+                            b1.ToTable("StudentProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentProfileId");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.Year", "GraduationYear", b1 =>
+                        {
+                            b1.Property<Guid>("StudentProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("GraduationYear");
+
+                            b1.HasKey("StudentProfileId");
+
+                            b1.ToTable("StudentProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentProfileId");
+                        });
+
+                    b.Navigation("GraduationYear")
+                        .IsRequired();
+
+                    b.Navigation("PhoneNumber")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Users.Skill", "Skill")
+                        .WithMany("StudentSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Aggregates.Users.StudentProfile", "Student")
+                        .WithMany("Skills")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skill");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Users.Role", null)
+                    b.HasOne("Domain.Aggregates.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -240,7 +484,7 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Users.User", null)
+                    b.HasOne("Domain.Aggregates.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -249,7 +493,7 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Users.User", null)
+                    b.HasOne("Domain.Aggregates.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -258,13 +502,13 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Users.Role", null)
+                    b.HasOne("Domain.Aggregates.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Users.User", null)
+                    b.HasOne("Domain.Aggregates.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -273,11 +517,28 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Users.User", null)
+                    b.HasOne("Domain.Aggregates.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.Skill", b =>
+                {
+                    b.Navigation("StudentSkills");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
+                {
+                    b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Users.User", b =>
+                {
+                    b.Navigation("CompanyProfile");
+
+                    b.Navigation("StudentProfile");
                 });
 #pragma warning restore 612, 618
         }

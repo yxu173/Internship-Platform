@@ -2,5 +2,7 @@
 
 public enum EgyptianUniversity
 {
-    
+    AinShams,
+    AlAzhar,
+    Alexandria
 }

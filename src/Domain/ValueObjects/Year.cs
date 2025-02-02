@@ -5,6 +5,7 @@ namespace Domain.ValueObjects;
 
 public sealed record Year : ValueObject
 {
+    private Year() {}
     public int Value { get; }
 
     private Year(int value) => Value = value;

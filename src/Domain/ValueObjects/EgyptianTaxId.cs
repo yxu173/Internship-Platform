@@ -8,6 +8,7 @@ public sealed record EgyptianTaxId : ValueObject
 {
     public string Value { get; }
     
+    private EgyptianTaxId() { }
     private EgyptianTaxId(string value) => Value = value;
 
     public static Result<EgyptianTaxId> Create(string taxId)

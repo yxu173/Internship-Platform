@@ -1,20 +1,18 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
-//using Application.Abstractions.Authentication;
-using Domain.Users;
+using Domain.Aggregates.Users;
+using Domain.Repositories;
 using Infrastructure.Authentication;
 using Infrastructure.Database;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +34,8 @@ public static class DependencyInjection
         services.AddScoped<IUserContext, UserContext>();
         services.AddSingleton<ITokenProvider, TokenProvider>();
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IStudentRepository, StudentRepository>();
         //services.AddScoped<IEmailSender, EmailSender>();
 
 

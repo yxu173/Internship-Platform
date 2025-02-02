@@ -1,0 +1,16 @@
+P:\Graducation-Project\Internship-Platform\src\Domain\bin\Debug\net9.0\Domain.deps.json
+P:\Graducation-Project\Internship-Platform\src\Domain\bin\Debug\net9.0\Domain.dll
+P:\Graducation-Project\Internship-Platform\src\Domain\bin\Debug\net9.0\Domain.pdb
+P:\Graducation-Project\Internship-Platform\src\Domain\bin\Debug\net9.0\SharedKernal.dll
+P:\Graducation-Project\Internship-Platform\src\Domain\bin\Debug\net9.0\SharedKernal.pdb
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.csproj.AssemblyReference.cache
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.AssemblyInfoInputs.cache
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.AssemblyInfo.cs
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.csproj.CoreCompileInputs.cache
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.sourcelink.json
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.csproj.Up2Date
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.dll
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\refint\Domain.dll
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\Domain.pdb
+P:\Graducation-Project\Internship-Platform\src\Domain\obj\Debug\net9.0\ref\Domain.dll
