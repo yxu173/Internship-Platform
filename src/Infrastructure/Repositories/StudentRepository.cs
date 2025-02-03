@@ -20,14 +20,13 @@ public class StudentRepository : IStudentRepository
 
 
     public async Task<Result> CreateAsync(Guid userId,
-     string fullName,
-      EgyptianUniversity university,
-       string faculty,
-        Year graduationYear,
+        string fullName,
+        string university,
+        string faculty,
+        int graduationYear,
         int age,
-         Gender gender,
-            PhoneNumber phoneNumber
-          )
+        string gender,
+        string phoneNumber)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -43,7 +42,7 @@ public class StudentRepository : IStudentRepository
             graduationYear,
             age,
             gender,
-            phoneNumber.Value);
+            phoneNumber);
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync();

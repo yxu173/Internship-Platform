@@ -37,11 +37,11 @@ public sealed class User : IdentityUser<Guid>
 
     public Result CreateStudentProfile(
           string fullName,
-          EgyptianUniversity university,
+          string university,
           string faculty,
           int graduationYear,
           int age,
-          Gender gender,
+          string gender,
           string phoneNumber)
     {
         var profileResult = StudentProfile.Create(

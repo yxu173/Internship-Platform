@@ -18,7 +18,7 @@ public sealed class CreateStudentProfileCommandValidator
             .NotEmpty().WithMessage("Faculty is required")
             .MaximumLength(100).WithMessage("Faculty cannot exceed 100 characters");
 
-        RuleFor(x => x.GraduationYear.Value)
+        RuleFor(x => x.GraduationYear)
             .InclusiveBetween(2000, DateTime.Now.Year + 5)
             .WithMessage("Invalid graduation year");
 

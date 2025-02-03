@@ -7,11 +7,13 @@ using Application.Abstractions.Data;
 using Domain.Aggregates.Users;
 using Domain.Repositories;
 using Infrastructure.Authentication;
+using Infrastructure.Authentication.Options;
 using Infrastructure.Database;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -45,6 +47,11 @@ public static class DependencyInjection
             .AddDefaultTokenProviders();
 
 
+        var jwtSettings = new JwtSettings();
+        configuration.Bind(nameof(JwtSettings), jwtSettings);
+        var jwtSection = configuration.GetSection(nameof(JwtSettings));
+        services.Configure<JwtSettings>(jwtSection);
+
         services.Configure<CookieAuthenticationOptions>(IdentityConstants.ExternalScheme, options =>
         {
             options.Cookie.SameSite = SameSiteMode.None;
@@ -67,21 +74,27 @@ public static class DependencyInjection
 
         services.AddAuthentication(options =>
             {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
+             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                // options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                // options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                // options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(o =>
+             .AddJwtBearer(jwt =>
             {
-                o.TokenValidationParameters = new TokenValidationParameters
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!))
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding
+                        .UTF8.GetBytes(jwtSettings.SigningKey))
                 };
             })
             .AddGoogle(googleOptions =>
@@ -149,6 +162,7 @@ public static class DependencyInjection
                     }
                 };
             });
+            services.AddAuthorization();
 
         return services;
     }

@@ -8,12 +8,12 @@ public interface IStudentRepository
 {
     Task<StudentProfile> GetByIdAsync(Guid id);
     Task<Result> CreateAsync(Guid userId,
-    string fullName,
-     EgyptianUniversity university
-     , string faculty
-     , Year graduationYear
-     , int age
-     , Gender gender
-        , PhoneNumber phoneNumber);
+     string fullName,
+      string university,
+       string faculty,
+        int graduationYear,
+        int age,
+        string gender,
+        string phoneNumber);
     Task UpdateAsync(StudentProfile student);
 }

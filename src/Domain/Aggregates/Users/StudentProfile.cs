@@ -42,13 +42,16 @@ public sealed class StudentProfile : BaseAuditableEntity
 
     public static Result<StudentProfile> Create(
         string fullName,
-        EgyptianUniversity university,
+        string university,
         string faculty,
         int graduationYear,
         int age,
-        Gender gender,
+        string gender,
         string phoneNumber)
     {
+
+        var genderResult = Enum.Parse<Gender>(gender);
+        var universityResult = Enum.Parse<EgyptianUniversity>(university);
         var phoneResult = PhoneNumber.Create(phoneNumber);
         if (phoneResult.IsFailure)
             return Result.Failure<StudentProfile>(phoneResult.Error);
@@ -59,11 +62,11 @@ public sealed class StudentProfile : BaseAuditableEntity
 
         return Result.Success(new StudentProfile(
             fullName.Trim(),
-            university,
+            universityResult,
             faculty,
             graduationYearResult.Value,
             age,
-            gender,
+            genderResult,
             phoneResult.Value));
     }
 

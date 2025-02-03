@@ -9,6 +9,7 @@ namespace Application.Features.Identity.Login;
 
 public sealed class LoginUserCommandHandler(
     UserManager<User> userManager,
+    SignInManager<User> signInManager,
     ITokenProvider tokenProvider)
     : ICommandHandler<LoginUserCommand, string>
 {
@@ -20,11 +21,14 @@ public sealed class LoginUserCommandHandler(
             return Result.Failure<string>(UserErrors.NotFoundByEmail);
         }
 
-        var result = await userManager.CheckPasswordAsync(user, request.Password);
-        if (!result)
+        var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        
+        if (!result.Succeeded)
         {
-            return Result.Failure<string>(UserErrors.NotFoundByEmail);
+            return Result.Failure<string>(UserErrors.EmailNotUnique);
         }
+
+        
 
         var token = tokenProvider.Create(user);
 
