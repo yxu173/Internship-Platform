@@ -35,17 +35,20 @@ public sealed class CompanyProfile : BaseAuditableEntity
     public static Result<CompanyProfile> Create(
         string companyName,
         string taxId,
-        Governorate governorate,
+        string governorate,
         string industry)
     {
         var taxIdResult = EgyptianTaxId.Create(taxId);
+ 
         if (taxIdResult.IsFailure)
             return Result.Failure<CompanyProfile>(taxIdResult.Error);
-
+ 
+        var governorateResult = Enum.Parse<Governorate>(governorate);
+ 
         return Result.Success(new CompanyProfile(
             companyName.Trim(),
             taxIdResult.Value,
-            governorate,
+            governorateResult,
             industry.Trim()
         ));
     }

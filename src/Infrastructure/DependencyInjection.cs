@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
         //services.AddScoped<IEmailSender, EmailSender>();
 
 

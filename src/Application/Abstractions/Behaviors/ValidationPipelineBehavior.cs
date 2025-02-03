@@ -5,7 +5,6 @@ using SharedKernel;
 
 namespace Application.Abstractions.Behaviors;
 
-
 public sealed class ValidationPipelineBehavior<TRequest, TResponse> 
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -37,28 +36,36 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse>
             .ToList();
 
         if (failures.Count != 0)
-            return CreateValidationResult<TResponse>(failures);
+        {
+            // Group validation errors by property
+            var errorsByProperty = failures
+                .GroupBy(x => x.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(x => Error.Validation(
+                        g.Key,
+                        x.ErrorMessage
+                    )).ToArray()
+                );
+
+            var validationErrors = errorsByProperty
+                .SelectMany(x => x.Value)
+                .ToArray();
+
+            var validationError = new ValidationError(validationErrors, errorsByProperty);
+
+            if (typeof(TResponse).IsGenericType)
+            {
+                var resultType = typeof(TResponse).GetGenericArguments()[0];
+                return (TResponse)(object)typeof(Result<>)
+                    .MakeGenericType(resultType)
+                    .GetMethod(nameof(Result<object>.ValidationFailure))!
+                    .Invoke(null, new object[] { validationError })!;
+            }
+
+            return (TResponse)(object)Result.Failure(validationError);
+        }
 
         return await next();
-    }
-
-    private static TResponse CreateValidationResult<TResponse>(List<ValidationFailure> failures)
-        where TResponse : Result
-    {
-        var errors = failures
-            .Select(f => Error.Validation(f.ErrorCode, f.ErrorMessage))
-            .ToArray();
-
-        var validationError = new ValidationError(errors);
-
-        if (typeof(TResponse) == typeof(Result))
-            return (Result.Failure(validationError) as TResponse)!;
-
-        var result = typeof(Result<>)
-            .MakeGenericType(typeof(TResponse).GenericTypeArguments[0])
-            .GetMethod(nameof(Result.Failure))!
-            .Invoke(null, new object?[] { validationError })!;
-
-        return (TResponse)result;
     }
 }

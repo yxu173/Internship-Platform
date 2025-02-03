@@ -44,8 +44,6 @@ public sealed class User : IdentityUser<Guid>
           Gender gender,
           string phoneNumber)
     {
-
-
         var profileResult = StudentProfile.Create(
             fullName, university, faculty, graduationYear,
             age, gender, phoneNumber);
@@ -62,13 +60,9 @@ public sealed class User : IdentityUser<Guid>
     public Result CreateCompanyProfile(
       string companyName,
       string taxId,
-      Governorate governorate,
+      string governorate,
       string industry)
     {
-
-        if (CompanyProfile != null)
-            return Result.Failure(DomainErrors.CompanyErrors.AlreadyRegistered);
-
         var profileResult = CompanyProfile.Create(companyName, taxId, governorate, industry);
         if (profileResult.IsFailure)
             return profileResult;

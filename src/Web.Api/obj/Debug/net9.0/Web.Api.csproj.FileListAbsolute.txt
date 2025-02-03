@@ -71,5 +71,3 @@ P:\Graducation-Project\Internship-Platform\src\Web.Api\obj\Debug\net9.0\refint\W
 P:\Graducation-Project\Internship-Platform\src\Web.Api\obj\Debug\net9.0\Web.Api.pdb
 P:\Graducation-Project\Internship-Platform\src\Web.Api\obj\Debug\net9.0\Web.Api.genruntimeconfig.cache
 P:\Graducation-Project\Internship-Platform\src\Web.Api\obj\Debug\net9.0\ref\Web.Api.dll
-P:\Graducation-Project\Internship-Platform\src\Web.Api\bin\Debug\net9.0\Mapster.dll
-P:\Graducation-Project\Internship-Platform\src\Web.Api\bin\Debug\net9.0\Mapster.Core.dll

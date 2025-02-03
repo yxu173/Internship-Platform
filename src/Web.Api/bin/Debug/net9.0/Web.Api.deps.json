@@ -10,7 +10,6 @@
         "dependencies": {
           "Application": "1.0.0",
           "Infrastructure": "1.0.0",
-          "Mapster": "7.4.2-pre02",
           "Microsoft.AspNetCore.OpenApi": "9.0.1",
           "Serilog.AspNetCore": "9.0.0",
           "Serilog.Sinks.Seq": "9.0.0",
@@ -37,25 +36,6 @@
           "lib/net8.0/FluentValidation.DependencyInjectionExtensions.dll": {
             "assemblyVersion": "12.0.0.0",
             "fileVersion": "12.0.0.0"
-          }
-        }
-      },
-      "Mapster/7.4.2-pre02": {
-        "dependencies": {
-          "Mapster.Core": "1.2.3-pre02"
-        },
-        "runtime": {
-          "lib/net9.0/Mapster.dll": {
-            "assemblyVersion": "7.4.2.0",
-            "fileVersion": "7.4.2.0"
-          }
-        }
-      },
-      "Mapster.Core/1.2.3-pre02": {
-        "runtime": {
-          "lib/net9.0/Mapster.Core.dll": {
-            "assemblyVersion": "1.2.3.0",
-            "fileVersion": "1.2.3.0"
           }
         }
       },
@@ -710,20 +690,6 @@
       "sha512": "sha512-5MGzsWERL7C+bbsVW2rZhYpPv+e3Tpy5w+BcHaSN4ziuM9qkWJd7Of0v5naYJxewEbpZ3oT3WbBO+WikxO9irQ==",
       "path": "fluentvalidation.dependencyinjectionextensions/12.0.0-preview1",
       "hashPath": "fluentvalidation.dependencyinjectionextensions.12.0.0-preview1.nupkg.sha512"
-    },
-    "Mapster/7.4.2-pre02": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ry6YPGImX4aL0+Jj0rn46vqYOxzeyKOdlr6LUPvby1NLc68E5T2gRhDVWxvFexgZGOIW/U8NM87kygE4xl7Qvw==",
-      "path": "mapster/7.4.2-pre02",
-      "hashPath": "mapster.7.4.2-pre02.nupkg.sha512"
-    },
-    "Mapster.Core/1.2.3-pre02": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-FDVPfGvCz1RRb1PYeoddiJftxo+ANAifiaqkZbH2kijZT2GcoR1w6byLQ8Czc9YBuNZqHHV4LKeXZA+eoFuCTw==",
-      "path": "mapster.core/1.2.3-pre02",
-      "hashPath": "mapster.core.1.2.3-pre02.nupkg.sha512"
     },
     "MediatR/12.4.1": {
       "type": "package",

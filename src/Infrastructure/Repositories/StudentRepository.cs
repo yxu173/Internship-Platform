@@ -31,9 +31,11 @@ public class StudentRepository : IStudentRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
-        {
             return Result.Failure<bool>(UserErrors.UserNotFound);
-        }
+
+        if (user.ProfileComplete == true)
+            return Result.Failure<bool>(StudentErrors.AlreadyExists);
+
         var student = user.CreateStudentProfile(
             fullName,
             university,

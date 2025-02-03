@@ -1,3 +1,4 @@
+using Application.Features.Profiles.CreateCompanyProfile;
 using Application.Features.Profiles.StudentProfile;
 using Domain.Enums;
 using Domain.ValueObjects;
@@ -32,6 +33,20 @@ public class ProfileController : BaseController
             Gender = Enum.Parse<Gender>(request.Gender),
             PhoneNumber = phoneResult.Value
         };
+
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("company")]
+    public async Task<IResult> CreateCompanyProfile([FromBody] CreateCompanyProfileRequest request)
+    {
+        var command = new CreateCompanyProfileCommand(
+            request.UserId,
+            request.CompanyName,
+            request.TaxId,
+            request.Governorate,
+            request.Industry);
 
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);

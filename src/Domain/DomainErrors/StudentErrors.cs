@@ -27,4 +27,8 @@ public static class StudentErrors
     public static Error InvalidGraduationYear => Error.Validation(
         "Student.InvalidGraduationYear",
         $"Graduation year must be between 2000-{DateTime.Now.Year + 5}");
+
+    public static Error AlreadyExists => Error.Conflict(
+        "Student.AlreadyExists",
+        "Student profile already exists");
 }
