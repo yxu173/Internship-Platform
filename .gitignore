@@ -1,4 +1,5 @@
-﻿# Default ignored files
+﻿/CleanArchitecture.sln
+# Default ignored files
 /shelf/
 /workspace.xml
 .gitignore
