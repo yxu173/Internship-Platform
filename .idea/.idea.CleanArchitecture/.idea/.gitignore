@@ -11,3 +11,105 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+### ASP.NET Core ###
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Pp]ackages/
+publish/
+*.nupkg
+
+# VS specific
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ide/
+*.dotSettings.user
+
+# Rider specific
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+### Docker ###
+docker-compose.override.yml
+.env
+.dockerignore
+dockerdata/
+
+### Database ###
+# PostgreSQL
+pgdata/
+*.dump
+*.bak
+*.sqlite
+
+### Frontend ###
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+wwwroot/build/
+dist/
+out-tsc/
+
+### Logs ###
+*.log
+logs/
+**/logs-seq/
+
+### NuGet ###
+nuget.exe
+.nuget/
+!NuGet.config
+
+### User-specific ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+### Local development ###
+appsettings.*.json
+!appsettings.json
+!appsettings.*.sample.json
+secrets.json
+
+### Test results ###
+TestResults/
+*.coverage
+coverage*.json
+*.html
+
+### Misc ###
+*.cache
+*.pid
+*.seed
+*.pid.lock
+*.pyc
+*.pyo
+*.pdb
+*.db
+*.sql
+*.sqlite
+*.temp
+*.tmp
+*.orig
+*.patch
+*.diff

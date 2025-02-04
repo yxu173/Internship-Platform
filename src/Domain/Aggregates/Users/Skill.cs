@@ -1,9 +1,10 @@
 ﻿using Domain.Common;
+using Domain.DomainErrors;
 using SharedKernel;
 
 namespace Domain.Aggregates.Users;
 
-public sealed class Skill : BaseEntity
+public sealed class Skill : BaseAuditableEntity
 {
     private readonly List<StudentSkill> _studentSkills = new();
 
@@ -14,17 +15,23 @@ public sealed class Skill : BaseEntity
 
     private Skill(string name)
     {
+        Name = name;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public static Result<Skill> Create(string name)
     {
-        try
-        {
-            return Result.Success(new Skill(name.Trim()));
-        }
-        catch (ArgumentException ex)
-        {
-            return Result.Failure<Skill>(Error.Validation("Skill.Create", ex.Message));
-        }
+
+        var result = Result.Success(new Skill(name.Trim()));
+        if (result.IsFailure)
+            return Result.Failure<Skill>(SkillErrors.AlreadyExists);
+
+        return result;
+    }
+
+    public void Update(string name)
+    {
+        Name = name;
+        ModifiedAt = DateTime.UtcNow;
     }
 }
