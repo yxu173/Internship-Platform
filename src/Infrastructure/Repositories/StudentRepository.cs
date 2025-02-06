@@ -60,4 +60,12 @@ public class StudentRepository : IStudentRepository
         _context.StudentProfiles.Update(student);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<StudentProfile?> GetByUserIdAsync(Guid userId)
+    {
+        return await _context.StudentProfiles
+            .Include(s => s.Skills)
+            .ThenInclude(ss => ss.Skill)
+            .FirstOrDefaultAsync(s => s.UserId == userId);
+    }
 }

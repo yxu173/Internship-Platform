@@ -16,4 +16,5 @@ public interface IStudentRepository
         string gender,
         string phoneNumber);
     Task UpdateAsync(StudentProfile student);
+    Task<StudentProfile?> GetByUserIdAsync(Guid userId);
 }

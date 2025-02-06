@@ -42,4 +42,12 @@ public class ProfileController : BaseController
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    [HttpGet("student")]
+    public async Task<IResult> GetStudentProfile()
+    {
+        var query = new GetStudentProfileQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
 }
