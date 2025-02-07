@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SharedKernal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f43f1f564affcbe1666ac0748d773d54a982804a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7ebeeddb58d98426f4bddcc5ed9f6bc09deebb7")]
 [assembly: System.Reflection.AssemblyProductAttribute("SharedKernal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SharedKernal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

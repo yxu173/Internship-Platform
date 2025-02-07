@@ -16,4 +16,8 @@ public static class CompanyErrors
     public static Error AlreadyRegistered => Error.Conflict(
         "Company.AlreadyRegistered",
         "The company is already registered");
+
+    public static Error ProfileNotFound = Error.NotFound(
+        "Company.ProfileNotFound", 
+        "Company profile not found");
 }

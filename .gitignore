@@ -115,3 +115,7 @@ coverage*.json
 *.orig
 *.patch
 *.diff
+
+# .NET build artifacts
+**/[Bb]in/
+**/[Oo]bj/

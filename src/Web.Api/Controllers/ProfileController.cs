@@ -1,5 +1,6 @@
 using Application.Abstractions.Authentication;
 using Application.Features.Profiles.CreateCompanyProfile;
+using Application.Features.Profiles.GetCompanyProfile;
 using Application.Features.Profiles.StudentProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,14 @@ public class ProfileController : BaseController
     public async Task<IResult> GetStudentProfile()
     {
         var query = new GetStudentProfileQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("company")]
+    public async Task<IResult> GetCompanyProfile()
+    {
+        var query = new GetCompanyProfileQuery(UserId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
