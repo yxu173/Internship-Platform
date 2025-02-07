@@ -119,3 +119,7 @@ coverage*.json
 # .NET build artifacts
 **/[Bb]in/
 **/[Oo]bj/
+
+# Add these lines
+src/**/bin/
+src/**/obj/

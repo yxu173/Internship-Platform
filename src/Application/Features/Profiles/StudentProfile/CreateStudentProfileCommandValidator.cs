@@ -11,8 +11,8 @@ public sealed class CreateStudentProfileCommandValidator
             .NotEmpty().WithMessage("Full name is required")
             .MaximumLength(100).WithMessage("Full name cannot exceed 100 characters");
 
-        RuleFor(x => x.University)
-            .IsInEnum().WithMessage("Invalid university selection");
+        // RuleFor(x => x.University)
+        //     .IsInEnum().WithMessage("Invalid university selection");
 
         RuleFor(x => x.Faculty)
             .NotEmpty().WithMessage("Faculty is required")

@@ -69,7 +69,7 @@ public class IdentityController : BaseController
     [HttpGet("google-login")]
     public IActionResult GoogleLogin()
     {
-        var redirectUrl = "/signin-google";
+        var redirectUrl = Url.Action("ExternalCallback", "Identity");
         var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
         return Challenge(properties, "Google");
     }
@@ -77,7 +77,7 @@ public class IdentityController : BaseController
     [HttpGet("github-login")]
     public IActionResult GithubLogin()
     {
-        var redirectUrl = Url.Action("ExternalCallback", "Identity"); 
+        var redirectUrl = Url.Action("ExternalCallback", "Identity");
         var properties = _signInManager.ConfigureExternalAuthenticationProperties("GitHub", redirectUrl);
         return Challenge(properties, "GitHub");
     }
@@ -97,57 +97,61 @@ public class IdentityController : BaseController
             isPersistent: false
         );
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            var innerUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            var tokens = _tokenProvider.Create(innerUser);
-            return Ok(new { Token = tokens });
-        }
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email claim not found.");
+            }
 
-        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-        if (string.IsNullOrEmpty(email))
-        {
-            return BadRequest("Email claim not found.");
-        }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                var surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
+                var name = info.Principal.FindFirstValue(ClaimTypes.Name);
 
-        var givenName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
-        var surname = info.Principal.FindFirstValue(ClaimTypes.Surname);
-        var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+                if (string.IsNullOrEmpty(givenName) || string.IsNullOrEmpty(surname))
+                {
+                    var nameParts = name?.Split(' ') ?? Array.Empty<string>();
+                    givenName = nameParts.Length > 0 ? nameParts[0] : "User";
+                    surname = nameParts.Length > 1 ? nameParts[1] : "Name";
+                }
 
-        if (string.IsNullOrEmpty(givenName) || string.IsNullOrEmpty(surname))
-        {
-            var nameParts = name?.Split(' ') ?? Array.Empty<string>();
-            givenName = nameParts.Length > 0 ? nameParts[0] : "User";
-            surname = nameParts.Length > 1 ? nameParts[1] : "Name";
-        }
-
-        
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            user = Domain.Aggregates.Users.User.Create(
+                user = Domain.Aggregates.Users.User.Create(
                 email,
                 givenName
-            ).Value;
+                ).Value;
 
-            var createResult = await _userManager.CreateAsync(user);
-            if (!createResult.Succeeded)
-            {
-                return BadRequest("User creation failed: " +
-                                  string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    return BadRequest("User creation failed: " +
+                        string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                }
+
+                var roleResult = await _userManager.AddToRoleAsync(user, Roles.Basic.ToString());
+                if (!roleResult.Succeeded)
+                {
+                    return BadRequest("Role assignment failed: " +
+                        string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                }
             }
+
+            
+            var addLoginResult = await _userManager.AddLoginAsync(user, info);
+            if (!addLoginResult.Succeeded)
+            {
+                return BadRequest("Failed to add external login: " +
+                    string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
         }
 
-        // Link the external login
-        var addLoginResult = await _userManager.AddLoginAsync(user, info);
-        if (!addLoginResult.Succeeded)
-        {
-            return BadRequest("Failed to add external login: " +
-                              string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
-        }
-
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        var token = _tokenProvider.Create(user);
+        var currentUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+        var token = _tokenProvider.Create(currentUser);
         return Ok(new { Token = token });
     }
 
