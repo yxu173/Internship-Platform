@@ -3,7 +3,9 @@ using Application.Abstractions.Authentication;
 using Application.Features.Identity.Login;
 using Application.Features.Identity.Logout;
 using Application.Features.Identity.Register;
-using Domain.Users;
+using Domain.Aggregates.Users;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -123,10 +125,10 @@ public class IdentityController : BaseController
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            user = Domain.Users.User.Create(
+            user = Domain.Aggregates.Users.User.Create(
                 email,
                 givenName
-            );
+            ).Value;
 
             var createResult = await _userManager.CreateAsync(user);
             if (!createResult.Succeeded)
@@ -147,5 +149,12 @@ public class IdentityController : BaseController
         await _signInManager.SignInAsync(user, isPersistent: false);
         var token = _tokenProvider.Create(user);
         return Ok(new { Token = token });
+    }
+
+    [HttpGet("external-login")]
+    public IActionResult ExternalLogin()
+    {
+        var redirectUrl = Url.Action("ExternalLoginCallback");
+        return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, GoogleDefaults.AuthenticationScheme);
     }
 }

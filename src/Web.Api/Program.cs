@@ -1,13 +1,8 @@
 using Application;
-using Application.Features.Identity.Login;
 using Infrastructure;
-using MediatR;
 using Serilog;
-using SharedKernel;
 using Web.Api;
-using Web.Api.Contracts;
 using Web.Api.Extensions;
-using Web.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +13,7 @@ builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configu
 builder.Services
     .AddApplication()
     .AddPresentation()
-    .AddInfrastructure(builder.Configuration)
-    .AddAuthorization();
+    .AddInfrastructure(builder.Configuration);
 
 
 builder.Services.AddOpenApi();

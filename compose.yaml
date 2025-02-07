@@ -4,3 +4,27 @@
     build:
       context: .
       dockerfile: src/Web.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    volumes:
+      - ./dataprotection-keys:/home/app/.aspnet/DataProtection-Keys 
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=Internship-Platform
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d Internship-Platform"]
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:
+  dataprotection-keys:

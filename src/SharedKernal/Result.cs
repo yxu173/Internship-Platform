@@ -31,6 +31,7 @@ public class Result
 
     public static Result<TValue> Failure<TValue>(Error error) =>
         new(default, false, error);
+        
 }
 
 public class Result<TValue> : Result

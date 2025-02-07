@@ -1,0 +1,12 @@
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\bin\Debug\net9.0\SharedKernal.deps.json
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\bin\Debug\net9.0\SharedKernal.dll
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\bin\Debug\net9.0\SharedKernal.pdb
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.GeneratedMSBuildEditorConfig.editorconfig
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.AssemblyInfoInputs.cache
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.AssemblyInfo.cs
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.csproj.CoreCompileInputs.cache
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.sourcelink.json
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.dll
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\refint\SharedKernal.dll
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\SharedKernal.pdb
+P:\Graducation-Project\Internship-Platform\src\SharedKernal\obj\Debug\net9.0\ref\SharedKernal.dll
