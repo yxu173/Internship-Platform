@@ -26,6 +26,7 @@ public sealed class GetCompanyProfileQueryHandler
 
         return new CompanyProfileDto(
             profile.Id,
+            profile.UserId,
             profile.CompanyName,
             profile.Governorate.ToString(),
             profile.Industry,

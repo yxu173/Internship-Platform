@@ -1,4 +1,3 @@
-
 using SharedKernel;
 
 namespace Domain.DomainErrors
@@ -21,7 +20,7 @@ namespace Domain.DomainErrors
 
         public static Error EmptySkills => Error.NotFound(
             "Skill.Empty",
-            "No skills found");
+            "No skills found in the system");
 
         // make one for if deleting a skill fails
 

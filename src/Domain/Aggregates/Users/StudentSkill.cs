@@ -15,6 +15,7 @@ public sealed class StudentSkill : BaseEntity
 
     public StudentSkill(Guid studentId, Guid skillId)
     {
+        Id = Guid.NewGuid(); 
         StudentId = studentId;
         SkillId = skillId;
     }

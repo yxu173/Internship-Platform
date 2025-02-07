@@ -26,4 +26,8 @@ public static class StudentErrors
     public static Error AlreadyExists => Error.Conflict(
         "Student.AlreadyExists",
         "Student profile already exists");
+
+    public static Error SkillNotFound => Error.NotFound(
+        "Student.SkillNotFound",
+        "Skill not found in student profile");
 }

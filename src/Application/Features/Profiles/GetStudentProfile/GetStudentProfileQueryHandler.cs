@@ -26,6 +26,8 @@ public sealed class GetStudentProfileQueryHandler
             return Result.Failure<StudentProfileDto>(Domain.DomainErrors.StudentErrors.ProfileNotFound);
 
         return new StudentProfileDto(
+            profile.Id,
+            profile.UserId,
             profile.FullName,
             profile.University.ToString(),
             profile.Faculty,

@@ -78,4 +78,9 @@ public sealed class StudentProfile : BaseAuditableEntity
         _skills.Add(new StudentSkill(Id, skill.Id));
         return Result.Success();
     }
+
+    public void RemoveSkill(StudentSkill skill)
+    {
+        _skills.Remove(skill);
+    }
 }
