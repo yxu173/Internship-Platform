@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Data;
+using Domain.Aggregates.Internships;
 using Domain.Aggregates.Users;
 using Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -15,6 +16,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<CompanyProfile> CompanyProfiles { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<StudentSkill> StudentSkills { get; set; }
+    public DbSet<Internship> Internships { get; set; }
+    public DbSet<Domain.Aggregates.Internships.Application> Applications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -23,6 +26,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.Ignore<PhoneNumber>();
         builder.Ignore<Year>();
         builder.Ignore<EgyptianTaxId>();
+        builder.Ignore<DateRange>();
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
