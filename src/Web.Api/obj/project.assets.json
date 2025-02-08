@@ -3153,41 +3153,38 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\moham\\.nuget\\packages\\": {}
+    "/home/mrx/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "P:\\Graducation-Project\\Internship-Platform\\src\\Web.Api\\Web.Api.csproj",
+      "projectUniqueName": "/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/Web.Api.csproj",
       "projectName": "Web.Api",
-      "projectPath": "P:\\Graducation-Project\\Internship-Platform\\src\\Web.Api\\Web.Api.csproj",
-      "packagesPath": "C:\\Users\\moham\\.nuget\\packages\\",
-      "outputPath": "P:\\Graducation-Project\\Internship-Platform\\src\\Web.Api\\obj\\",
+      "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/Web.Api.csproj",
+      "packagesPath": "/home/mrx/.nuget/packages/",
+      "outputPath": "/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\moham\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/mrx/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "P:\\Graducation-Project\\Internship-Platform\\src\\Application\\Application.csproj": {
-              "projectPath": "P:\\Graducation-Project\\Internship-Platform\\src\\Application\\Application.csproj"
+            "/home/mrx/graduaction-project/Internship-Platform/src/Application/Application.csproj": {
+              "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Application/Application.csproj"
             },
-            "P:\\Graducation-Project\\Internship-Platform\\src\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "P:\\Graducation-Project\\Internship-Platform\\src\\Infrastructure\\Infrastructure.csproj"
+            "/home/mrx/graduaction-project/Internship-Platform/src/Infrastructure/Infrastructure.csproj": {
+              "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Infrastructure/Infrastructure.csproj"
             },
-            "P:\\Graducation-Project\\Internship-Platform\\src\\SharedKernal\\SharedKernal.csproj": {
-              "projectPath": "P:\\Graducation-Project\\Internship-Platform\\src\\SharedKernal\\SharedKernal.csproj"
+            "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj": {
+              "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj"
             }
           }
         }
@@ -3232,6 +3229,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.1, 9.0.1]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -3240,7 +3243,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -4,13 +4,12 @@
     build:
       context: .
       dockerfile: src/Web.Api/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
-    volumes:
-      - ./dataprotection-keys:/home/app/.aspnet/DataProtection-Keys 
     ports:
-      - "8080:8080"
+      - "5067:8080"
+    volumes:
+      # Mount a local folder or Docker volume to persist keys
+      - aspnet_keys:/home/app/.aspnet/DataProtection-Keys
+    user: "1000:1000"
 
   postgres:
     image: postgres:17-alpine
@@ -19,12 +18,18 @@
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=Internship-Platform
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d Internship-Platform"]
+      - ./.containers/intern_db:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5431:5432"
+
+  migrate:
+    image: web.api
+    command: dotnet ef database update
+    depends_on:
+      - postgres
+    volumes:
+      - aspnet_keys:/home/app/.aspnet/DataProtection-Keys
+    user: "1000:1000"
 
 volumes:
-  postgres-data:
-  dataprotection-keys:
+  aspnet_keys:

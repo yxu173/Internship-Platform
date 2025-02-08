@@ -8,27 +8,24 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\moham\\.nuget\\packages\\": {}
+    "/home/mrx/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "P:\\Graducation-Project\\Internship-Platform\\src\\SharedKernal\\SharedKernal.csproj",
+      "projectUniqueName": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
       "projectName": "SharedKernal",
-      "projectPath": "P:\\Graducation-Project\\Internship-Platform\\src\\SharedKernal\\SharedKernal.csproj",
-      "packagesPath": "C:\\Users\\moham\\.nuget\\packages\\",
-      "outputPath": "P:\\Graducation-Project\\Internship-Platform\\src\\SharedKernal\\obj\\",
+      "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
+      "packagesPath": "/home/mrx/.nuget/packages/",
+      "outputPath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\moham\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/mrx/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -63,12 +60,18 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.1, 9.0.1]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

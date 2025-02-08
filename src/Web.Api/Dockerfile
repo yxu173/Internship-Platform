@@ -24,4 +24,9 @@ RUN dotnet publish "Web.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:U
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Create the DataProtection directory and update its ownership to the app user
+RUN mkdir -p /home/app/.aspnet/DataProtection-Keys \
+    && chown -R app:app /home/app/.aspnet/DataProtection-Keys
+
 ENTRYPOINT ["dotnet", "Web.Api.dll"]

@@ -1,5 +1,9 @@
 using Application;
+using Domain.Aggregates.Users;
 using Infrastructure;
+using Infrastructure.Database;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Web.Api;
 using Web.Api.Extensions;
@@ -23,6 +27,25 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+// for docker-compose
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    string[] roles = new[] { "BASIC", "ADMIN" }; 
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            var newRole = Role.Create(role);
+            await roleManager.CreateAsync(newRole);
+        }
+    }
 }
 
 app.UseRequestContextLogging();
