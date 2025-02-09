@@ -38,16 +38,18 @@ public sealed class Internship : BaseAuditableEntity
             Duration = duration;
             ApplicationDeadline = applicationDeadline;
             IsActive = true;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public static Result<Internship> Create(
             string title,
             string description,
             Guid companyProfileId,
-            InternshipType type,
+            string type,
             DateRange duration,
             DateTime applicationDeadline)
         {
+            var typeResult = Enum.Parse<InternshipType>(type);            
             if (applicationDeadline < DateTime.UtcNow)
                 return Result.Failure<Internship>(InternshipErrors.DeadlinePassed);
 
@@ -59,7 +61,7 @@ public sealed class Internship : BaseAuditableEntity
                 title,
                 description,
                 companyProfileId,
-                type,
+                typeResult,
                 duration,
                 applicationDeadline);
         }
@@ -88,4 +90,23 @@ public sealed class Internship : BaseAuditableEntity
             IsActive = false;
             return Result.Success();
         }
+
+    public Result Update(
+        string title,
+        string description,
+        DateTime applicationDeadline)
+    {
+        if (applicationDeadline < DateTime.UtcNow)
+            return Result.Failure(InternshipErrors.DeadlinePassed);
+
+        if (applicationDeadline > Duration.StartDate)
+            return Result.Failure(InternshipErrors.InvalidDeadline);
+
+        Title = title;
+        Description = description;
+        ApplicationDeadline = applicationDeadline;
+        ModifiedAt = DateTime.UtcNow;
+
+        return Result.Success();
+    }
 }

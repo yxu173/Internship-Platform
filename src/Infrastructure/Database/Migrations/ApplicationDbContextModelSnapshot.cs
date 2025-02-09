@@ -76,8 +76,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -89,8 +88,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -480,7 +478,7 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Domain.Aggregates.Internships.Internship", b =>
                 {
-                    b.HasOne("Domain.Aggregates.Users.CompanyProfile", null)
+                    b.HasOne("Domain.Aggregates.Users.CompanyProfile", "CompanyProfile")
                         .WithMany()
                         .HasForeignKey("CompanyProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -506,6 +504,8 @@ namespace Infrastructure.Database.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("InternshipId");
                         });
+
+                    b.Navigation("CompanyProfile");
 
                     b.Navigation("Duration")
                         .IsRequired();

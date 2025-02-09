@@ -18,4 +18,23 @@ internal sealed class UserContext : IUserContext
             .User
             .GetUserId() ??
         throw new ApplicationException("User context is unavailable");
+
+    public Guid? StudentId => GetClaimValueAsGuid("student_id");
+    public Guid? CompanyId => GetClaimValueAsGuid("company_id");
+
+    private Guid? GetClaimValueAsGuid(string claimType)
+    {
+        var claimValue = _httpContextAccessor?
+            .HttpContext?
+            .User?
+            .FindFirst(claimType)?
+            .Value;
+
+        if (Guid.TryParse(claimValue, out var guidValue))
+        {
+            return guidValue;
+        }
+        
+        return null;
+    }
 }
