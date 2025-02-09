@@ -14,32 +14,23 @@ public sealed class InternshipRepository : IInternshipRepository
         _context = context;
     }
 
-    public async Task<Internship?> GetByIdAsync(Guid id)
+    public async Task<Internship?> GetByIdAsync(Guid id, bool includeApplications = false)
     {
-        return await _context.Internships
-            .Include(i => i.Applications)
-            .FirstOrDefaultAsync(i => i.Id == id);
+        var query = _context.Internships.AsQueryable();
+        
+        if (includeApplications)
+        {
+            query = query.Include(i => i.Applications);
+        }
+        
+        return await query.FirstOrDefaultAsync(i => i.Id == id);
     }
 
-    public async Task<List<Internship>> GetByCompanyIdAsync(Guid companyId)
+    public async Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.Internships
-            .Where(i => i.CompanyId == companyId)
-            .ToListAsync();
-    }
-
-    public async Task<List<Internship>> GetActiveInternshipsAsync()
-    {
-        return await _context.Internships
-            .Where(i => i.IsActive)
-            .ToListAsync();
-    }
-
-    public async Task<List<Internship>> SearchAsync(string searchTerm)
-    {
-        return await _context.Internships
-            .Where(i => EF.Functions.ILike(i.Title, $"%{searchTerm}%") ||
-                        EF.Functions.ILike(i.Description, $"%{searchTerm}%"))
+            .Where(i => i.CompanyProfileId == companyId)
+            .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
     }
 
@@ -49,9 +40,53 @@ public sealed class InternshipRepository : IInternshipRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Internship internship)
+    public async Task Update(Internship internship)
     {
-        _context.Update(internship);
+        _context.Internships.Update(internship);
+        await _context.SaveChangesAsync();
+
+    }
+
+    public async Task Delete(Internship internship)
+    {
+        _context.Internships.Remove(internship);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Domain.Aggregates.Internships.Application?> GetApplicationByIdAsync(Guid applicationId)
+    {
+        return await _context.Applications
+            .Include(a => a.StudentProfile)
+            .FirstOrDefaultAsync(a => a.Id == applicationId);
+    }
+
+    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByInternshipIdAsync(Guid internshipId)
+    {
+        return await _context.Applications
+            .Where(a => a.InternshipId == internshipId)
+            .Include(a => a.StudentProfile)
+            .ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByStudentIdAsync(Guid studentProfileId)
+    {
+        return await _context.Applications
+            .Where(a => a.StudentProfileId == studentProfileId)
+            .Include(a => a.Internship)
+            .ThenInclude(i => i.CompanyProfile)
+            .ToListAsync();
+    }
+
+    public async Task AddApplicationAsync(Domain.Aggregates.Internships.Application application)
+    {
+        await _context.Applications.AddAsync(application);
+        await _context.SaveChangesAsync();
+
+    }
+
+    public async Task RemoveApplication(Domain.Aggregates.Internships.Application application)
+    {
+        _context.Applications.Remove(application);
         await _context.SaveChangesAsync();
     }
 }

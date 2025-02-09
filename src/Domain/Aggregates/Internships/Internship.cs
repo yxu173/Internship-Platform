@@ -1,3 +1,5 @@
+using System.Net.NetworkInformation;
+using Domain.Aggregates.Users;
 using Domain.Common;
 using Domain.DomainErrors;
 using Domain.Enums;
@@ -12,25 +14,26 @@ public sealed class Internship : BaseAuditableEntity
         
         public string Title { get; private set; }
         public string Description { get; private set; }
-        public Guid CompanyId { get; }
+        public Guid CompanyProfileId { get; private set; }
         public InternshipType Type { get; private set; }
         public DateRange Duration { get; private set; }
         public DateTime ApplicationDeadline { get; private set; }
         public bool IsActive { get; private set; }
+        public CompanyProfile CompanyProfile { get; private set; }
         public IReadOnlyList<Application> Applications => _applications.AsReadOnly();
         private Internship(){}
         private Internship(
             Guid id,
             string title,
             string description,
-            Guid companyId,
+            Guid companyProfileId ,
             InternshipType type,
             DateRange duration,
             DateTime applicationDeadline)
         {
             Title = title;
             Description = description;
-            CompanyId = companyId;
+            CompanyProfileId = companyProfileId;
             Type = type;
             Duration = duration;
             ApplicationDeadline = applicationDeadline;
@@ -40,7 +43,7 @@ public sealed class Internship : BaseAuditableEntity
         public static Result<Internship> Create(
             string title,
             string description,
-            Guid companyId,
+            Guid companyProfileId,
             InternshipType type,
             DateRange duration,
             DateTime applicationDeadline)
@@ -55,7 +58,7 @@ public sealed class Internship : BaseAuditableEntity
                 Guid.NewGuid(),
                 title,
                 description,
-                companyId,
+                companyProfileId,
                 type,
                 duration,
                 applicationDeadline);
@@ -70,7 +73,7 @@ public sealed class Internship : BaseAuditableEntity
         if (DateTime.UtcNow > ApplicationDeadline)
             return Result.Failure(InternshipErrors.DeadlinePassed);
 
-        if (_applications.Any(a => a.StudentId == application.StudentId))
+        if (_applications.Any(a => a.StudentProfileId == application.StudentProfileId))
                 return Result.Failure(InternshipErrors.DuplicateApplication);
 
         _applications.Add(application);

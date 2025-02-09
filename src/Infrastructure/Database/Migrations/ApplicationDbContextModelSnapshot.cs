@@ -22,6 +22,87 @@ namespace Infrastructure.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Aggregates.Internships.Application", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AppliedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DecisionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InternshipId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("InternshipId");
+
+                    b.Property<string>("ResumeUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StudentProfileId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("StudentProfileId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InternshipId");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.ToTable("Applications", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Internships.Internship", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ApplicationDeadline")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CompanyProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyProfileId");
+
+                    b.ToTable("Internships", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -378,6 +459,58 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.Internships.Application", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Internships.Internship", "Internship")
+                        .WithMany("Applications")
+                        .HasForeignKey("InternshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Aggregates.Users.StudentProfile", "StudentProfile")
+                        .WithMany()
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Internship");
+
+                    b.Navigation("StudentProfile");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Internships.Internship", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Users.CompanyProfile", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyProfileId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.DateRange", "Duration", b1 =>
+                        {
+                            b1.Property<Guid>("InternshipId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("EndDate")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("EndDate");
+
+                            b1.Property<DateTime>("StartDate")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("StartDate");
+
+                            b1.HasKey("InternshipId");
+
+                            b1.ToTable("Internships");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InternshipId");
+                        });
+
+                    b.Navigation("Duration")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
                 {
                     b.HasOne("Domain.Aggregates.Users.User", null)
@@ -528,6 +661,11 @@ namespace Infrastructure.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Internships.Internship", b =>
+                {
+                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.Skill", b =>
