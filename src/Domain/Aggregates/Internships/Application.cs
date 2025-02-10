@@ -19,6 +19,7 @@ public sealed class Application : BaseEntity
 
     private Application(Guid studentProfileId, string resumeUrl)
     {
+        Id = Guid.NewGuid();
         StudentProfileId = studentProfileId;
         AppliedAt = DateTime.UtcNow;
         Status = ApplicationStatus.Pending;

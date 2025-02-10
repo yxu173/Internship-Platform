@@ -26,6 +26,11 @@ public sealed class InternshipRepository : IInternshipRepository
         return await query.FirstOrDefaultAsync(i => i.Id == id);
     }
 
+    public Task<Internship?> GetById(Guid id)
+    {
+        return _context.Internships.FirstOrDefaultAsync(i => i.Id == id);
+    }
+
     public async Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.Internships
@@ -44,7 +49,6 @@ public sealed class InternshipRepository : IInternshipRepository
     {
         _context.Internships.Update(internship);
         await _context.SaveChangesAsync();
-
     }
 
     public async Task Delete(Internship internship)

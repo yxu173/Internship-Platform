@@ -1,6 +1,8 @@
+using Application.Features.Internships.CreateApplication;
 using Application.Features.Internships.CreateInternship;
+using Application.Features.Internships.RemoveApplication;
+using Application.Features.Internships.RemoveInternship;
 using Application.Features.Internships.UpdateInternship;
-using Application.Features.Profiles.CreateCompanyProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Internship;
@@ -39,6 +41,39 @@ public class InternshipController : BaseController
 
         var result = await _mediator.Send(command);
 
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpDelete("DeleteInternship/{id}")]
+    public async Task<IResult> DeleteInternship([FromRoute] Guid id)
+    {
+        var command = new RemoveInternshipCommand(id);
+
+        var result = await _mediator.Send(command);
+
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("CreateApplication/{id}")]
+    public async Task<IResult> CreateApplication([FromRoute] Guid id, [FromBody] CreateApplicationRequest request)
+    {
+        var command = new CreateApplicationCommand(
+            id,
+            UserId,
+            request.ResumeUrl
+        );
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpDelete("DeleteApplication/{id}")]
+    public async Task<IResult> DeleteApplication([FromRoute] Guid id)
+    {
+        var command = new RemoveApplicationCommand(
+            id,
+            UserId
+        );
+        var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

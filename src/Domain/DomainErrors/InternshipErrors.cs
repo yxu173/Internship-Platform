@@ -36,4 +36,17 @@ public static class InternshipErrors
         "Internship.InternshipClosed",
         "Internship Closed"
     );
+    public static Error NotFound => Error.NotFound(
+        "Internship.NotFound",
+        "Internship not found"
+    );
+    public static Error ApplicationNotFound => Error.NotFound(
+        "Internship.ApplicationNotFound",
+        "Application not found"
+    );
+
+    public static Error NotApplicationOwner => Error.Conflict(
+        " Internship.NotApplicationOwner",
+        "You are not the owner of this application"
+    );
 }

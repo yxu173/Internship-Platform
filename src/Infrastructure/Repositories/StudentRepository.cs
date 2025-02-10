@@ -51,7 +51,7 @@ public class StudentRepository : IStudentRepository
 
     public async Task<StudentProfile> GetByIdAsync(Guid id)
     {
-        return await _context.StudentProfiles.FirstOrDefaultAsync(s => s.Id == id);
+        return await _context.StudentProfiles.FirstOrDefaultAsync(s => s.UserId == id);
     }
 
 

@@ -5,6 +5,7 @@ namespace Domain.Repositories;
 public interface IInternshipRepository
 {
     Task<Internship?> GetByIdAsync(Guid id, bool includeApplications = false);
+    Task<Internship?> GetById(Guid id);
     Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId);
     Task AddAsync(Internship internship);
     Task Update(Internship internship);
