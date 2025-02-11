@@ -147,3 +147,6 @@ P:/Graducation-Project/Internship-Platform/src/Web.Api/obj/Debug/net9.0/ref/Web.
 /home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
 /home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/BouncyCastle.Cryptography.dll
+/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/MailKit.dll
+/home/mrx/graduaction-project/Internship-Platform/src/Web.Api/bin/Debug/net9.0/MimeKit.dll

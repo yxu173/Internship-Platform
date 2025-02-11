@@ -9,15 +9,15 @@ namespace Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
-    private readonly UserManager<User> _userManager;
+    private readonly UserManager<User?> _userManager;
 
-    public UserRepository(ApplicationDbContext context, UserManager<User> userManager)
+    public UserRepository(ApplicationDbContext context, UserManager<User?> userManager)
     {
         _context = context;
         _userManager = userManager;
     }
 
-    public async Task CreateAsync(User user, string password)
+    public async Task CreateAsync(User? user, string password)
     {
         await _userManager.CreateAsync(user, password);
     }
@@ -49,12 +49,12 @@ public class UserRepository : IUserRepository
         return await _context.Users.ToListAsync();
     }
 
-    public async Task<User> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email)
     {
         return await _userManager.FindByEmailAsync(email);
     }
 
-    public async Task<User> GetByIdAsync(Guid id)
+    public async Task<User?> GetByIdAsync(Guid id)
     {
         return await _userManager.FindByIdAsync(id.ToString());
     }
@@ -64,7 +64,7 @@ public class UserRepository : IUserRepository
         return await _userManager.FindByNameAsync(username);
     }
 
-    public async Task<IEnumerable<User>> GetUsersByRoleAsync(string role)
+    public async Task<IEnumerable<User?>> GetUsersByRoleAsync(string role)
     {
         return await _userManager.GetUsersInRoleAsync(role);
     }
@@ -79,7 +79,20 @@ public class UserRepository : IUserRepository
         return await _userManager.FindByNameAsync(username) == null;
     }
 
-    public async Task UpdateAsync(User user)
+    public Task<string> GeneratePasswordResetTokenAsync(User user)
+    {
+        return _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public async Task<bool> ResetPasswordAsync(User user, string token, string newPassword)
+    {
+         var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+         if (!result.Succeeded)
+             return false;
+         return true;
+    }
+
+    public async Task UpdateAsync(User? user)
     {
         await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();

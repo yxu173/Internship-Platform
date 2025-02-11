@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Globalization;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -43,7 +44,17 @@ public static class DependencyInjection
         services.AddScoped<ISkillRepository,SkillRepository>();
         services.AddScoped<IInternshipRepository, InternshipRepository>();
         //services.AddScoped<IEmailSender, EmailSender>();
-
+        services.AddTransient<IEmailSender, EmailSender>(provider =>
+        {
+            IConfiguration configuration = provider.GetRequiredService<IConfiguration>();
+            IConfigurationSection smtpSettings = configuration.GetSection("SmtpSettings");
+            return new EmailSender(
+                smtpSettings["Host"]!,
+                int.Parse(smtpSettings["Port"]!, CultureInfo.InvariantCulture),
+                smtpSettings["Username"]!,
+                smtpSettings["Password"]!
+            );
+        });
 
         services.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>()

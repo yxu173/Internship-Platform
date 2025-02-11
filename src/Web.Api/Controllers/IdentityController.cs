@@ -1,13 +1,16 @@
 ﻿using System.Security.Claims;
 using Application.Abstractions.Authentication;
+using Application.Features.Identity.ForgetPassword;
 using Application.Features.Identity.Login;
 using Application.Features.Identity.Logout;
 using Application.Features.Identity.Register;
+using Application.Features.Identity.ResetPassword;
 using Domain.Aggregates.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using SharedKernel;
 using Web.Api.Contracts;
@@ -63,6 +66,22 @@ public class IdentityController : BaseController
     public async Task<IResult> Logout()
     {
         Result<bool> result = await _mediator.Send(new LogoutUserCommand());
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("ForgotPassword")]
+    public async Task<IResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        var result = await _mediator.Send(new ForgetPasswordCommand(request.Email));
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("ResetPassword")]
+    public async Task<IResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var result = await _mediator.Send(new ResetPasswordCommand(request.Email,
+            request.ResetCode,
+            request.NewPassword));
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 

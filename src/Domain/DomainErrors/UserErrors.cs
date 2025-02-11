@@ -35,4 +35,7 @@ public static class UserErrors
     public static readonly Error RegisterUserError = Error.Failure(
         "Users.RegisterUserError",
         "Failed to register user");
+    public static readonly Error PasswordResetFailed = Error.Failure(
+        "Users.PasswordResetFailed",
+        "Failed to reset password");
 }
