@@ -36,7 +36,7 @@ public class CompanyRepository : ICompanyRepository
         return Result.Success(true);
     }
 
-    public Task<CompanyProfile> GetByIdAsync(Guid id)
+    public Task<CompanyProfile?> GetByIdAsync(Guid id)
     {
         return _context.CompanyProfiles.FirstOrDefaultAsync(x => x.UserId == id);
     }

@@ -5,7 +5,7 @@ using SharedKernel;
 namespace Domain.Repositories;
 public interface ICompanyRepository
 {
-    Task<CompanyProfile> GetByIdAsync(Guid id);
+    Task<CompanyProfile?> GetByIdAsync(Guid id);
     Task<Result<bool>> CreateAsync(Guid userId,
      string companyName,
       string taxId,

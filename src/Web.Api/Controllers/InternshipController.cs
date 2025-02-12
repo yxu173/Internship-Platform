@@ -1,5 +1,6 @@
 using Application.Features.Internships.CreateApplication;
 using Application.Features.Internships.CreateInternship;
+using Application.Features.Internships.GetInternshipsByCompanyId;
 using Application.Features.Internships.RemoveApplication;
 using Application.Features.Internships.RemoveInternship;
 using Application.Features.Internships.UpdateInternship;
@@ -74,6 +75,14 @@ public class InternshipController : BaseController
             UserId
         );
         var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("GetInternshipById/{id}")]
+    public async Task<IResult> GetInternshipById([FromRoute] Guid id)
+    {
+        var query = new GetInternshipsByCompanyIdQuery(id);
+        var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

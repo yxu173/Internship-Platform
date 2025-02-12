@@ -1,6 +1,7 @@
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Messaging;
 using Domain.Aggregates.Internships;
+using Domain.Aggregates.Users;
 using Domain.Repositories;
 using Domain.ValueObjects;
 using SharedKernel;

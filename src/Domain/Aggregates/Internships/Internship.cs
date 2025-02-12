@@ -11,7 +11,7 @@ namespace Domain.Aggregates.Internships;
 public sealed class Internship : BaseAuditableEntity
 {
     private readonly List<Application> _applications = new();
-        
+       // TODO: Internship model -   
         public string Title { get; private set; }
         public string Description { get; private set; }
         public Guid CompanyProfileId { get; private set; }
