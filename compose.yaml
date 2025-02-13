@@ -7,11 +7,13 @@
     ports:
       - "5067:8080"
     volumes:
-      # Mount a local folder or Docker volume to persist keys
       - aspnet_keys:/home/app/.aspnet/DataProtection-Keys
     user: "1000:1000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Host=db;Port=5432;Database=Internship-Platform;Username=postgres;Password=postgres
 
-  postgres:
+  db:
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=postgres
@@ -20,16 +22,25 @@
     volumes:
       - ./.containers/intern_db:/var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - "5431:5432"  # Exposes container's 5432 as host's 5431
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   migrate:
     image: web.api
     command: dotnet ef database update
     depends_on:
-      - postgres
+      db:
+        condition: service_healthy
     volumes:
       - aspnet_keys:/home/app/.aspnet/DataProtection-Keys
     user: "1000:1000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Host=db;Port=5432;Database=Internship-Platform;Username=postgres;Password=postgres
 
 volumes:
   aspnet_keys:

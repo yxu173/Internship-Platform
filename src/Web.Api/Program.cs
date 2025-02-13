@@ -32,23 +32,23 @@ if (app.Environment.IsDevelopment())
 }
 
 // for docker-compose
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     await dbContext.Database.MigrateAsync();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
 
-//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-//     string[] roles = new[] { "BASIC", "ADMIN" }; 
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    string[] roles = new[] { "BASIC", "ADMIN" }; 
 
-//     foreach (var role in roles)
-//     {
-//         if (!await roleManager.RoleExistsAsync(role))
-//         {
-//             var newRole = Role.Create(role);
-//             await roleManager.CreateAsync(newRole);
-//         }
-//     }
-// }
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            var newRole = Role.Create(role);
+            await roleManager.CreateAsync(newRole);
+        }
+    }
+}
 
 app.UseRequestContextLogging();
 

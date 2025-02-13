@@ -7,6 +7,7 @@ namespace Domain.Aggregates.Users;
 
 public sealed class StudentProfile : BaseAuditableEntity
 {
+    //TODO: Degree - Start Date - End Year - lang section - Project Section- CV 
     private StudentProfile() { }
     private readonly List<StudentSkill> _skills = new();
     public Guid UserId { get; private set; }

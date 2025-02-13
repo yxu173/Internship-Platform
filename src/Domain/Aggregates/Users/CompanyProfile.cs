@@ -7,7 +7,7 @@ namespace Domain.Aggregates.Users;
 
 public sealed class CompanyProfile : BaseAuditableEntity
 {
-    //TODO: Address 
+    //TODO: Add - Logo
     private CompanyProfile() { }
     public Guid UserId { get; private set; }
     public string CompanyName { get; private set; }
