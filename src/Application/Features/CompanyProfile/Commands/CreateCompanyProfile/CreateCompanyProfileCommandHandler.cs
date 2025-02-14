@@ -1,9 +1,8 @@
 using Application.Abstractions.Messaging;
-using Domain.DomainErrors;
 using Domain.Repositories;
 using SharedKernel;
 
-namespace Application.Features.Profiles.CreateCompanyProfile;
+namespace Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 
 public sealed class CreateCompanyProfileCommandHandler : ICommandHandler<CreateCompanyProfileCommand, bool>
 {

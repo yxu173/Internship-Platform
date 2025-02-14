@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Application.Features.Profiles.StudentProfile;
+namespace Application.Features.StudentProfile.Commands.CreateStudentProfile;
 
 public sealed class CreateStudentProfileCommandValidator
         : AbstractValidator<CreateStudentProfileCommand>

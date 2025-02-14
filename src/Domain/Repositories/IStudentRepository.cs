@@ -1,22 +1,39 @@
 using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
-using Domain.Enums;
-using Domain.ValueObjects;
 using SharedKernel;
 
 namespace Domain.Repositories;
+
 public interface IStudentRepository
 {
     Task<StudentProfile> GetByIdAsync(Guid id);
+
     Task<Result> CreateAsync(Guid userId,
-     string fullName,
-      string university,
-       string faculty,
+        string fullName,
+        string university,
+        string faculty,
         int graduationYear,
         int enrollmentYear,
         int age,
         string gender,
         string phoneNumber);
+
+    Task<IReadOnlyList<StudentSkill>> GetStudentSkillsAsync(Guid studentId);
     Task UpdateAsync(StudentProfile student);
     Task<StudentProfile?> GetByUserIdAsync(Guid userId);
+
+    Task<Result> CreateStudentExperienceAsync(Guid studentId,
+        string jobTitle,
+        string companyName,
+        DateTime startDate,
+        DateTime endDate);
+
+    Task<Result> RemoveStudentExperienceAsync(Guid experienceId);
+    Task<IReadOnlyList<StudentExperience>> GetAllStudentExperiences(Guid studentId);
+
+    Task<Result> CreateStudentProjectAsync(
+        Guid studentId,
+        string projectName, 
+        string description,
+        string projectUrl);
 }

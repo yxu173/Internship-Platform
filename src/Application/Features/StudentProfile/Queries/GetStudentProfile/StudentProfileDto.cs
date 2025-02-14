@@ -1,4 +1,4 @@
-namespace Application.Features.Profiles.GetStudentProfile;
+namespace Application.Features.StudentProfile.Queries.GetStudentProfile;
 
 public sealed record StudentProfileDto(
     Guid StudentId,

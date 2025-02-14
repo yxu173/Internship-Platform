@@ -13,7 +13,10 @@ public sealed class StudentProfile : BaseAuditableEntity
     //TODO: Add - Education Section (University, Faculty, GraduationYear, EnrollmentYear)
     //TODO: Add - Experience Section (JobTitle, CompanyName, StartDate, EndDate, Description)
     //TODO: Add - Project Section (ProjectName, Description, ProjectUrl)
-    private StudentProfile() { }
+    private StudentProfile()
+    {
+    }
+
     private readonly List<StudentSkill> _skills = new();
     private readonly List<StudentExperience> _experiences = new();
     private readonly List<StudentProject> _projects = new();
@@ -64,18 +67,17 @@ public sealed class StudentProfile : BaseAuditableEntity
         string gender,
         string phoneNumber)
     {
-
         var genderResult = Enum.Parse<Gender>(gender);
         var universityResult = Enum.Parse<EgyptianUniversity>(university);
         var phoneResult = PhoneNumber.Create(phoneNumber);
-        
+
         if (phoneResult.IsFailure)
             return Result.Failure<StudentProfile>(phoneResult.Error);
 
         var graduationYearResult = Year.Create(graduationYear);
         if (graduationYearResult.IsFailure)
             return Result.Failure<StudentProfile>(graduationYearResult.Error);
-        
+
         var enrollmentYearResult = Year.Create(enrollmentYear);
         if (graduationYearResult.IsFailure)
             return Result.Failure<StudentProfile>(graduationYearResult.Error);
@@ -104,21 +106,19 @@ public sealed class StudentProfile : BaseAuditableEntity
     {
         _skills.Remove(skill);
     }
-    
+
     public Result AddExperience(
         string jobTitle,
         string companyName,
         DateTime startDate,
-        DateTime? endDate,
-        string description)
+        DateTime? endDate)
     {
         var experienceResult = StudentExperience.Create(
             Id,
             jobTitle,
             companyName,
             startDate,
-            endDate,
-            description);
+            endDate);
 
         if (experienceResult.IsFailure)
             return Result.Failure(experienceResult.Error);
@@ -145,6 +145,40 @@ public sealed class StudentProfile : BaseAuditableEntity
         return Result.Success();
     }
 
+    public Result UpdateInformation(
+        string fullName,
+        string university,
+        string faculty,
+        int enrollmentYear,
+        int graduationYear,
+        int age,
+        string bio,
+        string gender
+    )
+    {
+        var genderResult = Enum.Parse<Gender>(gender);
+        var universityResult = Enum.Parse<EgyptianUniversity>(university);
+
+        var graduationYearResult = Year.Create(graduationYear);
+        if (graduationYearResult.IsFailure)
+            return Result.Failure(graduationYearResult.Error);
+
+
+        var enrollmentYearResult = Year.Create(enrollmentYear);
+        if (enrollmentYearResult.IsFailure)
+            return Result.Failure(enrollmentYearResult.Error);
+
+        FullName = fullName;
+        Faculty = faculty;
+        Age = age;
+        Bio = bio;
+        Gender = genderResult;
+        University = universityResult;
+        GraduationYear = graduationYearResult.Value;
+        EnrollmentYear = enrollmentYearResult.Value;
+        return Result.Success();
+    }
+
     public void RemoveExperience(StudentExperience experience)
     {
         _experiences.Remove(experience);
@@ -153,5 +187,21 @@ public sealed class StudentProfile : BaseAuditableEntity
     public void RemoveProject(StudentProject project)
     {
         _projects.Remove(project);
+    }
+
+    public Result UpdateResumeUrl(string? resumeUrl)
+    {
+        if (resumeUrl is null)
+            resumeUrl = null;
+        ResumeUrl = resumeUrl?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateProfilePicture(string? profilePictureUrl)
+    {
+        if (profilePictureUrl is null)
+            profilePictureUrl = null;
+        ProfilePictureUrl = profilePictureUrl?.Trim();
+        return Result.Success();
     }
 }

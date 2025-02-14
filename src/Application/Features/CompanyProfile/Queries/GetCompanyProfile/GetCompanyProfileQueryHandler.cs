@@ -2,7 +2,7 @@ using Application.Abstractions.Messaging;
 using Domain.Repositories;
 using SharedKernel;
 
-namespace Application.Features.Profiles.GetCompanyProfile;
+namespace Application.Features.CompanyProfile.Queries.GetCompanyProfile;
 
 public sealed class GetCompanyProfileQueryHandler 
     : IQueryHandler<GetCompanyProfileQuery, CompanyProfileDto>

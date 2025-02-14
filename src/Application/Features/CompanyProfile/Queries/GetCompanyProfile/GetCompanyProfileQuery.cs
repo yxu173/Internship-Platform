@@ -1,6 +1,6 @@
 using Application.Abstractions.Messaging;
 
-namespace Application.Features.Profiles.GetCompanyProfile;
+namespace Application.Features.CompanyProfile.Queries.GetCompanyProfile;
 
 public sealed record GetCompanyProfileQuery(Guid UserId) 
     : IQuery<CompanyProfileDto>;

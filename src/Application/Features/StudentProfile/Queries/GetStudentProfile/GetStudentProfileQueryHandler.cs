@@ -1,10 +1,8 @@
 using Application.Abstractions.Messaging;
-using Application.Features.Profiles.GetStudentProfile;
-using Domain.Aggregates.Users;
 using Domain.Repositories;
 using SharedKernel;
 
-namespace Application.Features.Profiles.StudentProfile;
+namespace Application.Features.StudentProfile.Queries.GetStudentProfile;
 
 public sealed class GetStudentProfileQueryHandler 
     : IQueryHandler<GetStudentProfileQuery, StudentProfileDto>

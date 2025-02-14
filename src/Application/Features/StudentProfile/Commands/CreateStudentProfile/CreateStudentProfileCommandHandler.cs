@@ -3,7 +3,7 @@ using Domain.DomainErrors;
 using Domain.Repositories;
 using SharedKernel;
 
-namespace Application.Features.Profiles.StudentProfile;
+namespace Application.Features.StudentProfile.Commands.CreateStudentProfile;
 
 public sealed class CreateStudentProfileCommandHandler : ICommandHandler<CreateStudentProfileCommand, bool>
 {

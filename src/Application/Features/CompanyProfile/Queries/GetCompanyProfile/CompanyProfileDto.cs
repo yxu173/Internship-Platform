@@ -1,4 +1,4 @@
-namespace Application.Features.Profiles.GetCompanyProfile;
+namespace Application.Features.CompanyProfile.Queries.GetCompanyProfile;
 
 public sealed record CompanyProfileDto(
     Guid CompanyId,

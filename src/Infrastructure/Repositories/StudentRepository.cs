@@ -1,9 +1,7 @@
 using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.DomainErrors;
-using Domain.Enums;
 using Domain.Repositories;
-using Domain.ValueObjects;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
@@ -54,7 +52,7 @@ public class StudentRepository : IStudentRepository
 
     public async Task<StudentProfile> GetByIdAsync(Guid id)
     {
-        return await _context.StudentProfiles.FirstOrDefaultAsync(s => s.UserId == id);
+        return (await _context.StudentProfiles.FirstOrDefaultAsync(s => s.UserId == id))!;
     }
 
 
@@ -64,11 +62,67 @@ public class StudentRepository : IStudentRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task<IReadOnlyList<StudentSkill>> GetStudentSkillsAsync(Guid studentId)
+    {
+        return await _context.StudentSkills
+            .Where(ss => ss.StudentId == studentId)
+            .Include(ss => ss.Skill)
+            .ToListAsync();
+    }
+
     public async Task<StudentProfile?> GetByUserIdAsync(Guid userId)
     {
         return await _context.StudentProfiles
             .Include(s => s.Skills)
             .ThenInclude(ss => ss.Skill)
             .FirstOrDefaultAsync(s => s.UserId == userId);
+    }
+
+    public async Task<Result> CreateStudentExperienceAsync(Guid studentId,
+        string jobTitle,
+        string companyName,
+        DateTime startDate,
+        DateTime endDate)
+    {
+        var studentExperience = StudentExperience.Create(
+            studentId,
+            jobTitle,
+            companyName,
+            startDate,
+            endDate);
+        if (studentExperience.IsFailure)
+            return Result.Failure<bool>(studentExperience.Error);
+        await _context.StudentExperiences.AddAsync(studentExperience.Value);
+        await _context.SaveChangesAsync();
+        return Result.Success();
+    }
+
+    public async Task<Result> RemoveStudentExperienceAsync(Guid experienceId)
+    {
+        var studentExperience = await _context.StudentExperiences.FirstOrDefaultAsync(se => se.Id == experienceId);
+        if (studentExperience is null)
+            return Result.Failure<bool>(StudentErrors.ExperienceNotFound);
+        _context.StudentExperiences.Remove(studentExperience);
+        await _context.SaveChangesAsync();
+        return Result.Success();
+    }
+
+    public async Task<IReadOnlyList<StudentExperience>> GetAllStudentExperiences(Guid studentId)
+    {
+        return await _context.StudentExperiences
+            .Where(se => se.StudentProfileId == studentId)
+            .ToListAsync();
+    }
+
+    public async Task<Result> CreateStudentProjectAsync(Guid studentId, string projectName, string description,
+        string projectUrl)
+    {
+        var studentProject = StudentProject.Create(studentId, projectName, 
+            description, projectUrl);
+        if (studentProject.IsFailure)
+            return Result.Failure<bool>(studentProject.Error);
+        await _context.StudentProjects.AddAsync(studentProject.Value);
+        await _context.SaveChangesAsync();
+        return Result.Success();
     }
 }

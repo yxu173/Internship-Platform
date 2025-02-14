@@ -1,8 +1,6 @@
-using Domain.DomainErrors;
 using FluentValidation;
-using SharedKernel;
 
-namespace Application.Features.Profiles.CreateCompanyProfile;
+namespace Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 
 public sealed class CreateCompanyProfileCommandValidator : AbstractValidator<CreateCompanyProfileCommand>
 {

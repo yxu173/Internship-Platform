@@ -26,8 +26,5 @@ public class StudentExperienceConfiguration : IEntityTypeConfiguration<StudentEx
             d.Property(dd => dd.EndDate)
                 .HasColumnName("EndDate");
         });
-
-        builder.Property(x => x.Description)
-            .HasMaxLength(500);
     }
 }

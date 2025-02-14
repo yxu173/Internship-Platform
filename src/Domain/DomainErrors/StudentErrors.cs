@@ -30,4 +30,7 @@ public static class StudentErrors
     public static Error SkillNotFound => Error.NotFound(
         "Student.SkillNotFound",
         "Skill not found in student profile");
+    public static Error ExperienceNotFound => Error.NotFound(
+        "Student.ExperienceNotFound",
+        "Experience not found in student profile");
 }

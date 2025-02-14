@@ -14,7 +14,6 @@ public sealed class StudentExperience : BaseEntity
     public string JobTitle { get; private set; }
     public string CompanyName { get; private set; }
     public DateRange DateRange { get; private set; }
-    public string Description { get; private set; }
     public StudentProfile StudentProfile { get; private set; }
 
     private StudentExperience(
@@ -22,14 +21,12 @@ public sealed class StudentExperience : BaseEntity
         string jobTitle,
         string companyName,
         DateTime startDate,
-        DateTime? endDate,
-        string description)
+        DateTime? endDate)
     {
         StudentProfileId = studentProfileId;
         JobTitle = jobTitle;
         CompanyName = companyName;
         DateRange = DateRange.Create(startDate, endDate ?? DateTime.UtcNow).Value;
-        Description = description;
     }
 
     public static Result<StudentExperience> Create(
@@ -37,15 +34,13 @@ public sealed class StudentExperience : BaseEntity
         string jobTitle,
         string companyName,
         DateTime startDate,
-        DateTime? endDate,
-        string description)
+        DateTime? endDate)
     {
         return Result.Success(new StudentExperience(
             studentProfileId,
             jobTitle,
             companyName,
             startDate,
-            endDate,
-            description ?? string.Empty));
+            endDate));
     }
 }

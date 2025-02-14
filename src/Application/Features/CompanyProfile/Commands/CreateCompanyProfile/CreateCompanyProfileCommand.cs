@@ -1,6 +1,6 @@
 using Application.Abstractions.Messaging;
 
-namespace Application.Features.Profiles.CreateCompanyProfile;
+namespace Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 
 public sealed record CreateCompanyProfileCommand(
     Guid UserId,

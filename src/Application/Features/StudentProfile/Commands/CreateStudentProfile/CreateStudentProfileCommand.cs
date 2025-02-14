@@ -1,8 +1,6 @@
 using Application.Abstractions.Messaging;
-using Domain.Enums;
-using Domain.ValueObjects;
 
-namespace Application.Features.Profiles.StudentProfile;
+namespace Application.Features.StudentProfile.Commands.CreateStudentProfile;
 
 
 public sealed record CreateStudentProfileCommand(
