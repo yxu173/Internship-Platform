@@ -1,3 +1,4 @@
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.DomainErrors;
 using Domain.Repositories;
@@ -20,6 +21,8 @@ public class CompanyRepository : ICompanyRepository
      string companyName,
       string taxId,
        string governorate,
+     string city,
+     string street,
         string industry)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -30,7 +33,10 @@ public class CompanyRepository : ICompanyRepository
             return Result.Failure<bool>(CompanyErrors.AlreadyRegistered);
 
         user.CreateCompanyProfile(companyName, taxId,
-         governorate, industry);
+         governorate,
+         city,
+         street,
+         industry);
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Result.Success(true);

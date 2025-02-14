@@ -1,4 +1,5 @@
-﻿using Domain.Aggregates.Users;
+﻿using Domain.Aggregates.Profiles;
+using Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -38,7 +39,13 @@ public class StudentProfileConfiguration : IEntityTypeConfiguration<StudentProfi
                 .HasColumnName("GraduationYear")
                 .IsRequired();
         });
-
+        
+        builder.OwnsOne(sp => sp.EnrollmentYear, year =>
+        {
+            year.Property(y => y.Value)
+                .HasColumnName("EnrollmentYear")
+                .IsRequired();
+        });
       
         builder.Property(sp => sp.University)
             .HasConversion<string>()
@@ -49,5 +56,14 @@ public class StudentProfileConfiguration : IEntityTypeConfiguration<StudentProfi
             .HasConversion<string>()
             .HasMaxLength(10)
             .IsRequired();
+        builder.HasMany(x => x.Experiences)
+            .WithOne(x => x.StudentProfile)
+            .HasForeignKey(x => x.StudentProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.Projects)
+            .WithOne(x => x.StudentProfile)
+            .HasForeignKey(x => x.StudentProfileId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

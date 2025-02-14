@@ -1,3 +1,4 @@
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.Enums;
 using Domain.ValueObjects;
@@ -12,6 +13,7 @@ public interface IStudentRepository
       string university,
        string faculty,
         int graduationYear,
+        int enrollmentYear,
         int age,
         string gender,
         string phoneNumber);

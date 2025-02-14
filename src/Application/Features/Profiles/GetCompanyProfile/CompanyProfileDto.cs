@@ -5,6 +5,8 @@ public sealed record CompanyProfileDto(
     Guid UserId,
     string CompanyName,
     string Governorate,
+    string City,
+    string Street,
     string Industry,
     string? WebsiteUrl,
     string? Description,

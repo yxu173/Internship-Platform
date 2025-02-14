@@ -1,4 +1,5 @@
 using System.Net.NetworkInformation;
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.Common;
 using Domain.DomainErrors;

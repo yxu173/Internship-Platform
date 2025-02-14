@@ -4,8 +4,7 @@ using SharedKernel;
 
 namespace Application.Features.Profiles.CreateCompanyProfile;
 
-public sealed class CreateCompanyProfileCommandValidator 
-    : AbstractValidator<CreateCompanyProfileCommand>
+public sealed class CreateCompanyProfileCommandValidator : AbstractValidator<CreateCompanyProfileCommand>
 {
     public CreateCompanyProfileCommandValidator()
     {
@@ -32,6 +31,16 @@ public sealed class CreateCompanyProfileCommandValidator
             .WithMessage("Governorate is required")
             .Must(g => Enum.TryParse<Domain.Enums.Governorate>(g, out _))
             .WithMessage("Invalid governorate value");
+        RuleFor(x => x.City)
+            .NotEmpty()
+            .WithMessage("City is required")
+            .MinimumLength(2)
+            .WithMessage("City must be at least 2 characters")
+            .MaximumLength(50)
+            .WithMessage("City cannot exceed 50 characters");
+        RuleFor(x => x.Street)
+            .NotEmpty()
+            .WithMessage("Street is required");
 
         RuleFor(x => x.Industry)
             .NotEmpty()

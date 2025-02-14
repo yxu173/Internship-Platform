@@ -1,3 +1,4 @@
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.DomainErrors;
 using Domain.Enums;
@@ -24,6 +25,7 @@ public class StudentRepository : IStudentRepository
         string university,
         string faculty,
         int graduationYear,
+        int enrollmentYear,
         int age,
         string gender,
         string phoneNumber)
@@ -40,6 +42,7 @@ public class StudentRepository : IStudentRepository
             university,
             faculty,
             graduationYear,
+            enrollmentYear,
             age,
             gender,
             phoneNumber);

@@ -22,6 +22,7 @@ public class ProfileController : BaseController
             request.University,
             request.Faculty,
             request.GraduationYear,
+            request.EnrollmentYear,
             request.Age,
             request.Gender,
             request.PhoneNumber);
@@ -38,6 +39,8 @@ public class ProfileController : BaseController
             request.CompanyName,
             request.TaxId,
             request.Governorate,
+            request.City,
+            request.Street,
             request.Industry);
 
         var result = await _mediator.Send(command);

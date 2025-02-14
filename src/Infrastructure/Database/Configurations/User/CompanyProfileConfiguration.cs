@@ -1,4 +1,5 @@
-﻿using Domain.Aggregates.Users;
+﻿using Domain.Aggregates.Profiles;
+using Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -25,7 +26,11 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
 
         builder.Property(cp => cp.Description)
             .HasMaxLength(1000);
-            
+        
+        builder.Property(cp => cp.Size)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+    
 
         builder.OwnsOne(cp => cp.TaxId, taxId =>
         {
@@ -34,14 +39,22 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
                 .HasMaxLength(20)
                 .IsRequired();
         });
+        builder.OwnsOne(cp => cp.Address, address =>
+        {
+            address.Property(t => t.Governorate)
+                .HasColumnName("Governorate")
+                .HasConversion<string>()
+                .IsRequired();
+            address.Property(t => t.City)
+                .IsRequired();
+            address.Property(t => t.Street)
+                .IsRequired();
+        });
 
-        builder.Property(cp => cp.Size)
-            .HasConversion<string>()
-            .HasMaxLength(20);
-
-        builder.Property(cp => cp.Governorate)
-            .HasConversion<string>()
-            .HasMaxLength(50)
-            .IsRequired();
+        builder.HasMany(cp => cp.Internships)
+            .WithOne(i => i.CompanyProfile)
+            .HasForeignKey(i => i.CompanyProfileId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Aggregates.Internships;
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,8 @@ public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
     DbSet<StudentProfile> StudentProfiles { get; }
+    DbSet<StudentExperience> StudentExperiences { get; }
+    DbSet<StudentProject> StudentProjects { get; }
     DbSet<CompanyProfile> CompanyProfiles { get; }
     DbSet<Skill> Skills { get; }
     DbSet<StudentSkill> StudentSkills { get; }

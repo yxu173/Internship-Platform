@@ -1,12 +1,9 @@
 using Application.Abstractions.Messaging;
-using Domain.Aggregates.Users;
 using Domain.DomainErrors;
 using Domain.Repositories;
 using SharedKernel;
 
 namespace Application.Features.Profiles.StudentProfile;
-
-
 
 public sealed class CreateStudentProfileCommandHandler : ICommandHandler<CreateStudentProfileCommand, bool>
 {
@@ -18,17 +15,18 @@ public sealed class CreateStudentProfileCommandHandler : ICommandHandler<CreateS
     }
 
 
-
     public async Task<Result<bool>> Handle(CreateStudentProfileCommand request, CancellationToken cancellationToken)
     {
-        var result = await _studentRepository.CreateAsync(request.UserId,
-         request.FullName,
-          request.University,
-           request.Faculty,
+        var result = await _studentRepository.CreateAsync(
+            request.UserId,
+            request.FullName,
+            request.University,
+            request.Faculty,
             request.GraduationYear,
-             request.Age,
-              request.Gender,
-              request.PhoneNumber);
+            request.EnrollmentYear,
+            request.Age,
+            request.Gender,
+            request.PhoneNumber);
 
         if (result.IsFailure)
         {

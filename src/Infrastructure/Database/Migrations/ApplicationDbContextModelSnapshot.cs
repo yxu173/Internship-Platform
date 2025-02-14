@@ -31,6 +31,9 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTime>("AppliedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("CompanyProfileId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("DecisionDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -51,6 +54,8 @@ namespace Infrastructure.Database.Migrations
                         .HasColumnName("StudentProfileId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyProfileId");
 
                     b.HasIndex("InternshipId");
 
@@ -101,7 +106,7 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("Internships", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
+            modelBuilder.Entity("Domain.Aggregates.Profiles.CompanyProfile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -119,15 +124,13 @@ namespace Infrastructure.Database.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<string>("Governorate")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<string>("Industry")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("timestamp with time zone");
@@ -149,6 +152,124 @@ namespace Infrastructure.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("CompanyProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentExperience", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("StudentProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.ToTable("StudentExperiences", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Faculty")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("ResumeUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("StudentProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProject", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ProjectUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("StudentProfileId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentProfileId");
+
+                    b.ToTable("StudentProjects", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.Role", b =>
@@ -202,60 +323,6 @@ namespace Infrastructure.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Skills", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Bio")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Faculty")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("University")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("StudentProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>
@@ -459,13 +526,17 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Domain.Aggregates.Internships.Application", b =>
                 {
+                    b.HasOne("Domain.Aggregates.Profiles.CompanyProfile", null)
+                        .WithMany("Applications")
+                        .HasForeignKey("CompanyProfileId");
+
                     b.HasOne("Domain.Aggregates.Internships.Internship", "Internship")
                         .WithMany("Applications")
                         .HasForeignKey("InternshipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Aggregates.Users.StudentProfile", "StudentProfile")
+                    b.HasOne("Domain.Aggregates.Profiles.StudentProfile", "StudentProfile")
                         .WithMany()
                         .HasForeignKey("StudentProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -478,8 +549,8 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Domain.Aggregates.Internships.Internship", b =>
                 {
-                    b.HasOne("Domain.Aggregates.Users.CompanyProfile", "CompanyProfile")
-                        .WithMany()
+                    b.HasOne("Domain.Aggregates.Profiles.CompanyProfile", "CompanyProfile")
+                        .WithMany("Internships")
                         .HasForeignKey("CompanyProfileId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -511,13 +582,39 @@ namespace Infrastructure.Database.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Aggregates.Users.CompanyProfile", b =>
+            modelBuilder.Entity("Domain.Aggregates.Profiles.CompanyProfile", b =>
                 {
                     b.HasOne("Domain.Aggregates.Users.User", null)
                         .WithOne("CompanyProfile")
-                        .HasForeignKey("Domain.Aggregates.Users.CompanyProfile", "UserId")
+                        .HasForeignKey("Domain.Aggregates.Profiles.CompanyProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Governorate")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Governorate");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CompanyProfileId");
+
+                            b1.ToTable("CompanyProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyProfileId");
+                        });
 
                     b.OwnsOne("Domain.ValueObjects.EgyptianTaxId", "TaxId", b1 =>
                         {
@@ -538,28 +635,64 @@ namespace Infrastructure.Database.Migrations
                                 .HasForeignKey("CompanyProfileId");
                         });
 
+                    b.Navigation("Address")
+                        .IsRequired();
+
                     b.Navigation("TaxId")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentExperience", b =>
                 {
-                    b.HasOne("Domain.Aggregates.Users.User", null)
-                        .WithOne("StudentProfile")
-                        .HasForeignKey("Domain.Aggregates.Users.StudentProfile", "UserId")
+                    b.HasOne("Domain.Aggregates.Profiles.StudentProfile", "StudentProfile")
+                        .WithMany("Experiences")
+                        .HasForeignKey("StudentProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Domain.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                    b.OwnsOne("Domain.ValueObjects.DateRange", "DateRange", b1 =>
+                        {
+                            b1.Property<Guid>("StudentExperienceId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("EndDate")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("EndDate");
+
+                            b1.Property<DateTime>("StartDate")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("StartDate");
+
+                            b1.HasKey("StudentExperienceId");
+
+                            b1.ToTable("StudentExperiences");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentExperienceId");
+                        });
+
+                    b.Navigation("DateRange")
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProfile", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Users.User", null)
+                        .WithOne("StudentProfile")
+                        .HasForeignKey("Domain.Aggregates.Profiles.StudentProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.ValueObjects.Year", "EnrollmentYear", b1 =>
                         {
                             b1.Property<Guid>("StudentProfileId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(15)
-                                .HasColumnType("character varying(15)")
-                                .HasColumnName("PhoneNumber");
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("EnrollmentYear");
 
                             b1.HasKey("StudentProfileId");
 
@@ -586,11 +719,44 @@ namespace Infrastructure.Database.Migrations
                                 .HasForeignKey("StudentProfileId");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<Guid>("StudentProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(15)
+                                .HasColumnType("character varying(15)")
+                                .HasColumnName("PhoneNumber");
+
+                            b1.HasKey("StudentProfileId");
+
+                            b1.ToTable("StudentProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentProfileId");
+                        });
+
+                    b.Navigation("EnrollmentYear")
+                        .IsRequired();
+
                     b.Navigation("GraduationYear")
                         .IsRequired();
 
                     b.Navigation("PhoneNumber")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProject", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Profiles.StudentProfile", "StudentProfile")
+                        .WithMany("Projects")
+                        .HasForeignKey("StudentProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentProfile");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>
@@ -601,7 +767,7 @@ namespace Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Aggregates.Users.StudentProfile", "Student")
+                    b.HasOne("Domain.Aggregates.Profiles.StudentProfile", "Student")
                         .WithMany("Skills")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -668,14 +834,25 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Applications");
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.Profiles.CompanyProfile", b =>
+                {
+                    b.Navigation("Applications");
+
+                    b.Navigation("Internships");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProfile", b =>
+                {
+                    b.Navigation("Experiences");
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("Skills");
+                });
+
             modelBuilder.Entity("Domain.Aggregates.Users.Skill", b =>
                 {
                     b.Navigation("StudentSkills");
-                });
-
-            modelBuilder.Entity("Domain.Aggregates.Users.StudentProfile", b =>
-                {
-                    b.Navigation("Skills");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.User", b =>

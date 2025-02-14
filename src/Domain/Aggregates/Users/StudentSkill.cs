@@ -1,4 +1,5 @@
-﻿using Domain.Common;
+﻿using Domain.Aggregates.Profiles;
+using Domain.Common;
 using Domain.Enums;
 
 namespace Domain.Aggregates.Users;

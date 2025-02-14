@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Aggregates.Profiles;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using SharedKernel;
 
@@ -11,16 +12,17 @@ public sealed class User : IdentityUser<Guid>
     public string? GitHubUrl { get; private set; }
     public StudentProfile? StudentProfile { get; private set; }
     public CompanyProfile? CompanyProfile { get; private set; }
-    public bool ProfileComplete { get; private set; } = false; 
+    public bool ProfileComplete { get; private set; } = false;
 
-    private User() { }
+    private User()
+    {
+    }
 
     private User(string email, string userName)
     {
         Email = email;
         UserName = userName;
     }
-
 
 
     public static Result<User> Create(string email, string userName)
@@ -36,16 +38,17 @@ public sealed class User : IdentityUser<Guid>
     }
 
     public Result CreateStudentProfile(
-          string fullName,
-          string university,
-          string faculty,
-          int graduationYear,
-          int age,
-          string gender,
-          string phoneNumber)
+        string fullName,
+        string university,
+        string faculty,
+        int graduationYear,
+        int enrollmentYear,
+        int age,
+        string gender,
+        string phoneNumber)
     {
         var profileResult = StudentProfile.Create(
-            fullName, university, faculty, graduationYear,
+            fullName, university, faculty, graduationYear, enrollmentYear,
             age, gender, phoneNumber);
 
         if (profileResult.IsFailure)
@@ -58,12 +61,14 @@ public sealed class User : IdentityUser<Guid>
 
 
     public Result CreateCompanyProfile(
-      string companyName,
-      string taxId,
-      string governorate,
-      string industry)
+        string companyName,
+        string taxId,
+        string governorate,
+        string city,
+        string street,
+        string industry)
     {
-        var profileResult = CompanyProfile.Create(companyName, taxId, governorate, industry);
+        var profileResult = CompanyProfile.Create(companyName, taxId, governorate, city, street, industry);
         if (profileResult.IsFailure)
             return profileResult;
 

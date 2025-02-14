@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using SharedKernel;
 
@@ -10,6 +11,8 @@ public interface ICompanyRepository
      string companyName,
       string taxId,
        string governorate,
+        string city,
+        string street,
         string industry);
     Task UpdateAsync(CompanyProfile company);
 }
