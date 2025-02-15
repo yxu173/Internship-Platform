@@ -19,9 +19,4 @@
     <ProjectReference Include="..\SharedKernal\SharedKernal.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\CompanyProfile\Commands\" />
-    <Folder Include="Features\CompanyProfile\Queries\" />
-  </ItemGroup>
-
 </Project>

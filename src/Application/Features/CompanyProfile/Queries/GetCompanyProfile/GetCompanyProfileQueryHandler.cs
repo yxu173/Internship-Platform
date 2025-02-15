@@ -18,7 +18,7 @@ public sealed class GetCompanyProfileQueryHandler
         GetCompanyProfileQuery request, 
         CancellationToken cancellationToken)
     {
-        var profile = await _companyRepository.GetByIdAsync(request.UserId);
+        var profile = await _companyRepository.GetCompanyByIdAsync(request.UserId);
         
         if (profile is null)
             return Result.Failure<CompanyProfileDto>

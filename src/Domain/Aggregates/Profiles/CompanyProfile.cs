@@ -13,6 +13,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
     //TODO: Company Contact Information (Email, PhoneNumber, WebsiteUrl)
     //TODO: Company Social Media (Facebook, Twitter, LinkedIn)
     //TODO: Company Internship (Internships, Applications)
+    //TODO: Company About (About, Mission, Vision)
 
     private CompanyProfile()
     {
@@ -27,6 +28,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
     public string? Description { get; private set; }
     public string Industry { get; private set; }
     public EgyptianTaxId TaxId { get; private set; }
+    public CompanyAbout About { get; private set; }
 
     public Address Address { get; private set; }
     public CompanySize? Size { get; private set; }
@@ -74,15 +76,17 @@ public sealed class CompanyProfile : BaseAuditableEntity
     }
 
     public Result UpdateDetails(
+        string companyName,
         string industry,
         string websiteUrl,
         string description,
-        CompanySize size)
+        string size)
     {
+        CompanyName = companyName;
         Industry = industry;
         WebsiteUrl = websiteUrl;
         Description = description;
-        Size = size;
+        Size = Enum.Parse<CompanySize>(size);
 
         return Result.Success();
     }

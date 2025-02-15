@@ -31,6 +31,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.Ignore<EgyptianTaxId>();
         builder.Ignore<DateRange>();
         builder.Ignore<Address>();
+        builder.Ignore<CompanyAbout>();
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 

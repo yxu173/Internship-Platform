@@ -611,6 +611,34 @@ namespace Infrastructure.Database.Migrations
                                 .HasForeignKey("CompanyProfileId");
                         });
 
+                    b.OwnsOne("Domain.ValueObjects.CompanyAbout", "About", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("About")
+                                .HasMaxLength(1000)
+                                .HasColumnType("character varying(1000)")
+                                .HasColumnName("About");
+
+                            b1.Property<string>("Mission")
+                                .HasMaxLength(1000)
+                                .HasColumnType("character varying(1000)")
+                                .HasColumnName("Mission");
+
+                            b1.Property<string>("Vision")
+                                .HasMaxLength(1000)
+                                .HasColumnType("character varying(1000)")
+                                .HasColumnName("Vision");
+
+                            b1.HasKey("CompanyProfileId");
+
+                            b1.ToTable("CompanyProfiles");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyProfileId");
+                        });
+
                     b.OwnsOne("Domain.ValueObjects.EgyptianTaxId", "TaxId", b1 =>
                         {
                             b1.Property<Guid>("CompanyProfileId")
@@ -629,6 +657,9 @@ namespace Infrastructure.Database.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("CompanyProfileId");
                         });
+
+                    b.Navigation("About")
+                        .IsRequired();
 
                     b.Navigation("Address")
                         .IsRequired();

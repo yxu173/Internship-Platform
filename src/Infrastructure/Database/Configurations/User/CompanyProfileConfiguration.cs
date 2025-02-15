@@ -11,7 +11,7 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
     {
         builder.ToTable("CompanyProfiles");
 
-         builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.Id);
 
         builder.Property(cp => cp.CompanyName)
             .HasMaxLength(100)
@@ -26,11 +26,11 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
 
         builder.Property(cp => cp.Description)
             .HasMaxLength(1000);
-        
+
         builder.Property(cp => cp.Size)
             .HasConversion<string>()
             .HasMaxLength(20);
-    
+
 
         builder.OwnsOne(cp => cp.TaxId, taxId =>
         {
@@ -50,11 +50,22 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
             address.Property(t => t.Street)
                 .IsRequired();
         });
+        builder.OwnsOne(cp => cp.About, about =>
+        {
+            about.Property(a => a.Mission)
+                .HasColumnName("Mission")
+                .HasMaxLength(1000);
+            about.Property(a => a.Vision)
+                .HasColumnName("Vision")
+                .HasMaxLength(1000);
+            about.Property(a => a.About)
+                .HasColumnName("About")
+                .HasMaxLength(1000);
+        });
 
         builder.HasMany(cp => cp.Internships)
             .WithOne(i => i.CompanyProfile)
             .HasForeignKey(i => i.CompanyProfileId)
             .OnDelete(DeleteBehavior.Restrict);
-        
     }
 }

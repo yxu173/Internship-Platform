@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.DomainErrors;
@@ -18,11 +19,11 @@ public class CompanyRepository : ICompanyRepository
     }
 
     public async Task<Result<bool>> CreateAsync(Guid userId,
-     string companyName,
-      string taxId,
-       string governorate,
-     string city,
-     string street,
+        string companyName,
+        string taxId,
+        string governorate,
+        string city,
+        string street,
         string industry)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -33,18 +34,61 @@ public class CompanyRepository : ICompanyRepository
             return Result.Failure<bool>(CompanyErrors.AlreadyRegistered);
 
         user.CreateCompanyProfile(companyName, taxId,
-         governorate,
-         city,
-         street,
-         industry);
+            governorate,
+            city,
+            street,
+            industry);
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Result.Success(true);
     }
 
-    public Task<CompanyProfile?> GetByIdAsync(Guid id)
+    public async Task<Result<bool>> UpdateBasicInfoAsync(Guid userId,
+        string name,
+        string industry,
+        string description,
+        string websiteUrl,
+        string companySize)
     {
-        return _context.CompanyProfiles.FirstOrDefaultAsync(x => x.UserId == id);
+        var company = await GetCompanyByIdAsync(userId);
+        if (company == null)
+            return Result.Failure<bool>(CompanyErrors.ProfileNotFound);
+        company.UpdateDetails(name, industry, websiteUrl, description, companySize.ToString());
+        await UpdateAsync(company);
+        return Result.Success(true);
+    }
+
+    public async Task<Result<bool>> UpdateCompanyLogo(Guid userId, string logoUrl)
+    {
+        var company = await GetCompanyByIdAsync(userId);
+        if (company == null)
+            return Result.Failure<bool>(CompanyErrors.ProfileNotFound);
+        company.UpdateLogo(logoUrl);
+        await UpdateAsync(company);
+        return Result.Success(true);
+    }
+
+    public async Task<Result<bool>> UpdateCompanyAbout(Guid userId, string about, string mission, string vision)
+    {
+        var company = await GetCompanyByIdAsync(userId);
+        if (company == null)
+            return Result.Failure<bool>(CompanyErrors.ProfileNotFound);
+        company.About.Update(about, mission, vision);
+        await UpdateAsync(company);
+        return Result.Success(true);
+    }
+
+    public async Task<Result<T?>> GetByUserIdAsync<T>(Guid userId, Expression<Func<CompanyProfile, T>> selector)
+    {
+        return Result.Success(await _context.CompanyProfiles
+            .Where(cp => cp.UserId == userId)
+            .Select(selector)
+            .FirstOrDefaultAsync());
+    }
+
+    public async Task<CompanyProfile?> GetCompanyByIdAsync(Guid id)
+    {
+        return await _context.CompanyProfiles.FirstOrDefaultAsync(x => x.UserId == id);
     }
 
     public async Task UpdateAsync(CompanyProfile company)

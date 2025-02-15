@@ -20,7 +20,7 @@ public sealed class CreateInternshipCommandHandler : ICommandHandler<CreateInter
 
     public async Task<Result<Guid>> Handle(CreateInternshipCommand request, CancellationToken cancellationToken)
     {
-        var companyProfile = await companyRepository.GetByIdAsync(request.UserId);
+        var companyProfile = await companyRepository.GetCompanyByIdAsync(request.UserId);
         var Duration = DateRange.Create(request.StartDate,request.EndDate);
          var internshipResult = Internship.Create(
             request.Title,
