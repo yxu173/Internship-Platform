@@ -1,3 +1,4 @@
+using Application.Features.StudentProfile.Queries.GetAllStudentProfile;
 using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Users;
 using Domain.DomainErrors;
@@ -117,12 +118,63 @@ public class StudentRepository : IStudentRepository
     public async Task<Result> CreateStudentProjectAsync(Guid studentId, string projectName, string description,
         string projectUrl)
     {
-        var studentProject = StudentProject.Create(studentId, projectName, 
+        var studentProject = StudentProject.Create(studentId, projectName,
             description, projectUrl);
         if (studentProject.IsFailure)
             return Result.Failure<bool>(studentProject.Error);
         await _context.StudentProjects.AddAsync(studentProject.Value);
         await _context.SaveChangesAsync();
         return Result.Success();
+    }
+
+    public async Task<IReadOnlyList<StudentProject>> GetAllStudentProjects(Guid studentId)
+    {
+        return await _context.StudentProjects
+            .Where(sp => sp.StudentProfileId == studentId)
+            .ToListAsync();
+    }
+
+    public async Task<Result> UpdateStudentProjectAsync(Guid studentId, Guid projectId,
+        string projectName, string description, string projectUrl)
+    {
+        var studentProject = await _context.StudentProjects
+            .Where(x => x.StudentProfileId == studentId)
+            .FirstOrDefaultAsync(sp => sp.Id == projectId);
+
+        if (studentProject is null)
+            return Result.Failure<bool>(StudentErrors.ProjectNotFound);
+
+        var studentProjectUpdated = studentProject!.Update(projectName, description, projectUrl);
+
+        _context.StudentProjects.Update(studentProject);
+
+        await _context.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<Result> RemoveStudentProjectAsync(Guid studentId, Guid projectId)
+    {
+        var studentProject = await _context.StudentProjects
+            .Where(x => x.StudentProfileId == studentId)
+            .FirstOrDefaultAsync(sp => sp.Id == projectId);
+
+        if (studentProject is null)
+            return Result.Failure<bool>(StudentErrors.ProjectNotFound);
+
+        _context.StudentProjects.Remove(studentProject);
+        await _context.SaveChangesAsync();
+
+        return Result.Success();
+    }
+
+    public async Task<StudentProfile?> GetCompleteStudentProfile(Guid studentProfileId)
+    {
+        return await _context.StudentProfiles
+            .Include(sp => sp.Skills)
+            .ThenInclude(ss => ss.Skill)
+            .Include(sp => sp.Experiences)
+            .Include(sp => sp.Projects)
+            .FirstOrDefaultAsync(sp => sp.Id == studentProfileId);
     }
 }

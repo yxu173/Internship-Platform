@@ -33,7 +33,12 @@ public interface IStudentRepository
 
     Task<Result> CreateStudentProjectAsync(
         Guid studentId,
-        string projectName, 
+        string projectName,
         string description,
         string projectUrl);
+
+    Task<IReadOnlyList<StudentProject>> GetAllStudentProjects(Guid studentId);
+    Task<Result> UpdateStudentProjectAsync(Guid studentId, Guid projectId, string projectName, string description, string projectUrl);
+    Task<Result> RemoveStudentProjectAsync(Guid studentId, Guid projectId);
+    Task<StudentProfile?> GetCompleteStudentProfile(Guid studentProfileId);
 }

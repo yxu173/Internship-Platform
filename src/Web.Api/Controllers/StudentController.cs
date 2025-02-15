@@ -2,12 +2,17 @@ using Application.Features.StudentProfile.Commands.CreateStudentExperience;
 using Application.Features.StudentProfile.Commands.CreateStudentProfile;
 using Application.Features.StudentProfile.Commands.CreateStudentProject;
 using Application.Features.StudentProfile.Commands.RemoveStudentExperience;
+using Application.Features.StudentProfile.Commands.RemoveStudentProject;
 using Application.Features.StudentProfile.Commands.UpdateStudentInfo;
 using Application.Features.StudentProfile.Commands.UpdateStudentProfilePic;
+using Application.Features.StudentProfile.Commands.UpdateStudentProject;
 using Application.Features.StudentProfile.Commands.UpdateStudentResumeUrl;
 using Application.Features.StudentProfile.Queries.GetAllStudentExperiences;
+using Application.Features.StudentProfile.Queries.GetAllStudentProfile;
+using Application.Features.StudentProfile.Queries.GetAllStudentProjects;
 using Application.Features.StudentProfile.Queries.GetAllStudentSkills;
 using Application.Features.StudentProfile.Queries.GetStudentProfile;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Profile;
 using Web.Api.Extensions;
@@ -15,8 +20,17 @@ using Web.Api.Infrastructure;
 
 namespace Web.Api.Controllers;
 
+[Authorize]
 public class StudentController : BaseController
 {
+    [HttpGet("profiles/{id:guid}")]
+    public async Task<IResult> GetCompleteStudentProfile([FromRoute] Guid id)
+    {
+        var query = new GetAllStudentProfileQuery(id);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
     [HttpPost("profiles")]
     public async Task<IResult> CreateStudentProfile([FromBody] CreateStudentProfileRequest request)
     {
@@ -35,7 +49,7 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/me")]
+    [HttpGet("profiles/basic/me")]
     public async Task<IResult> GetStudentProfile()
     {
         var query = new GetStudentProfileQuery(UserId);
@@ -43,7 +57,7 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/{id:guid}")]
+    [HttpGet("profiles/basic/{id:guid}")]
     public async Task<IResult> GetStudentProfileById([FromRoute] Guid id)
     {
         var query = new GetStudentProfileQuery(id);
@@ -84,6 +98,7 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    // Add Student ID to the route
     [HttpGet("profiles/skills")]
     public async Task<IResult> GetStudentSkills()
     {
@@ -130,6 +145,36 @@ public class StudentController : BaseController
             request.Description,
             request.ProjectUrl);
 
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("profiles/{id:guid}/projects")]
+    public async Task<IResult> GetStudentProjects([FromRoute] Guid id)
+    {
+        var query = new GetAllStudentProjectsQuery(id);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPut("profiles/{id:guid}/projects/{projectId:guid}")]
+    public async Task<IResult> UpdateProject([FromRoute] Guid id, [FromRoute] Guid projectId,
+        [FromBody] UpdateProjectRequest request)
+    {
+        var command = new UpdateStudentProjectCommand(
+            id,
+            projectId,
+            request.ProjectName,
+            request.Description,
+            request.ProjectUrl);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpDelete("profiles/{id:guid}/projects/{projectId:guid}")]
+    public async Task<IResult> RemoveProject([FromRoute] Guid id, [FromRoute] Guid projectId)
+    {
+        var command = new RemoveStudentProjectCommand(id, projectId);
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

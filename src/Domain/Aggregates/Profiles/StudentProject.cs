@@ -39,4 +39,16 @@ public sealed class StudentProject : BaseEntity
             description,
             projectUrl));
     }
+    
+    public Result Update(
+        string projectName,
+        string description,
+        string? projectUrl)
+    {
+        ProjectName = projectName;
+        Description = description;
+        ProjectUrl = projectUrl;
+        
+        return Result.Success();
+    }
 }

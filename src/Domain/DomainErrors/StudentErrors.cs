@@ -33,4 +33,7 @@ public static class StudentErrors
     public static Error ExperienceNotFound => Error.NotFound(
         "Student.ExperienceNotFound",
         "Experience not found in student profile");
+    public static Error ProjectNotFound => Error.NotFound(
+        "Student.ProjectNotFound",
+        "Project not found in student profile");
 }
