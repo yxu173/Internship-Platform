@@ -22,7 +22,13 @@ public sealed class UpdateInternshipCommandHandler : ICommandHandler<UpdateInter
 
         var updateResult = internship.Update(
             request.Title,
-            request.Description,
+            request.About,
+            request.KeyResponsibilities,
+            request.Requirements,
+            request.Type,
+            request.WorkingModel,
+            request.Salary,
+            request.Currency,
             request.ApplicationDeadline);
 
         if (updateResult.IsFailure)

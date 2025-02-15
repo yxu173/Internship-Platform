@@ -27,13 +27,22 @@ public sealed class GetInternshipsByCompanyIdQueryHandler :
         if (company is null)
             return Result.Failure<IReadOnlyList<InternshipDto>>(CompanyErrors.ProfileNotFound);
         var internships = await _internshipRepository.GetByCompanyIdAsync(request.UserId);
-        return internships.Select(i => new InternshipDto(i.Id,
-            i.Title,
-            i.Description,
-            i.Duration.StartDate,
-            i.Duration.EndDate,
-            i.Type.ToString(),
-            i.IsActive,
-            i.CreatedAt)).ToList();
+        return Result.Success<IReadOnlyList<InternshipDto>>(
+            internships.Select(i => new InternshipDto
+                (
+                    i.Id,
+                    i.Title,
+                    i.About,
+                    i.KeyResponsibilities,
+                    i.Requirements,
+                    i.Duration.StartDate,
+                    i.Duration.EndDate,
+                    i.Type.ToString(),
+                    i.WorkingModel.ToString(),
+                    i.Salary.Amount,
+                    i.Salary.Currency,
+                    i.IsActive,
+                    i.CreatedAt))
+                .ToList());
     }
 }

@@ -49,4 +49,12 @@ public static class InternshipErrors
         " Internship.NotApplicationOwner",
         "You are not the owner of this application"
     );
+    public static Error InvalidSalary => Error.Validation(
+        "Internship.InvalidSalary",
+        "Salary must be greater than or equal to 0"
+    );
+    public static Error InvalidCurrency => Error.Validation(
+        "Internship.InvalidCurrency",
+        "Currency cannot be empty"
+    );
 }

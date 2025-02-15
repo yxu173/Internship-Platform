@@ -6,8 +6,8 @@ namespace Domain.ValueObjects;
 
 public sealed record DateRange : ValueObject
 {
-    public DateTime StartDate { get; }
-    public DateTime EndDate { get; }
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set;}
 
     private DateRange(DateTime startDate, DateTime endDate)
     {
@@ -26,6 +26,12 @@ public sealed record DateRange : ValueObject
         return new DateRange(startDate, endDate);
     }
 
+    public Result Update(DateTime startDate, DateTime endDate)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+        return Result.Success();
+    }
     public int DurationInWeeks => (int)(EndDate - StartDate).TotalDays / 7;
 
     protected override IEnumerable<object> GetEqualityComponents()

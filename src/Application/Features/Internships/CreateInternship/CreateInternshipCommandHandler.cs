@@ -24,9 +24,14 @@ public sealed class CreateInternshipCommandHandler : ICommandHandler<CreateInter
         var Duration = DateRange.Create(request.StartDate,request.EndDate);
          var internshipResult = Internship.Create(
             request.Title,
-            request.Description,
+            request.About,
+            request.KeyResponsibilities,
+            request.Requirements,
             companyProfile.Id,
             request.Type,
+            request.WorkingModel,
+            request.Salary,
+            request.Currency,
             Duration.Value,
             request.ApplicationDeadline);
 

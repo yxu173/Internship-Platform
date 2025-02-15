@@ -11,6 +11,7 @@ using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 
 namespace Web.Api.Controllers;
+
 [Authorize]
 public class InternshipController : BaseController
 {
@@ -18,16 +19,21 @@ public class InternshipController : BaseController
     public async Task<IResult> CreateInternship([FromBody] CreateInternshipRequest request)
     {
         var command = new CreateInternshipCommand(
-        UserId,
-        request.Title,
-        request.Description,
-        request.Type,
-        request.StartDate,
-        request.EndDate,
-        request.ApplicationDeadline
+            UserId,
+            request.Title,
+            request.About,
+            request.KeyResponsibilities,
+            request.Requirements,
+            request.Type,
+            request.WorkingModel,
+            request.Salary,
+            request.Currency,
+            request.StartDate,
+            request.EndDate,
+            request.ApplicationDeadline
         );
         var result = await _mediator.Send(command);
-        return result.Match(Results.Ok,CustomResults.Problem);
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 
     [HttpPut("UpdateInternship/{id}")]
@@ -36,7 +42,13 @@ public class InternshipController : BaseController
         var command = new UpdateInternshipCommand(
             id,
             request.Title,
-            request.Description,
+            request.About,
+            request.KeyResponsibilities,
+            request.Requirements,
+            request.Type,
+            request.WorkingModel,
+            request.Salary,
+            request.Currency,
             request.ApplicationDeadline
         );
 
@@ -66,7 +78,7 @@ public class InternshipController : BaseController
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
-    
+
     [HttpDelete("DeleteApplication/{id}")]
     public async Task<IResult> DeleteApplication([FromRoute] Guid id)
     {

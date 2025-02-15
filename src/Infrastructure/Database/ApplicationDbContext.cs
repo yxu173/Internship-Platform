@@ -11,8 +11,6 @@ namespace Infrastructure.Database;
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<User, Role, Guid>(options), IApplicationDbContext
 {
-
-
     public DbSet<StudentProfile> StudentProfiles { get; set; }
     public DbSet<StudentExperience> StudentExperiences { get; set; }
     public DbSet<StudentProject> StudentProjects { get; set; }
@@ -32,6 +30,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.Ignore<DateRange>();
         builder.Ignore<Address>();
         builder.Ignore<CompanyAbout>();
+        builder.Ignore<Salary>();
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 

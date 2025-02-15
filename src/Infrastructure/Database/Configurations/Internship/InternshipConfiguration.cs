@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Database.Configurations.Internship;
+
 public sealed class InternshipConfiguration : IEntityTypeConfiguration<Domain.Aggregates.Internships.Internship>
 {
     public void Configure(EntityTypeBuilder<Domain.Aggregates.Internships.Internship> builder)
     {
-       builder.ToTable("Internships");
+        builder.ToTable("Internships");
 
         builder.Property(i => i.Type)
             .HasConversion<string>();
@@ -20,7 +21,16 @@ public sealed class InternshipConfiguration : IEntityTypeConfiguration<Domain.Ag
             d.Property(dr => dr.EndDate).HasColumnName("EndDate");
         });
 
-         builder.HasOne<CompanyProfile>(i => i.CompanyProfile)
+        builder.Property(i => i.WorkingModel)
+            .HasConversion<string>();
+
+        builder.OwnsOne(i => i.Salary, s =>
+        {
+            s.Property(s => s.Amount).HasColumnName("Salary");
+            s.Property(s => s.Currency).HasColumnName("Currency");
+        });
+
+        builder.HasOne<CompanyProfile>(i => i.CompanyProfile)
             .WithMany()
             .HasForeignKey(i => i.CompanyProfileId)
             .OnDelete(DeleteBehavior.Restrict)
