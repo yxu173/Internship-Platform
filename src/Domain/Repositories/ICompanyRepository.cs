@@ -20,4 +20,6 @@ public interface ICompanyRepository
     Task<Result<bool>> UpdateCompanyLogo(Guid userId, string logoUrl);
     Task<Result<bool>> UpdateCompanyAbout(Guid userId, string about, string mission, string vision);
     Task<Result<T?>> GetByUserIdAsync<T>(Guid userId, Expression<Func<CompanyProfile, T>> selector);
+    Task<Result<T?>> GetByCompanyProfileWithInternships<T>(Guid userId, Expression<Func<CompanyProfile, T>> selector);
+
 }

@@ -23,9 +23,6 @@ public sealed class GetInternshipsByCompanyIdQueryHandler :
         GetInternshipsByCompanyIdQuery request,
         CancellationToken cancellationToken)
     {
-        var company = await _companyRepository.GetCompanyByIdAsync(request.UserId);
-        if (company is null)
-            return Result.Failure<IReadOnlyList<InternshipDto>>(CompanyErrors.ProfileNotFound);
         var internships = await _internshipRepository.GetByCompanyIdAsync(request.UserId);
         return Result.Success<IReadOnlyList<InternshipDto>>(
             internships.Select(i => new InternshipDto

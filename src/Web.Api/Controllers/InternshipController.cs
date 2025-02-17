@@ -90,7 +90,7 @@ public class InternshipController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("GetInternshipById/{id}")]
+    [HttpGet("GetInternshipById/{id:guid}")]
     public async Task<IResult> GetInternshipById([FromRoute] Guid id)
     {
         var query = new GetInternshipsByCompanyIdQuery(id);

@@ -96,4 +96,13 @@ public class CompanyRepository : ICompanyRepository
         _context.CompanyProfiles.Update(company);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Result<T?>> GetByCompanyProfileWithInternships<T>(Guid userId, Expression<Func<CompanyProfile, T>> selector)
+    {
+        return Result.Success(await _context.CompanyProfiles
+            .Where(cp => cp.UserId == userId)
+            .Include(x => x.Internships)
+            .Select(selector)
+            .FirstOrDefaultAsync());
+    }
 }

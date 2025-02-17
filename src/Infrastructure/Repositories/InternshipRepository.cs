@@ -1,3 +1,4 @@
+using System.Linq;
 using Domain.Aggregates.Internships;
 using Domain.Repositories;
 using Infrastructure.Database;
@@ -34,9 +35,8 @@ public sealed class InternshipRepository : IInternshipRepository
     public async Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.Internships
-            .Where(i => i.CompanyProfileId == companyId)
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync();
+        .Where(i => i.CompanyProfileId == companyId)
+        .ToListAsync();
     }
 
     public async Task AddAsync(Internship internship)
