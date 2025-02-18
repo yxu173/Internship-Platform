@@ -22,6 +22,17 @@ builder.Services
     .AddInfrastructure(builder.Configuration);
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Policy", policy =>
+    {
+        // Replace with your frontend URL
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -66,7 +77,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseCors("Policy");
 app.MapControllers();
 
 
