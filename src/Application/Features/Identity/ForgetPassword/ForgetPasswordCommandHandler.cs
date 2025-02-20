@@ -24,7 +24,7 @@ public class ForgetPasswordCommandHandler : ICommandHandler<ForgetPasswordComman
         if (user == null)
             return Result.Failure<bool>(UserErrors.UserNotFound);
         var token = await _userRepository.GeneratePasswordResetTokenAsync(user);
-        var resetLink = $"http://localhost:3000/reset-password?token={token}&email={request.Email}";
+        var resetLink = $"http://localhost:5173/user/reset-password?token={token}&email={request.Email}";
         
         await _emailSender.SendEmailAsync(request.Email, "Reset Password", 
             $"Click on the following link to reset your password: {resetLink}");
