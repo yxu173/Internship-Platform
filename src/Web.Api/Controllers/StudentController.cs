@@ -43,7 +43,8 @@ public class StudentController : BaseController
             request.EnrollmentYear,
             request.Age,
             request.Gender,
-            request.PhoneNumber);
+            request.PhoneNumber,
+            request.Bio);
 
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);

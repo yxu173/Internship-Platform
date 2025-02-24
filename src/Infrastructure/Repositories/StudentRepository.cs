@@ -27,7 +27,8 @@ public class StudentRepository : IStudentRepository
         int enrollmentYear,
         int age,
         string gender,
-        string phoneNumber)
+        string phoneNumber,
+        string? bio)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -44,7 +45,8 @@ public class StudentRepository : IStudentRepository
             enrollmentYear,
             age,
             gender,
-            phoneNumber);
+            phoneNumber,
+            bio);
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync();

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj": {}
+    "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/SharedKernal.csproj": {}
   },
   "projects": {
-    "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj": {
+    "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/SharedKernal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
+        "projectUniqueName": "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
         "projectName": "SharedKernal",
-        "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
+        "projectPath": "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
         "packagesPath": "/home/mrx/.nuget/packages/",
-        "outputPath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/obj/",
+        "outputPath": "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/mrx/.nuget/NuGet/NuGet.Config"

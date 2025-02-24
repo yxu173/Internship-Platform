@@ -45,11 +45,12 @@ public sealed class User : IdentityUser<Guid>
         int enrollmentYear,
         int age,
         string gender,
-        string phoneNumber)
+        string phoneNumber,
+        string? bio)
     {
         var profileResult = StudentProfile.Create(
             fullName, university, faculty, graduationYear, enrollmentYear,
-            age, gender, phoneNumber);
+            age, gender, phoneNumber, bio);
 
         if (profileResult.IsFailure)
             return profileResult;

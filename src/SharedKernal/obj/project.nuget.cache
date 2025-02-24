@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jxbmc5bwk4E=",
+  "dgSpecHash": "IstktN1OheI=",
   "success": true,
-  "projectFilePath": "/home/mrx/graduaction-project/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
+  "projectFilePath": "/home/mrx/work-projects/Internship-Platform/src/SharedKernal/SharedKernal.csproj",
   "expectedPackageFiles": [
     "/home/mrx/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.1/microsoft.aspnetcore.app.ref.9.0.1.nupkg.sha512"
   ],

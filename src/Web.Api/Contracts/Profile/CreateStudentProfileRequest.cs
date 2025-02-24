@@ -7,4 +7,5 @@ public sealed record CreateStudentProfileRequest(
     int EnrollmentYear,
     int Age,
     string Gender,
-    string PhoneNumber);
+    string PhoneNumber,
+    string? Bio);

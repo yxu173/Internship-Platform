@@ -48,7 +48,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// for docker-compose
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();

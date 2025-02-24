@@ -44,7 +44,8 @@ public sealed class StudentProfile : BaseAuditableEntity
         Year enrollmentYear,
         int age,
         Gender gender,
-        PhoneNumber phoneNumber)
+        PhoneNumber phoneNumber,
+        string? bio = null)
     {
         FullName = fullName;
         University = university;
@@ -54,6 +55,7 @@ public sealed class StudentProfile : BaseAuditableEntity
         Age = age;
         Gender = gender;
         PhoneNumber = phoneNumber;
+        Bio = bio;
         CreatedAt = DateTime.UtcNow;
     }
 
@@ -65,7 +67,8 @@ public sealed class StudentProfile : BaseAuditableEntity
         int enrollmentYear,
         int age,
         string gender,
-        string phoneNumber)
+        string phoneNumber,
+        string? bio = null)
     {
         var genderResult = Enum.Parse<Gender>(gender);
         var universityResult = Enum.Parse<EgyptianUniversity>(university);
@@ -90,7 +93,8 @@ public sealed class StudentProfile : BaseAuditableEntity
             enrollmentYearResult.Value,
             age,
             genderResult,
-            phoneResult.Value));
+            phoneResult.Value,
+            bio));
     }
 
     public Result AddSkill(Skill skill)

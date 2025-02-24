@@ -4901,11 +4901,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/mrx/graduaction-project/Internship-Platform/src/Infrastructure/Infrastructure.csproj",
+      "projectUniqueName": "/home/mrx/work-projects/Internship-Platform/src/Infrastructure/Infrastructure.csproj",
       "projectName": "Infrastructure",
-      "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Infrastructure/Infrastructure.csproj",
+      "projectPath": "/home/mrx/work-projects/Internship-Platform/src/Infrastructure/Infrastructure.csproj",
       "packagesPath": "/home/mrx/.nuget/packages/",
-      "outputPath": "/home/mrx/graduaction-project/Internship-Platform/src/Infrastructure/obj/",
+      "outputPath": "/home/mrx/work-projects/Internship-Platform/src/Infrastructure/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/mrx/.nuget/NuGet/NuGet.Config"
@@ -4920,11 +4920,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/mrx/graduaction-project/Internship-Platform/src/Application/Application.csproj": {
-              "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Application/Application.csproj"
+            "/home/mrx/work-projects/Internship-Platform/src/Application/Application.csproj": {
+              "projectPath": "/home/mrx/work-projects/Internship-Platform/src/Application/Application.csproj"
             },
-            "/home/mrx/graduaction-project/Internship-Platform/src/Domain/Domain.csproj": {
-              "projectPath": "/home/mrx/graduaction-project/Internship-Platform/src/Domain/Domain.csproj"
+            "/home/mrx/work-projects/Internship-Platform/src/Domain/Domain.csproj": {
+              "projectPath": "/home/mrx/work-projects/Internship-Platform/src/Domain/Domain.csproj"
             }
           }
         }
