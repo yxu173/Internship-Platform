@@ -5,12 +5,14 @@ using System.Text;
 using System.Text.Json;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
+using Application.Abstractions.Services;
 using Domain.Aggregates.Users;
 using Domain.Repositories;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Options;
 using Infrastructure.Database;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -35,6 +37,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("Database")));
 
         services.AddHttpContextAccessor();
+        services.AddScoped<IPhotoUploadService, LocalPhotoUploadService>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddSingleton<ITokenProvider, TokenProvider>();
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();

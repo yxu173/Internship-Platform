@@ -27,7 +27,8 @@ public sealed class CreateStudentProfileCommandHandler : ICommandHandler<CreateS
             request.Age,
             request.Gender,
             request.PhoneNumber,
-            request.Bio);
+            request.Bio,
+            request.ProfilePictureUrl);
 
         if (result.IsFailure)
         {

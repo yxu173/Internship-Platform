@@ -17,7 +17,8 @@ public interface IStudentRepository
         int age,
         string gender,
         string phoneNumber,
-        string? bio);
+        string? bio,
+        string? profilePictureUrl);
 
     Task<IReadOnlyList<StudentSkill>> GetStudentSkillsAsync(Guid studentId);
     Task UpdateAsync(StudentProfile student);

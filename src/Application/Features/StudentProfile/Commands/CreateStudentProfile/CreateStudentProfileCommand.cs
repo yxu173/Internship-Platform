@@ -12,5 +12,6 @@ public sealed record CreateStudentProfileCommand(
     int Age,
     string Gender,
     string PhoneNumber,
-    string? Bio
+    string? Bio,
+    string? ProfilePictureUrl
 ) : ICommand<bool>;

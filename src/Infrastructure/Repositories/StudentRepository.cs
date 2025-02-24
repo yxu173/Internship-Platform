@@ -28,7 +28,8 @@ public class StudentRepository : IStudentRepository
         int age,
         string gender,
         string phoneNumber,
-        string? bio)
+        string? bio,
+        string? profilePictureUrl)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -46,7 +47,8 @@ public class StudentRepository : IStudentRepository
             age,
             gender,
             phoneNumber,
-            bio);
+            bio,
+            profilePictureUrl);
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync();

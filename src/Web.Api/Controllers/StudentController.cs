@@ -44,7 +44,8 @@ public class StudentController : BaseController
             request.Age,
             request.Gender,
             request.PhoneNumber,
-            request.Bio);
+            request.Bio,
+            request.ProfilePictureUrl);
 
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);

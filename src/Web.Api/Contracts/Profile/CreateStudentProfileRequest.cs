@@ -1,4 +1,5 @@
 namespace Web.Api.Contracts.Profile;
+
 public sealed record CreateStudentProfileRequest(
     string FullName,
     string University,
@@ -8,4 +9,5 @@ public sealed record CreateStudentProfileRequest(
     int Age,
     string Gender,
     string PhoneNumber,
-    string? Bio);
+    string? Bio,
+    string? ProfilePictureUrl);
