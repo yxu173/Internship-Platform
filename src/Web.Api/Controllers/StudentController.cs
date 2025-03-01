@@ -1,3 +1,4 @@
+using Application.Abstractions.Services;
 using Application.Features.StudentProfile.Commands.CreateStudentExperience;
 using Application.Features.StudentProfile.Commands.CreateStudentProfile;
 using Application.Features.StudentProfile.Commands.CreateStudentProject;
@@ -23,11 +24,25 @@ namespace Web.Api.Controllers;
 [Authorize]
 public class StudentController : BaseController
 {
+    private readonly IPhotoUploadService _photoUploadService;
+
+    public StudentController(IPhotoUploadService photoUploadService)
+    {
+        _photoUploadService = photoUploadService;
+    }
+
     [HttpGet("profiles/{id:guid}")]
     public async Task<IResult> GetCompleteStudentProfile([FromRoute] Guid id)
     {
         var query = new GetAllStudentProfileQuery(id);
         var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("upload-profile-picture")]
+    public async Task<IResult> UploadProfilePicture([FromForm] IFormFile file)
+    {
+        var result = await _photoUploadService.UploadProfilePhoto(file);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 

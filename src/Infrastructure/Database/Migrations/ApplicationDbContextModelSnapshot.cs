@@ -279,6 +279,161 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("StudentProjects", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Enrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RoadmapId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Enrollments");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnrollmentId", "ItemId")
+                        .IsUnique();
+
+                    b.ToTable("ResourceProgresses");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Roadmap", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsPremium")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<string>("Technology")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("Technology");
+
+                    b.ToTable("Roadmaps");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("RoadmapSectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapSectionId");
+
+                    b.ToTable("RoadmapItems");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("RoadmapId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapId");
+
+                    b.ToTable("RoadmapSections");
+                });
+
             modelBuilder.Entity("Domain.Aggregates.Users.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -822,6 +977,61 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("StudentProfile");
                 });
 
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Enrollment", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Roadmaps.Roadmap", "Roadmap")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("RoadmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Aggregates.Profiles.StudentProfile", "Student")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Roadmap");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceProgress", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Roadmaps.Enrollment", "Enrollment")
+                        .WithMany("Progress")
+                        .HasForeignKey("EnrollmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Enrollment");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Roadmap", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Profiles.CompanyProfile", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapItem", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Roadmaps.RoadmapSection", null)
+                        .WithMany("Items")
+                        .HasForeignKey("RoadmapSectionId");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
+                {
+                    b.HasOne("Domain.Aggregates.Roadmaps.Roadmap", null)
+                        .WithMany("Sections")
+                        .HasForeignKey("RoadmapId");
+                });
+
             modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>
                 {
                     b.HasOne("Domain.Aggregates.Users.Skill", "Skill")
@@ -906,11 +1116,30 @@ namespace Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Domain.Aggregates.Profiles.StudentProfile", b =>
                 {
+                    b.Navigation("Enrollments");
+
                     b.Navigation("Experiences");
 
                     b.Navigation("Projects");
 
                     b.Navigation("Skills");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Enrollment", b =>
+                {
+                    b.Navigation("Progress");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.Roadmap", b =>
+                {
+                    b.Navigation("Enrollments");
+
+                    b.Navigation("Sections");
+                });
+
+            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.Skill", b =>

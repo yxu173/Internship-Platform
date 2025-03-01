@@ -1,5 +1,7 @@
-﻿using Domain.Aggregates.Users;
+﻿using Domain.Aggregates.Roadmaps;
+using Domain.Aggregates.Users;
 using Domain.Common;
+using Domain.DomainErrors;
 using Domain.Enums;
 using Domain.ValueObjects;
 using SharedKernel;
@@ -8,15 +10,11 @@ namespace Domain.Aggregates.Profiles;
 
 public sealed class StudentProfile : BaseAuditableEntity
 {
-    //TODO : Add - Information Section (FullName, University, Age, Bio, Gender, PhoneNumber, ProfilePictureUrl, ResumeUrl)
-    //TODO: Add - Skills Section (Skills)
-    //TODO: Add - Education Section (University, Faculty, GraduationYear, EnrollmentYear)
-    //TODO: Add - Experience Section (JobTitle, CompanyName, StartDate, EndDate, Description)
-    //TODO: Add - Project Section (ProjectName, Description, ProjectUrl)
     private StudentProfile()
     {
     }
 
+    private readonly List<Enrollment> _enrollments = new();
     private readonly List<StudentSkill> _skills = new();
     private readonly List<StudentExperience> _experiences = new();
     private readonly List<StudentProject> _projects = new();
@@ -32,6 +30,7 @@ public sealed class StudentProfile : BaseAuditableEntity
     public EgyptianUniversity University { get; private set; }
     public Year EnrollmentYear { get; private set; }
     public Year GraduationYear { get; private set; }
+    public IReadOnlyList<Enrollment> Enrollments => _enrollments.AsReadOnly();
     public IReadOnlyList<StudentSkill> Skills => _skills.AsReadOnly();
     public IReadOnlyList<StudentExperience> Experiences => _experiences.AsReadOnly();
     public IReadOnlyList<StudentProject> Projects => _projects.AsReadOnly();

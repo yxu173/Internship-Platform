@@ -7,7 +7,7 @@ public static class CompanyErrors
     public static Error TaxIdRequired => Error.BadRequest(
         "Company.TaxIdRequired",
         "The tax id is required");
-    
+
     public static Error InvalidTaxIdFormat => Error.BadRequest(
         "Company.InvalidTaxIdFormat",
         "The tax id format is invalid");
@@ -18,8 +18,9 @@ public static class CompanyErrors
         "The company is already registered");
 
     public static Error ProfileNotFound = Error.NotFound(
-        "Company.ProfileNotFound", 
+        "Company.ProfileNotFound",
         "Company profile not found");
+
     public static Error InvalidCompanySize => Error.BadRequest(
         "Company.InvalidCompanySize",
         "The company size is invalid");
@@ -51,4 +52,9 @@ public static class CompanyErrors
     public static Error InvalidCity => Error.BadRequest(
         "Company.InvalidCity",
         "The city is invalid");
+
+    public static Error DuplicateRoadmap => Error.Conflict(
+        "Company.DuplicateRoadmap",
+        "The roadmap is already added to the company profile"
+    );
 }

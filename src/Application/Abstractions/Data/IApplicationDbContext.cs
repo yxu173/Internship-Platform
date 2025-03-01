@@ -1,5 +1,6 @@
 ﻿using Domain.Aggregates.Internships;
 using Domain.Aggregates.Profiles;
+using Domain.Aggregates.Roadmaps;
 using Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,11 @@ public interface IApplicationDbContext
     DbSet<StudentSkill> StudentSkills { get; }
     DbSet<Internship> Internships { get; }
     DbSet<Domain.Aggregates.Internships.Application> Applications { get; }
+    DbSet<Enrollment> Enrollments { get; }
+    DbSet<Roadmap> Roadmaps { get; }
+    DbSet<RoadmapSection> RoadmapSections { get; }
+    DbSet<RoadmapItem> RoadmapItems { get; }
+    DbSet<ResourceProgress> ResourceProgresses { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

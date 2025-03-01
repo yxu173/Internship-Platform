@@ -26,25 +26,26 @@ public class LocalPhotoUploadService : IPhotoUploadService
 
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        
+    
         if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
             return Result.Failure<string>(Error.Validation("PhotoUpload.InvalidType", "Invalid image type"));
 
-        var path = _env.WebRootPath + @"\Properties\wwwroot\profile-photos";
-        var uploadsFolder = Path.Combine(path);
+       
+        var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "profile-pics");
         Directory.CreateDirectory(uploadsFolder);
-        
+    
         var fileName = $"{Guid.NewGuid()}{extension}";
         var filePath = Path.Combine(uploadsFolder, fileName);
 
         await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
 
+        // Generate full accessible URL
         var request = _httpContextAccessor.HttpContext!.Request;
         var baseUrl = $"{request.Scheme}://{request.Host}";
-        var relativePath = HttpUtility.UrlPathEncode($"uploads/profile-pics/{fileName}");
-        
-        return Result.Success(fileName);
+        var photoUrl = $"{baseUrl}/uploads/profile-pics/{fileName}";
+    
+        return Result.Success(photoUrl);
     }
 
     public async Task<Result> DeletePhoto(string photoUrl)

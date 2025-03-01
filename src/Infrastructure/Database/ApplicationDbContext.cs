@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Data;
 using Domain.Aggregates.Internships;
 using Domain.Aggregates.Profiles;
+using Domain.Aggregates.Roadmaps;
 using Domain.Aggregates.Users;
 using Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,11 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<StudentSkill> StudentSkills { get; set; }
     public DbSet<Internship> Internships { get; set; }
     public DbSet<Domain.Aggregates.Internships.Application> Applications { get; set; }
+    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<Roadmap> Roadmaps { get; set; }
+    public DbSet<RoadmapSection> RoadmapSections { get; set; }
+    public DbSet<RoadmapItem> RoadmapItems { get; set; }
+    public DbSet<ResourceProgress> ResourceProgresses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -31,6 +37,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.Ignore<Address>();
         builder.Ignore<CompanyAbout>();
         builder.Ignore<Salary>();
+        builder.Ignore<ResourceLink>();
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 

@@ -1,22 +1,27 @@
+using Domain.Aggregates.Profiles;
 using Domain.Common;
+using Domain.DomainErrors;
 using SharedKernel;
 
 namespace Domain.Aggregates.Roadmaps;
 
 public sealed class Roadmap : BaseAuditableEntity
 {
+    private Roadmap()
+    {
+    }
+
     private readonly List<RoadmapSection> _sections = new();
     private readonly List<Enrollment> _enrollments = new();
-
     public string Title { get; private set; }
     public string Description { get; private set; }
     public bool IsPremium { get; private set; }
     public decimal? Price { get; private set; }
     public Guid CompanyId { get; private set; }
+    public CompanyProfile? Company { get; private set; }
     public string Technology { get; private set; }
-
-    public IReadOnlyList<RoadmapSection> Sections => _sections.AsReadOnly();
     public IReadOnlyList<Enrollment> Enrollments => _enrollments.AsReadOnly();
+    public IReadOnlyList<RoadmapSection> Sections => _sections.AsReadOnly();
 
     private Roadmap(
         string title,
@@ -32,40 +37,46 @@ public sealed class Roadmap : BaseAuditableEntity
         IsPremium = isPremium;
         Price = price;
         CompanyId = companyId;
-        CreatedAt = DateTime.UtcNow;
     }
 
-    public static Result<Roadmap> CreatePremium(
+    public static Result<Roadmap> Create(
         string title,
         string description,
         string technology,
-        decimal price,
+        bool isPremium,
+        decimal? price,
         Guid companyId)
     {
+        if (isPremium && !price.HasValue)
+            return Result.Failure<Roadmap>(RoadmapErrors.PremiumRequiresPrice);
+
+        if (string.IsNullOrWhiteSpace(technology))
+            return Result.Failure<Roadmap>(RoadmapErrors.InvalidTechnology);
+
         return new Roadmap(
-            title: title,
-            description: description,
-            technology: technology,
-            isPremium: true,
-            price: price,
-            companyId: companyId
+            title,
+            description,
+            technology,
+            isPremium,
+            price,
+            companyId
         );
     }
 
-    public Result AddSection(
-        string title,
-        int order,
-        bool isPremiumSection,
-        List<RoadmapItem> items)
+    public Result AddSection(string title, int order, List<RoadmapItem> items)
     {
-        var section = new RoadmapSection(
-            title: title.Trim(),
-            order: order,
-            isPremium: isPremiumSection && this.IsPremium
-        );
+        if (_sections.Any(s => s.Order == order))
+            return Result.Failure(RoadmapErrors.DuplicateSectionOrder);
 
-        section.AddItems(items);
+        var section = new RoadmapSection(title, order);
+        var orderedItems = items.OrderBy(i => i.Order).ToList();
+
+        if (orderedItems.Select(i => i.Order).Distinct().Count() != orderedItems.Count)
+            return Result.Failure(RoadmapErrors.DuplicateItemOrder);
+
+        section.AddItems(orderedItems);
         _sections.Add(section);
+        ModifiedAt = DateTime.UtcNow;
         return Result.Success();
     }
 }

@@ -9,16 +9,10 @@ namespace Domain.Aggregates.Profiles;
 
 public sealed class CompanyProfile : BaseAuditableEntity
 {
-    //TODO: Company Information (CompanyName, TaxId, Industry, WebsiteUrl, LogoUrl, Description, Size, Address)
-    //TODO: Company Contact Information (Email, PhoneNumber, WebsiteUrl)
-    //TODO: Company Social Media (Facebook, Twitter, LinkedIn)
-    //TODO: Company Internship (Internships, Applications)
-    //TODO: Company About (About, Mission, Vision)
-
     private CompanyProfile()
     {
     }
-
+    private readonly List<Guid> _roadmapIds = new();
     private readonly List<Internship> _internships = new();
     private readonly List<Application> _applications = new();
     public Guid UserId { get; private set; }
@@ -32,6 +26,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
 
     public Address Address { get; private set; }
     public CompanySize? Size { get; private set; }
+    public IReadOnlyList<Guid> RoadmapIds => _roadmapIds.AsReadOnly();
     public IReadOnlyList<Internship> Internships => _internships.AsReadOnly();
     public IReadOnlyList<Application> Applications => _applications.AsReadOnly();
 
@@ -96,6 +91,14 @@ public sealed class CompanyProfile : BaseAuditableEntity
             return Result.Failure(CompanyErrors.InvalidLogoUrl);
 
         LogoUrl = logoUrl.Trim();
+        return Result.Success();
+    }
+    public Result AddRoadmap(Guid roadmapId)
+    {
+        if (_roadmapIds.Contains(roadmapId))
+            return Result.Failure(CompanyErrors.DuplicateRoadmap);
+
+        _roadmapIds.Add(roadmapId);
         return Result.Success();
     }
 }

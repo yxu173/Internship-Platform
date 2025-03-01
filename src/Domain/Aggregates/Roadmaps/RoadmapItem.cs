@@ -1,49 +1,47 @@
 using Domain.Common;
+using Domain.DomainErrors;
 using Domain.Enums;
 using Domain.ValueObjects;
+using SharedKernel;
 
 namespace Domain.Aggregates.Roadmaps;
 
 public sealed class RoadmapItem : BaseEntity
 {
-    public string Title { get; }
-    public string Description { get; }
-    public ResourceType Type { get; }
-    public List<ResourceLink> Resources { get; }
+    private RoadmapItem()
+    {
+    }
+
+    private readonly List<ResourceLink> _resourceLinks = new();
+    public string Title { get; private set; }
+    public string Description { get; private set; }
+    public ResourceType Type { get; private set; }
+    public IReadOnlyList<ResourceLink> Resources => _resourceLinks.AsReadOnly();
     public int Order { get; }
-    public bool IsPremium { get; }
 
     public RoadmapItem(
         string title,
         string description,
         ResourceType type,
         List<ResourceLink> resources,
-        int order,
-        bool isPremium)
+        int order)
     {
         Title = title.Trim();
         Description = description?.Trim();
         Type = type;
-        Resources = resources;
+        _resourceLinks = resources;
         Order = order;
-        IsPremium = isPremium;
     }
 
-    public static RoadmapItem CreateComparisonItem(
-        string primaryTool,
-        List<ResourceLink> primaryResources,
-        string secondaryTool,
-        List<ResourceLink> secondaryResources,
-        int order,
-        bool isPremium)
+    public static Result<RoadmapItem> Create(
+        string title,
+        string description,
+        ResourceType type,
+        List<ResourceLink> resources,
+        int order)
     {
-        return new RoadmapItem(
-            title: $"Compare {primaryTool} vs {secondaryTool}",
-            description: $"Detailed comparison between {primaryTool} and {secondaryTool}",
-            type: ResourceType.ToolComparison,
-            resources: primaryResources.Concat(secondaryResources).ToList(),
-            order: order,
-            isPremium: isPremium
-        );
+        if (resources == null || !resources.Any())
+            return Result.Failure<RoadmapItem>(RoadmapErrors.ResourcesRequired);
+        return new RoadmapItem(title, description, type, resources, order);
     }
 }
