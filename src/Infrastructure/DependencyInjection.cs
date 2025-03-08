@@ -44,8 +44,9 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
-        services.AddScoped<ISkillRepository,SkillRepository>();
+        services.AddScoped<ISkillRepository, SkillRepository>();
         services.AddScoped<IInternshipRepository, InternshipRepository>();
+        services.AddScoped<IRoadmapRepository, RoadmapRepository>();
         //services.AddScoped<IEmailSender, EmailSender>();
         services.AddTransient<IEmailSender, EmailSender>(provider =>
         {
@@ -89,97 +90,95 @@ public static class DependencyInjection
             options.Lockout.AllowedForNewUsers = true;
         });
 
-     
-
 
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-        })
-        .AddJwtBearer(jwt =>
-        {
-            jwt.SaveToken = true;
-            jwt.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidAudience = jwtSettings.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey))
-            };
-        })
-        .AddGoogle(googleOptions =>
-        {
-            googleOptions.ClientId = configuration["Authentication:Google:ClientId"]!;
-            googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
-            googleOptions.CallbackPath = "/signin-google";
-            googleOptions.CorrelationCookie.SameSite = SameSiteMode.None;
-            googleOptions.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
-            googleOptions.SaveTokens = true;
-        })
-        .AddOAuth("GitHub", options =>
-        {
-            options.ClientId = configuration["Authentication:Github:ClientId"]!;
-            options.ClientSecret = configuration["Authentication:Github:ClientSecret"]!;
-            options.CallbackPath = "/signin-github";
-            options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
-            options.TokenEndpoint = "https://github.com/login/oauth/access_token";
-            options.UserInformationEndpoint = "https://api.github.com/user";
-            options.Scope.Add("user:email");
-            options.CorrelationCookie.SameSite = SameSiteMode.None;
-            options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.SaveTokens = true;
-            options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-            options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
-            options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
-            options.Events = new OAuthEvents
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddJwtBearer(jwt =>
             {
-                OnCreatingTicket = async context =>
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // Get user details from GitHub API
-                    var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
-                    response.EnsureSuccessStatusCode();
-
-                    var userJson = await response.Content.ReadAsStringAsync();
-                    var userData = JsonDocument.Parse(userJson).RootElement;
-
-                    context.RunClaimActions(userData);
-                    if (context.Identity?.FindFirst(ClaimTypes.Email) == null)
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey))
+                };
+            })
+            .AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = configuration["Authentication:Google:ClientId"]!;
+                googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
+                googleOptions.CallbackPath = "/signin-google";
+                googleOptions.CorrelationCookie.SameSite = SameSiteMode.None;
+                googleOptions.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                googleOptions.SaveTokens = true;
+            })
+            .AddOAuth("GitHub", options =>
+            {
+                options.ClientId = configuration["Authentication:Github:ClientId"]!;
+                options.ClientSecret = configuration["Authentication:Github:ClientSecret"]!;
+                options.CallbackPath = "/signin-github";
+                options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+                options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+                options.UserInformationEndpoint = "https://api.github.com/user";
+                options.Scope.Add("user:email");
+                options.CorrelationCookie.SameSite = SameSiteMode.None;
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.SaveTokens = true;
+                options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+                options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
+                options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+                options.Events = new OAuthEvents
+                {
+                    OnCreatingTicket = async context =>
                     {
-                        var emailsRequest =
-                            new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user/emails");
-                        emailsRequest.Headers.Authorization =
-                            new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                        emailsRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        // Get user details from GitHub API
+                        var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        var emailsResponse =
-                            await context.Backchannel.SendAsync(emailsRequest, context.HttpContext.RequestAborted);
-                        emailsResponse.EnsureSuccessStatusCode();
+                        var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+                        response.EnsureSuccessStatusCode();
 
-                        var emailsJson = await emailsResponse.Content.ReadAsStringAsync();
-                        var emailsData = JsonDocument.Parse(emailsJson).RootElement;
+                        var userJson = await response.Content.ReadAsStringAsync();
+                        var userData = JsonDocument.Parse(userJson).RootElement;
 
-                        var primaryEmail = emailsData.EnumerateArray()
-                            .FirstOrDefault(email => email.GetProperty("primary").GetBoolean())
-                            .GetProperty("email").GetString();
-
-                        if (primaryEmail != null)
+                        context.RunClaimActions(userData);
+                        if (context.Identity?.FindFirst(ClaimTypes.Email) == null)
                         {
-                            context.Identity?.AddClaim(new Claim(ClaimTypes.Email, primaryEmail));
+                            var emailsRequest =
+                                new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/user/emails");
+                            emailsRequest.Headers.Authorization =
+                                new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                            emailsRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                            var emailsResponse =
+                                await context.Backchannel.SendAsync(emailsRequest, context.HttpContext.RequestAborted);
+                            emailsResponse.EnsureSuccessStatusCode();
+
+                            var emailsJson = await emailsResponse.Content.ReadAsStringAsync();
+                            var emailsData = JsonDocument.Parse(emailsJson).RootElement;
+
+                            var primaryEmail = emailsData.EnumerateArray()
+                                .FirstOrDefault(email => email.GetProperty("primary").GetBoolean())
+                                .GetProperty("email").GetString();
+
+                            if (primaryEmail != null)
+                            {
+                                context.Identity?.AddClaim(new Claim(ClaimTypes.Email, primaryEmail));
+                            }
                         }
                     }
-                }
-            };
-        });
+                };
+            });
         services.AddAuthorization();
 
         return services;
