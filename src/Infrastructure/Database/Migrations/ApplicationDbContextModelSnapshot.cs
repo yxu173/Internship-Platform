@@ -306,7 +306,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Enrollments");
+                    b.ToTable("Enrollments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceProgress", b =>
@@ -335,7 +335,7 @@ namespace Infrastructure.Database.Migrations
                     b.HasIndex("EnrollmentId", "ItemId")
                         .IsUnique();
 
-                    b.ToTable("ResourceProgresses");
+                    b.ToTable("ResourceProgresses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.Roadmap", b =>
@@ -381,7 +381,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasIndex("Technology");
 
-                    b.ToTable("Roadmaps");
+                    b.ToTable("Roadmaps", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapItem", b =>
@@ -394,7 +394,7 @@ namespace Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RoadmapSectionId")
+                    b.Property<Guid>("SectionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -406,9 +406,9 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoadmapSectionId");
+                    b.HasIndex("SectionId");
 
-                    b.ToTable("RoadmapItems");
+                    b.ToTable("RoadmapItems", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
@@ -420,7 +420,7 @@ namespace Infrastructure.Database.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("RoadmapId")
+                    b.Property<Guid>("RoadmapId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -431,7 +431,7 @@ namespace Infrastructure.Database.Migrations
 
                     b.HasIndex("RoadmapId");
 
-                    b.ToTable("RoadmapSections");
+                    b.ToTable("RoadmapSections", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.Role", b =>
@@ -732,7 +732,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("InternshipId");
 
-                            b1.ToTable("Internships");
+                            b1.ToTable("Internships", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("InternshipId");
@@ -754,7 +754,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("InternshipId");
 
-                            b1.ToTable("Internships");
+                            b1.ToTable("Internships", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("InternshipId");
@@ -776,32 +776,6 @@ namespace Infrastructure.Database.Migrations
                         .HasForeignKey("Domain.Aggregates.Profiles.CompanyProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
-                        {
-                            b1.Property<Guid>("CompanyProfileId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("City")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Governorate")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("Governorate");
-
-                            b1.Property<string>("Street")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.HasKey("CompanyProfileId");
-
-                            b1.ToTable("CompanyProfiles");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CompanyProfileId");
-                        });
 
                     b.OwnsOne("Domain.ValueObjects.CompanyAbout", "About", b1 =>
                         {
@@ -825,7 +799,33 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("CompanyProfileId");
 
-                            b1.ToTable("CompanyProfiles");
+                            b1.ToTable("CompanyProfiles", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CompanyProfileId");
+                        });
+
+                    b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("CompanyProfileId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Governorate")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Governorate");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CompanyProfileId");
+
+                            b1.ToTable("CompanyProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyProfileId");
@@ -844,7 +844,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("CompanyProfileId");
 
-                            b1.ToTable("CompanyProfiles");
+                            b1.ToTable("CompanyProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CompanyProfileId");
@@ -883,7 +883,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("StudentExperienceId");
 
-                            b1.ToTable("StudentExperiences");
+                            b1.ToTable("StudentExperiences", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentExperienceId");
@@ -914,7 +914,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("StudentProfileId");
 
-                            b1.ToTable("StudentProfiles");
+                            b1.ToTable("StudentProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentProfileId");
@@ -931,7 +931,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("StudentProfileId");
 
-                            b1.ToTable("StudentProfiles");
+                            b1.ToTable("StudentProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentProfileId");
@@ -950,7 +950,7 @@ namespace Infrastructure.Database.Migrations
 
                             b1.HasKey("StudentProfileId");
 
-                            b1.ToTable("StudentProfiles");
+                            b1.ToTable("StudentProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentProfileId");
@@ -1022,14 +1022,18 @@ namespace Infrastructure.Database.Migrations
                 {
                     b.HasOne("Domain.Aggregates.Roadmaps.RoadmapSection", null)
                         .WithMany("Items")
-                        .HasForeignKey("RoadmapSectionId");
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
                 {
                     b.HasOne("Domain.Aggregates.Roadmaps.Roadmap", null)
                         .WithMany("Sections")
-                        .HasForeignKey("RoadmapId");
+                        .HasForeignKey("RoadmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>

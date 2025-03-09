@@ -1,4 +1,6 @@
 using Application.Features.Roadmaps.Commands.CreateRoadmap;
+using Application.Features.Roadmaps.Commands.CreateRoadmapSection;
+using Application.Features.Roadmaps.Commands.UpdateRoadmap;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Roadmap;
 using Web.Api.Extensions;
@@ -18,6 +20,28 @@ public class RoadmapController : BaseController
             request.Technology,
             request.IsPremium,
             request.Price);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPut("update/{id:guid}")]
+    public async Task<IResult> Update([FromRoute] Guid id, [FromBody] UpdateRoadmapRequest request)
+    {
+        var command = new UpdateRoadmapCommand(
+            id,
+            request.Title,
+            request.Description,
+            request.Technology,
+            request.IsPremium,
+            request.Price);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("{roadmapId}/sections")]
+    public async Task<IResult> CreateSection([FromRoute] Guid roadmapId, [FromBody] CreateRoadmapSectionCommand command)
+    {
+        command = command with { RoadmapId = roadmapId };
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

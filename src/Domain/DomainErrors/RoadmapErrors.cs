@@ -4,6 +4,11 @@ namespace Domain.DomainErrors;
 
 public static class RoadmapErrors
 {
+    public static Error RoadmapNotFound => Error.NotFound(
+        "Roadmap.NotFound",
+        "Roadmap not found"
+    );
+
     public static Error PaidRoadmap => Error.Validation(
         "Roadmap.PaidRoadmap",
         "Roadmap is already paid");
@@ -40,32 +45,32 @@ public static class RoadmapErrors
         "Roadmap.SectionNotFound",
         "Section not found in the roadmap"
     );
-    
+
     public static Error ResourcesRequired => Error.Validation(
         "Roadmap.ResourcesRequired",
         "Resources are required for the roadmap item"
     );
-    
+
     public static Error ItemNotFound => Error.NotFound(
         "Roadmap.ItemNotFound",
         "Item not found in the roadmap"
     );
-    
+
     public static Error NoItemsProvided => Error.Validation(
         "Roadmap.NoItemsProvided",
         "No items provided to add to the roadmap section"
     );
-    
+
     public static Error InvalidStudentId => Error.Validation(
         "Roadmap.InvalidStudentId",
         "Student id is required to mark progress"
     );
-    
+
     public static Error InvalidRoadmapId => Error.Validation(
         "Roadmap.InvalidRoadmapId",
         "Roadmap id is required to mark progress"
     );
-    
+
     public static Error InvalidOrDuplicateItem => Error.Validation(
         "Roadmap.InvalidOrDuplicateItem",
         "Item is invalid or already marked as completed"

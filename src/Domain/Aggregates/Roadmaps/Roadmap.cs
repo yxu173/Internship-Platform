@@ -37,6 +37,7 @@ public sealed class Roadmap : BaseAuditableEntity
         IsPremium = isPremium;
         Price = price;
         CompanyId = companyId;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public static Result<Roadmap> Create(
@@ -63,12 +64,22 @@ public sealed class Roadmap : BaseAuditableEntity
         );
     }
 
+    public void UpdateRoadmap(string title, string description, string technology, bool isPremium, decimal? price)
+    {
+        Title = title;
+        Description = description;
+        Technology = technology;
+        IsPremium = isPremium;
+        Price = price;
+        ModifiedAt = DateTime.UtcNow;
+    }
+
     public Result AddSection(string title, int order, List<RoadmapItem> items)
     {
         if (_sections.Any(s => s.Order == order))
             return Result.Failure(RoadmapErrors.DuplicateSectionOrder);
 
-        var section = new RoadmapSection(title, order);
+        var section = new RoadmapSection(title, order, Id);
         var orderedItems = items.OrderBy(i => i.Order).ToList();
 
         if (orderedItems.Select(i => i.Order).Distinct().Count() != orderedItems.Count)

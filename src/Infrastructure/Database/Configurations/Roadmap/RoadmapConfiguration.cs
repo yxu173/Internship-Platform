@@ -23,6 +23,11 @@ public class RoadmapConfiguration : IEntityTypeConfiguration<Domain.Aggregates.R
             .HasPrecision(18, 2);
         builder.Property(r => r.CompanyId)
             .IsRequired();
+        
+        builder.HasMany(r => r.Sections)
+            .WithOne()
+            .HasForeignKey(s => s.RoadmapId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Enrollments)
             .WithOne(x => x.Roadmap)

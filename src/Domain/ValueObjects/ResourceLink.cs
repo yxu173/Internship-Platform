@@ -9,18 +9,21 @@ public record ResourceLink : ValueObject
     public string Url { get; }
     public ResourceType Type { get; }
 
-    public ResourceLink(string title, string url, ResourceType type)
+    private ResourceLink() { }
+    public ResourceLink(string title, string url, string type)
     {
+        var typeResult = Enum.Parse<ResourceType>(type);
         Title = title.Trim();
         Url = url.Trim();
-        Type = type;
+        Type = typeResult;
     }
 
-    public static ResourceLink CreateVideo(string title, string url) 
-        => new(title, url, ResourceType.Video);
-
-    public static ResourceLink CreateBook(string title, string purchaseUrl) 
-        => new(title, purchaseUrl, ResourceType.Book);
+    //
+    // public static ResourceLink CreateVideo(string title, string url)
+    //     => new(title, url, ResourceType.Video);
+    //
+    // public static ResourceLink CreateBook(string title, string purchaseUrl)
+    //     => new(title, purchaseUrl, ResourceType.Book);
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

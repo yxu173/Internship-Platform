@@ -49,7 +49,32 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task Update(Roadmap roadmap)
     {
-        _context.Roadmaps.Update(roadmap);
+        _context.Entry(roadmap).State = EntityState.Modified;
+
+        foreach (var section in roadmap.Sections)
+        {
+            if (section.Id == Guid.Empty)
+            {
+                _context.Entry(section).State = EntityState.Added;
+            }
+            else
+            {
+                _context.Entry(section).State = EntityState.Modified;
+            }
+
+            foreach (var item in section.Items)
+            {
+                if (item.Id == Guid.Empty)
+                {
+                    _context.Entry(item).State = EntityState.Added;
+                }
+                else
+                {
+                    _context.Entry(item).State = EntityState.Modified;
+                }
+            }
+        }
+
         await _context.SaveChangesAsync();
     }
 

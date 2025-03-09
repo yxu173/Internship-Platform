@@ -12,15 +12,17 @@ public sealed class RoadmapSection : BaseEntity
 
     private readonly List<RoadmapItem> _items = new();
 
+    public Guid RoadmapId { get; private set; }
     public string Title { get; private set; }
     public int Order { get; private set; }
 
     public IReadOnlyList<RoadmapItem> Items => _items.AsReadOnly();
 
-    public RoadmapSection(string title, int order)
+    public RoadmapSection(string title, int order, Guid roadmapId)
     {
         Title = title.Trim();
         Order = order;
+        RoadmapId = roadmapId;
     }
 
     public Result AddItems(List<RoadmapItem> items)

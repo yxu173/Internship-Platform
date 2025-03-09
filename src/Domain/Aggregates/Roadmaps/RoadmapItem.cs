@@ -13,6 +13,8 @@ public sealed class RoadmapItem : BaseEntity
     }
 
     private readonly List<ResourceLink> _resourceLinks = new();
+    
+    public Guid SectionId { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
     public ResourceType Type { get; private set; }
@@ -36,12 +38,13 @@ public sealed class RoadmapItem : BaseEntity
     public static Result<RoadmapItem> Create(
         string title,
         string description,
-        ResourceType type,
+        string type,
         List<ResourceLink> resources,
         int order)
     {
+        var typeResult = Enum.Parse<ResourceType>(type);
         if (resources == null || !resources.Any())
             return Result.Failure<RoadmapItem>(RoadmapErrors.ResourcesRequired);
-        return new RoadmapItem(title, description, type, resources, order);
+        return new RoadmapItem(title, description, typeResult, resources, order);
     }
 }
