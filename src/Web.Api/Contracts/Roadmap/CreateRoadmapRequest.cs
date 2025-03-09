@@ -5,5 +5,4 @@ public record CreateRoadmapRequest(
     string Description,
     string Technology,
     bool IsPremium,
-    decimal Price,
-    Guid CompanyProfileId);
+    decimal Price);

@@ -12,7 +12,7 @@ public class RoadmapController : BaseController
     public async Task<IResult> Create([FromBody] CreateRoadmapRequest request)
     {
         var command = new CreateRoadmapCommand(
-            request.CompanyProfileId,
+            UserId,
             request.Title,
             request.Description,
             request.Technology,
