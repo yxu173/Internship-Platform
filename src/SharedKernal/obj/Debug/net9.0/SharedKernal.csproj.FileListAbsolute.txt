@@ -34,3 +34,15 @@ P:/Graducation-Project/Internship-Platform/src/SharedKernal/obj/Debug/net9.0/ref
 /home/mrx/work-projects/Internship-Platform/src/SharedKernal/obj/Debug/net9.0/refint/SharedKernal.dll
 /home/mrx/work-projects/Internship-Platform/src/SharedKernal/obj/Debug/net9.0/SharedKernal.pdb
 /home/mrx/work-projects/Internship-Platform/src/SharedKernal/obj/Debug/net9.0/ref/SharedKernal.dll
+/app/src/SharedKernal/bin/Debug/net9.0/SharedKernal.deps.json
+/app/src/SharedKernal/bin/Debug/net9.0/SharedKernal.dll
+/app/src/SharedKernal/bin/Debug/net9.0/SharedKernal.pdb
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.GeneratedMSBuildEditorConfig.editorconfig
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.AssemblyInfoInputs.cache
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.AssemblyInfo.cs
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.csproj.CoreCompileInputs.cache
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.sourcelink.json
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.dll
+/app/src/SharedKernal/obj/Debug/net9.0/refint/SharedKernal.dll
+/app/src/SharedKernal/obj/Debug/net9.0/SharedKernal.pdb
+/app/src/SharedKernal/obj/Debug/net9.0/ref/SharedKernal.dll

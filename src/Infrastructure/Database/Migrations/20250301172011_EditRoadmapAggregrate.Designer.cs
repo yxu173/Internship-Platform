@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250301172011_EditRoadmapAggregrate")]
+    partial class EditRoadmapAggregrate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -392,27 +395,21 @@ namespace Infrastructure.Database.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("SectionId")
+                    b.Property<Guid?>("RoadmapSectionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SectionId");
+                    b.HasIndex("RoadmapSectionId");
 
                     b.ToTable("RoadmapItems");
                 });
@@ -426,7 +423,7 @@ namespace Infrastructure.Database.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("RoadmapId")
+                    b.Property<Guid?>("RoadmapId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -1028,53 +1025,14 @@ namespace Infrastructure.Database.Migrations
                 {
                     b.HasOne("Domain.Aggregates.Roadmaps.RoadmapSection", null)
                         .WithMany("Items")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.OwnsMany("Domain.ValueObjects.ResourceLink", "Resources", b1 =>
-                        {
-                            b1.Property<Guid>("RoadmapItemId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("integer");
-
-                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
-
-                            b1.Property<string>("Title")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("character varying(100)");
-
-                            b1.Property<string>("Type")
-                                .IsRequired()
-                                .HasColumnType("text");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("character varying(200)");
-
-                            b1.HasKey("RoadmapItemId", "Id");
-
-                            b1.ToTable("ResourceLink");
-
-                            b1.WithOwner()
-                                .HasForeignKey("RoadmapItemId");
-                        });
-
-                    b.Navigation("Resources");
+                        .HasForeignKey("RoadmapSectionId");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
                 {
                     b.HasOne("Domain.Aggregates.Roadmaps.Roadmap", null)
                         .WithMany("Sections")
-                        .HasForeignKey("RoadmapId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoadmapId");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Users.StudentSkill", b =>

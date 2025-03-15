@@ -144,10 +144,23 @@
           "Newtonsoft.Json": "11.0.2"
         }
       },
-      "Microsoft.AspNetCore.Cryptography.Internal/9.0.1": {},
+      "Microsoft.AspNetCore.Cryptography.Internal/9.0.1": {
+        "runtime": {
+          "lib/net9.0/Microsoft.AspNetCore.Cryptography.Internal.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.124.61009"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Cryptography.KeyDerivation/9.0.1": {
         "dependencies": {
           "Microsoft.AspNetCore.Cryptography.Internal": "9.0.1"
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.124.61009"
+          }
         }
       },
       "Microsoft.AspNetCore.DataProtection/2.3.0": {
@@ -693,6 +706,12 @@
           "Microsoft.AspNetCore.Cryptography.KeyDerivation": "9.0.1",
           "Microsoft.Extensions.Logging": "9.0.2",
           "Microsoft.Extensions.Options": "9.0.2"
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.Identity.Core.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.124.61009"
+          }
         }
       },
       "Microsoft.Extensions.Identity.Stores/9.0.1": {
@@ -700,6 +719,12 @@
           "Microsoft.Extensions.Caching.Abstractions": "9.0.2",
           "Microsoft.Extensions.Identity.Core": "9.0.1",
           "Microsoft.Extensions.Logging": "9.0.2"
+        },
+        "runtime": {
+          "lib/net9.0/Microsoft.Extensions.Identity.Stores.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.124.61009"
+          }
         }
       },
       "Microsoft.Extensions.Logging/9.0.2": {
@@ -1158,14 +1183,7 @@
       },
       "System.Security.Principal.Windows/5.0.0": {},
       "System.Text.Encodings.Web/8.0.0": {},
-      "System.Text.Json/9.0.2": {
-        "runtime": {
-          "lib/net9.0/System.Text.Json.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.225.6610"
-          }
-        }
-      },
+      "System.Text.Json/9.0.2": {},
       "System.Threading.Channels/7.0.0": {},
       "Application/1.0.0": {
         "dependencies": {
@@ -1179,7 +1197,7 @@
         },
         "runtime": {
           "Application.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1191,7 +1209,7 @@
         },
         "runtime": {
           "Domain.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1212,7 +1230,7 @@
         },
         "runtime": {
           "Infrastructure.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1220,7 +1238,7 @@
       "SharedKernal/1.0.0": {
         "runtime": {
           "SharedKernal.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
