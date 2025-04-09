@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "k5Fy8SzXI3I=",
+  "dgSpecHash": "sfX2K8oezqk=",
   "success": true,
   "projectFilePath": "/home/mrx/work-projects/Internship-Platform/src/Application/Application.csproj",
   "expectedPackageFiles": [
@@ -55,7 +55,7 @@
     "/home/mrx/.nuget/packages/system.security.cryptography.xml/8.0.2/system.security.cryptography.xml.8.0.2.nupkg.sha512",
     "/home/mrx/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
     "/home/mrx/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
-    "/home/mrx/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.1/microsoft.aspnetcore.app.ref.9.0.1.nupkg.sha512"
+    "/home/mrx/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.3/microsoft.aspnetcore.app.ref.9.0.3.nupkg.sha512"
   ],
   "logs": [
     {

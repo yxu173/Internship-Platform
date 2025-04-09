@@ -1,36 +1,39 @@
 ﻿services:
-  web.api:
-    image: web.api
+  web-api:
+    image: ${DOCKER_REGISTRY-}webapi
+    container_name: web-api
     build:
       context: .
       dockerfile: src/Web.Api/Dockerfile
     ports:
       - "5067:8080"
-    volumes:
-      - aspnet_keys:/home/app/.aspnet/DataProtection-Keys
-    user: "1000:1000"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Database=Host=db;Port=5432;Database=Internship-Platform;Username=postgres;Password=postgres
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
+    restart: on-failure
 
-  db:
-    image: postgres:17-alpine
+  postgres:
+    image: postgres:17
+    container_name: postgres
     environment:
+      - POSTGRES_DB=MultiChat
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=Internship-Platform
     volumes:
-      - ./.containers/intern_db:/var/lib/postgresql/data
+      - ./.containers/db:/var/lib/postgresql/data
     ports:
-      - "5431:5432"
+      - 5430:5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
-volumes:
-  aspnet_keys:
+  seq:
+    image: datalust/seq:2024.3
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 8081:80
