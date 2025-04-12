@@ -37,7 +37,6 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.Ignore<Address>();
         builder.Ignore<CompanyAbout>();
         builder.Ignore<Salary>();
-        builder.Ignore<ResourceLink>();
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 

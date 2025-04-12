@@ -4,13 +4,25 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Database.Configurations.Roadmap;
 
-public class RoadmapSectionConfiguration: IEntityTypeConfiguration<RoadmapSection>
+public class RoadmapSectionConfiguration : IEntityTypeConfiguration<RoadmapSection>
 {
     public void Configure(EntityTypeBuilder<RoadmapSection> builder)
     {
-        builder.HasMany(s => s.Items)
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Title)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(x => x.Order)
+            .IsRequired();
+
+        builder.HasMany(x => x.Items)
             .WithOne()
-            .HasForeignKey(i => i.SectionId)
+            .HasForeignKey("SectionId") 
             .OnDelete(DeleteBehavior.Cascade);
+            
+        builder.Navigation(x => x.Items)
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

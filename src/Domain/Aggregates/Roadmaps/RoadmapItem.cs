@@ -47,4 +47,31 @@ public sealed class RoadmapItem : BaseEntity
             return Result.Failure<RoadmapItem>(RoadmapErrors.ResourcesRequired);
         return new RoadmapItem(title, description, typeResult, resources, order);
     }
+
+    internal Result UpdateDetails(string title, string description, string type, List<ResourceLink> resources, int order)
+    {
+        // Validate inputs
+        if (resources == null || !resources.Any())
+        {
+            return Result.Failure(RoadmapErrors.ResourcesRequired);
+        }
+        
+        ResourceType typeResult;
+        try
+        {
+            typeResult = Enum.Parse<ResourceType>(type);
+        }
+        catch (ArgumentException)
+        {
+            return Result.Failure(RoadmapErrors.InvalidResourceType); 
+        }
+
+        Title = title.Trim();
+        Description = description?.Trim();
+        Type = typeResult;
+        _resourceLinks.Clear();
+        _resourceLinks.AddRange(resources); 
+
+        return Result.Success();
+    }
 }

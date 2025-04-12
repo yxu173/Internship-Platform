@@ -33,5 +33,9 @@ public class RoadmapItemConfiguration : IEntityTypeConfiguration<RoadmapItem>
                 .HasConversion<string>()
                 .IsRequired();
         });
+
+        builder.Navigation(x => x.Resources)  
+               .HasField("_resourceLinks")  
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

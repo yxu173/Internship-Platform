@@ -75,4 +75,24 @@ public static class RoadmapErrors
         "Roadmap.InvalidOrDuplicateItem",
         "Item is invalid or already marked as completed"
     );
+
+    public static Error InvalidResourceType => Error.Validation(
+        "RoadmapItem.InvalidResourceType",
+        "The provided resource type for the roadmap item is invalid."
+    );
+
+    public static Error DuplicateEnrollment => Error.Conflict(
+        "Enrollment.Duplicate",
+        "Student is already enrolled in this roadmap."
+    );
+
+    public static Error PremiumEnrollmentRequiresPayment => Error.Validation(
+        "Enrollment.PaymentRequired",
+        "Enrollment in this premium roadmap requires payment."
+    );
+
+    public static Error EnrollmentNotFound => Error.NotFound(
+        "Enrollment.NotFound",
+        "Student enrollment not found for this roadmap."
+    );
 }

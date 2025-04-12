@@ -34,4 +34,65 @@ public sealed class RoadmapSection : BaseEntity
         _items.AddRange(items.OrderBy(i => i.Order));
         return Result.Success();
     }
+
+    internal void UpdateDetails(string title, int order)
+    {
+        Title = title?.Trim();
+        Order = order;
+    }
+
+    public Result<Guid> AddItem(string title, string description, string type,
+        List<ValueObjects.ResourceLink> resources, int order)
+    {
+        if (_items.Any(i => i.Order == order))
+        {
+            return Result.Failure<Guid>(RoadmapErrors.DuplicateItemOrder);
+        }
+
+        var itemResult = RoadmapItem.Create(title, description, type, resources, order);
+        if (itemResult.IsFailure)
+        {
+            return Result.Failure<Guid>(itemResult.Error);
+        }
+
+        _items.Add(itemResult.Value);
+
+        return Result.Success(itemResult.Value.Id);
+    }
+
+    public Result UpdateItem(Guid itemId, string title, string description, string type,
+        List<ValueObjects.ResourceLink> resources, int order)
+    {
+        var item = _items.FirstOrDefault(i => i.Id == itemId);
+        if (item is null)
+        {
+            return Result.Failure(RoadmapErrors.ItemNotFound);
+        }
+
+        if (_items.Any(i => i.Id != itemId && i.Order == order))
+        {
+            return Result.Failure(RoadmapErrors.DuplicateItemOrder);
+        }
+
+        var updateResult = item.UpdateDetails(title, description, type, resources, order);
+        if (updateResult.IsFailure)
+        {
+            return updateResult;
+        }
+
+
+        return Result.Success();
+    }
+
+    public Result RemoveItem(Guid itemId)
+    {
+        var item = _items.FirstOrDefault(i => i.Id == itemId);
+        if (item is null)
+        {
+            return Result.Success();
+        }
+
+        _items.Remove(item);
+        return Result.Success();
+    }
 }

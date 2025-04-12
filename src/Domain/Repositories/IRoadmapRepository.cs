@@ -14,7 +14,7 @@ public interface IRoadmapRepository
     Task Delete(Roadmap roadmap);
 
     // Section Operations
-    Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId);
+    Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false);
     Task AddSectionAsync(Guid roadmapId, RoadmapSection section);
     Task UpdateSectionAsync(RoadmapSection section);
     Task DeleteSectionAsync(RoadmapSection section);
@@ -27,4 +27,14 @@ public interface IRoadmapRepository
     // Progress Tracking
     Task<ResourceProgress?> GetProgressAsync(Guid enrollmentId, Guid itemId);
     Task TrackProgressAsync(ResourceProgress progress);
+
+    Task<IReadOnlyList<Enrollment>> GetEnrollmentsByStudentIdAsync(Guid studentId, bool includeRoadmap = false);
+
+    Task<IReadOnlyList<ResourceProgress>> GetProgressByStudentIdAsync(Guid studentId);
+
+    Task<IReadOnlyList<ResourceProgress>> GetProgressByEnrollmentIdAsync(Guid enrollmentId);
+
+    Task<IReadOnlyList<Enrollment>> GetEnrollmentsByRoadmapIdsAsync(IEnumerable<Guid> roadmapIds);
+
+    Task<IReadOnlyList<ResourceProgress>> GetProgressByEnrollmentIdsAsync(IEnumerable<Guid> enrollmentIds);
 }

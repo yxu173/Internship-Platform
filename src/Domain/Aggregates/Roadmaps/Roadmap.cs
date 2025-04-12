@@ -74,19 +74,45 @@ public sealed class Roadmap : BaseAuditableEntity
         ModifiedAt = DateTime.UtcNow;
     }
 
-    public Result AddSection(string title, int order, List<RoadmapItem> items)
+    public Result<Guid> AddSection(string title, int order)
     {
         if (_sections.Any(s => s.Order == order))
-            return Result.Failure(RoadmapErrors.DuplicateSectionOrder);
+            return Result.Failure<Guid>(RoadmapErrors.DuplicateSectionOrder);
 
         var section = new RoadmapSection(title, order, Id);
-        var orderedItems = items.OrderBy(i => i.Order).ToList();
 
-        if (orderedItems.Select(i => i.Order).Distinct().Count() != orderedItems.Count)
-            return Result.Failure(RoadmapErrors.DuplicateItemOrder);
-
-        section.AddItems(orderedItems);
         _sections.Add(section);
+        ModifiedAt = DateTime.UtcNow;
+        return Result.Success(section.Id);
+    }
+
+    public Result UpdateSection(Guid sectionId, string title, int order)
+    {
+        var section = _sections.FirstOrDefault(s => s.Id == sectionId);
+        if (section is null)
+        {
+            return Result.Failure(RoadmapErrors.SectionNotFound);
+        }
+
+        if (_sections.Any(s => s.Id != sectionId && s.Order == order))
+        {
+            return Result.Failure(RoadmapErrors.DuplicateSectionOrder);
+        }
+
+        section.UpdateDetails(title, order);
+        ModifiedAt = DateTime.UtcNow;
+        return Result.Success();
+    }
+
+    public Result RemoveSection(Guid sectionId)
+    {
+        var section = _sections.FirstOrDefault(s => s.Id == sectionId);
+        if (section is null)
+        {
+            return Result.Success(); 
+        }
+
+        _sections.Remove(section);
         ModifiedAt = DateTime.UtcNow;
         return Result.Success();
     }
