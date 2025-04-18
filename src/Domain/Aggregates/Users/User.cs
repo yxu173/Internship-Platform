@@ -37,7 +37,7 @@ public sealed class User : IdentityUser<Guid>
         }
     }
 
-    public Result CreateStudentProfile(
+    public Result<StudentProfile> CreateStudentProfile(
         string fullName,
         string university,
         string faculty,
@@ -58,7 +58,7 @@ public sealed class User : IdentityUser<Guid>
 
         StudentProfile = profileResult.Value;
         ProfileComplete = true;
-        return Result.Success();
+        return Result.Success(profileResult.Value);
     }
 
 

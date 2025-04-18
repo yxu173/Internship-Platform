@@ -51,6 +51,7 @@ public class StudentRepository : IStudentRepository
             profilePictureUrl);
 
         _context.Users.Update(user);
+        await _context.StudentProfiles.AddAsync(student.Value);
         await _context.SaveChangesAsync();
         return Result.Success();
     }
