@@ -3,6 +3,7 @@ using Application.Abstractions.Authentication;
 using Application.Features.Identity.ForgetPassword;
 using Application.Features.Identity.Login;
 using Application.Features.Identity.Logout;
+using Application.Features.Identity.Queries.GetUserType;
 using Application.Features.Identity.Register;
 using Application.Features.Identity.ResetPassword;
 using Application.Features.Notifications.Commands.SendNotification;
@@ -198,5 +199,14 @@ public class IdentityController : BaseController
     {
         var redirectUrl = Url.Action("ExternalLoginCallback");
         return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, GoogleDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("user-type")]
+    [Authorize]
+    public async Task<IResult> GetUserType()
+    {
+        var query = new GetUserTypeQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

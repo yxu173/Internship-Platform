@@ -56,7 +56,10 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(Guid id)
     {
-        return await _userManager.FindByIdAsync(id.ToString());
+        return await _context.Users
+            .Include(u => u.StudentProfile)
+            .Include(u => u.CompanyProfile)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User> GetByUsernameAsync(string username)
