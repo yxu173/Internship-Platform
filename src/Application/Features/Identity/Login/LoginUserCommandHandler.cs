@@ -42,7 +42,6 @@ internal sealed class LoginUserCommandHandler : ICommandHandler<LoginUserCommand
             return Result.Failure<string>(UserErrors.InvalidCredentials);
         }
 
-        // Send welcome back notification
         var notificationCommand = new SendNotificationCommand(
             user.Id,
             "Welcome Back!",

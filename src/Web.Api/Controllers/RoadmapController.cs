@@ -87,9 +87,9 @@ public class RoadmapController : BaseController
     }
 
     [HttpGet("public")]
-    public async Task<IResult> GetPublic([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public async Task<IResult> GetPublic()
     {
-        var query = new GetPublicRoadmapsQuery(page, pageSize);
+        var query = new GetPublicRoadmapsQuery();
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

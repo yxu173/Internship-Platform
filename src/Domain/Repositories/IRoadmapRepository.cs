@@ -8,7 +8,7 @@ public interface IRoadmapRepository
     Task<Roadmap?> GetByIdAsync(Guid id, bool includeSections = false);
     Task<IReadOnlyList<Roadmap>> GetByTechnologyAsync(string technology);
     Task<IReadOnlyList<Roadmap>> GetByCompanyIdAsync(Guid companyId);
-    Task<IReadOnlyList<Roadmap>> GetPublicRoadmapsAsync(int page = 1, int pageSize = 20);
+    Task<IReadOnlyList<Roadmap>> GetPublicRoadmapsAsync();
     Task AddAsync(Roadmap roadmap);
     Task Update(Roadmap roadmap);
     Task Delete(Roadmap roadmap);

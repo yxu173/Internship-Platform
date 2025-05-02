@@ -4,4 +4,4 @@ using SharedKernel;
 
 namespace Application.Features.Roadmaps.Queries.GetPublicRoadmaps;
  
-public record GetPublicRoadmapsQuery(int Page = 1, int PageSize = 20) : IQuery<IReadOnlyList<RoadmapDto>>; 
+public record GetPublicRoadmapsQuery() : IQuery<IReadOnlyList<PublicRoadmapsDto>>; 

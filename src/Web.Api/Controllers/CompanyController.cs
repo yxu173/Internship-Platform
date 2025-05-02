@@ -76,27 +76,27 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/{id:guid}/basic")]
-    public async Task<IResult> GetCompanyBasicInfo([FromRoute] Guid id)
+    [HttpGet("profiles/basic")]
+    public async Task<IResult> GetCompanyBasicInfo()
     {
-        var query = new GetCompanyBasicInfoQuery(id);
+        var query = new GetCompanyBasicInfoQuery(UserId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/{id:guid}/about")]
-    public async Task<IResult> GetCompanyAbout([FromRoute] Guid id)
+    [HttpGet("profiles/about")]
+    public async Task<IResult> GetCompanyAbout()
     {
-        var query = new GetCompanyAboutQuery(id);
+        var query = new GetCompanyAboutQuery(UserId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpPatch("profiles/{id:guid}/about")]
-    public async Task<IResult> UpdateCompanyAbout([FromRoute] Guid id, [FromBody] UpdateCompanyAboutRequest request)
+    [HttpPatch("profiles/about")]
+    public async Task<IResult> UpdateCompanyAbout( [FromBody] UpdateCompanyAboutRequest request)
     {
         var command = new UpdateCompanyAboutCommand(
-            id,
+            UserId,
             request.About,
             request.Mission,
             request.Vision
@@ -105,21 +105,21 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpPatch("profiles/{id:guid}/logo")]
-    public async Task<IResult> UpdateCompanyLogo([FromRoute] Guid id, [FromBody] string logoUrl)
+    [HttpPatch("profiles/logo")]
+    public async Task<IResult> UpdateCompanyLogo( [FromBody] string logoUrl)
     {
         var command = new UpdateCompanyLogoCommand(
-            id,
+            UserId,
             logoUrl
         );
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/{id:guid}/logo")]
-    public async Task<IResult> GetCompanyLogo([FromRoute] Guid id)
+    [HttpGet("profiles/logo")]
+    public async Task<IResult> GetCompanyLogo()
     {
-        var query = new GetCompanyLogoQuery(id);
+        var query = new GetCompanyLogoQuery(UserId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

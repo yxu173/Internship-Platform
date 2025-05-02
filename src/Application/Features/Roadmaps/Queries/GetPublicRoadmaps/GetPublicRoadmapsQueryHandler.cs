@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Application.Features.Roadmaps.Queries.GetPublicRoadmaps;
 
-internal sealed class GetPublicRoadmapsQueryHandler : IQueryHandler<GetPublicRoadmapsQuery, IReadOnlyList<RoadmapDto>>
+internal sealed class GetPublicRoadmapsQueryHandler : IQueryHandler<GetPublicRoadmapsQuery, IReadOnlyList<PublicRoadmapsDto>>
 {
     private readonly IRoadmapRepository _roadmapRepository;
 
@@ -17,23 +17,15 @@ internal sealed class GetPublicRoadmapsQueryHandler : IQueryHandler<GetPublicRoa
         _roadmapRepository = roadmapRepository;
     }
 
-    public async Task<Result<IReadOnlyList<RoadmapDto>>> Handle(GetPublicRoadmapsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<PublicRoadmapsDto>>> Handle(GetPublicRoadmapsQuery request, CancellationToken cancellationToken)
     {
-        var roadmaps = await _roadmapRepository.GetPublicRoadmapsAsync(request.Page, request.PageSize);
+        var roadmaps = await _roadmapRepository.GetPublicRoadmapsAsync();
 
-        var roadmapDtos = roadmaps.Select(roadmap => new RoadmapDto(
+        var roadmapDtos = roadmaps.Select(roadmap => new PublicRoadmapsDto(
                 roadmap.Id,
-                roadmap.Title,
-                roadmap.Description,
-                roadmap.Technology,
-                roadmap.IsPremium,
-                roadmap.Price,
-                roadmap.CompanyId,
-                roadmap.CreatedAt,
-                null, 
-                null 
+                roadmap.Title
             )).ToList();
 
-        return Result.Success<IReadOnlyList<RoadmapDto>>(roadmapDtos);
+        return Result.Success<IReadOnlyList<PublicRoadmapsDto>>(roadmapDtos);
     }
 } 

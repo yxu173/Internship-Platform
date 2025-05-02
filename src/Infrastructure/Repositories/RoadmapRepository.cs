@@ -37,7 +37,7 @@ public class RoadmapRepository : IRoadmapRepository
         return await _context.Roadmaps.AsNoTracking().Where(x => x.CompanyId == companyId).ToListAsync();
     }
 
-    public async Task<IReadOnlyList<Roadmap>> GetPublicRoadmapsAsync(int page = 1, int pageSize = 20)
+    public async Task<IReadOnlyList<Roadmap>> GetPublicRoadmapsAsync()
     {
         return await _context.Roadmaps.AsNoTracking().Where(x => !x.IsPremium).ToListAsync();
     }
