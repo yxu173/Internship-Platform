@@ -4,8 +4,7 @@ public sealed record CompanyInternshipsDto(
     Guid Id,
     string Title,
     string Type,
-    string WorkingModel,
-    decimal Salary,
+    int ApplicationCount,
     string Currency,
     bool IsActive
     );

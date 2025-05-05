@@ -41,8 +41,7 @@ public sealed class
                     i.Id,
                     i.Title,
                     i.Type.ToString(),
-                    i.WorkingModel.ToString(),
-                    i.Salary.Amount,
+                    i.Applications.Count,
                     i.Salary.Currency,
                     i.IsActive
                 )).ToList()

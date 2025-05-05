@@ -19,8 +19,8 @@ namespace Web.Api.Controllers;
 [Authorize]
 public class CompanyController : BaseController
 {
-    [HttpGet("profiles/{id}")]
-    public async Task<IResult> GetCompleteCompanyProfile(Guid id)
+    [HttpGet("profiles")]
+    public async Task<IResult> GetCompleteCompanyProfile()
     {
         var query = new GetCompleteCompanyProfileQuery(UserId);
         var result = await _mediator.Send(query);
@@ -45,13 +45,13 @@ public class CompanyController : BaseController
     }
 
 
-    [HttpGet("profiles")]
-    public async Task<IResult> GetCompanyProfile()
-    {
-        var query = new GetCompanyProfileQuery(UserId);
-        var result = await _mediator.Send(query);
-        return result.Match(Results.Ok, CustomResults.Problem);
-    }
+    // [HttpGet("profiles")]
+    // public async Task<IResult> GetCompanyProfile()
+    // {
+    //     var query = new GetCompanyProfileQuery(UserId);
+    //     var result = await _mediator.Send(query);
+    //     return result.Match(Results.Ok, CustomResults.Problem);
+    // }
 
     /*
     [HttpGet("profiles/{id:guid}")]
