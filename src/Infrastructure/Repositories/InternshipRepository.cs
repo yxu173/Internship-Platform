@@ -38,6 +38,26 @@ public sealed class InternshipRepository : IInternshipRepository
             .Where(i => i.CompanyProfileId == companyId)
             .ToListAsync();
     }
+    
+    public async Task<IReadOnlyList<Internship>> GetActiveInternshipsAsync()
+    {
+        return await _context.Internships
+            .Where(i => i.IsActive && i.ApplicationDeadline > DateTime.UtcNow)
+            .Include(i => i.CompanyProfile)
+            .Include(i => i.Applications)
+            .ToListAsync();
+    }
+    
+    public async Task<IReadOnlyList<Internship>> GetRecentInternshipsAsync(int count)
+    {
+        return await _context.Internships
+            .Where(i => i.IsActive && i.ApplicationDeadline > DateTime.UtcNow)
+            .Include(i => i.CompanyProfile)
+            .Include(i => i.Applications)
+            .OrderByDescending(i => i.CreatedAt)
+            .Take(count)
+            .ToListAsync();
+    }
 
     public async Task AddAsync(Internship internship)
     {
