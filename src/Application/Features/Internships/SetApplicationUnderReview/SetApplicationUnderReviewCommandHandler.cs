@@ -5,20 +5,20 @@ using Domain.Repositories;
 using MediatR;
 using SharedKernel;
 
-namespace Application.Features.Internships.RejectApplication;
+namespace Application.Features.Internships.SetApplicationUnderReview;
 
-public sealed class RejectApplicationCommandHandler : ICommandHandler<RejectApplicationCommand, bool>
+public sealed class SetApplicationUnderReviewCommandHandler : ICommandHandler<SetApplicationUnderReviewCommand, bool>
 {
     private readonly IInternshipRepository _internshipRepository;
     private readonly IMediator _mediator;
 
-    public RejectApplicationCommandHandler(IInternshipRepository internshipRepository, IMediator mediator)
+    public SetApplicationUnderReviewCommandHandler(IInternshipRepository internshipRepository, IMediator mediator)
     {
         _internshipRepository = internshipRepository;
         _mediator = mediator;
     }
 
-    public async Task<Result<bool>> Handle(RejectApplicationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(SetApplicationUnderReviewCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,14 +35,14 @@ public sealed class RejectApplicationCommandHandler : ICommandHandler<RejectAppl
                 return Result.Failure<bool>(Error.NotFound("Internship not found", $"{application.InternshipId}"));
             }
 
-            application.UpdateStatus(ApplicationStatus.Rejected, request.FeedbackNotes);
+            application.UpdateStatus(ApplicationStatus.UnderReview, request.FeedbackNotes);
             await _internshipRepository.UpdateApplicationAsync(application);
 
-            var notificationTitle = "Application Status Update";
-            var notificationMessage = $"Your application for {internship.Title} has been reviewed.";
+            var notificationTitle = "Application Under Review";
+            var notificationMessage = $"Your application for {internship.Title} is now under review.";
             if (!string.IsNullOrEmpty(request.FeedbackNotes))
             {
-                notificationMessage += $" Feedback: {request.FeedbackNotes}";
+                notificationMessage += $" Note: {request.FeedbackNotes}";
             }
 
             var notificationCommand = new SendNotificationCommand(
@@ -58,7 +58,7 @@ public sealed class RejectApplicationCommandHandler : ICommandHandler<RejectAppl
         }
         catch (Exception ex)
         {
-            return Result.Failure<bool>(Error.BadRequest("Error rejecting application", $"{ex.Message}"));
+            return Result.Failure<bool>(Error.BadRequest("Error setting application under review", $"{ex.Message}"));
         }
     }
 }

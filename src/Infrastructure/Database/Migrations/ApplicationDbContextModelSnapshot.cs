@@ -93,6 +93,9 @@ namespace Infrastructure.Database.Migrations
                     b.Property<DateTime?>("DecisionDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("FeedbackNotes")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("InternshipId")
                         .HasColumnType("uuid")
                         .HasColumnName("InternshipId");

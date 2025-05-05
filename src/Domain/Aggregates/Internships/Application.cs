@@ -14,6 +14,7 @@ public sealed class Application : BaseEntity
     public ApplicationStatus Status { get; private set; }
     public string? ResumeUrl { get; }
     public DateTime? DecisionDate { get; private set; }
+    public string? FeedbackNotes { get; private set; }
     public Internship Internship { get; private set; }
     public StudentProfile StudentProfile { get; private set; }
     private Application() { }
@@ -32,10 +33,16 @@ public sealed class Application : BaseEntity
         return Result.Success(new Application(studentProfileId, resumeUrl));
     }
 
-    public Result UpdateStatus(ApplicationStatus newStatus)
+    public Result UpdateStatus(ApplicationStatus newStatus, string? feedbackNotes = null)
     {
         Status = newStatus;
         DecisionDate = DateTime.UtcNow;
+        
+        if (feedbackNotes is not null)
+        {
+            FeedbackNotes = feedbackNotes;
+        }
+        
         return Result.Success();
     }
 }

@@ -1,8 +1,12 @@
+using Application.Features.Internships.AcceptApplication;
 using Application.Features.Internships.CreateApplication;
 using Application.Features.Internships.CreateInternship;
+using Application.Features.Internships.GetApplicationsByInternshipId;
 using Application.Features.Internships.GetInternshipsByCompanyId;
+using Application.Features.Internships.RejectApplication;
 using Application.Features.Internships.RemoveApplication;
 using Application.Features.Internships.RemoveInternship;
+using Application.Features.Internships.SetApplicationUnderReview;
 using Application.Features.Internships.UpdateInternship;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -93,8 +97,40 @@ public class InternshipController : BaseController
     [HttpGet("GetInternshipById/{id:guid}")]
     public async Task<IResult> GetInternshipById([FromRoute] Guid id)
     {
-        var query = new GetInternshipsByCompanyIdQuery(id);
+        var query = new GetInternshipsByCompanyIdQuery(UserId);
         var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpGet("GetApplicationsByInternshipId/{internshipId:guid}")]
+    public async Task<IResult> GetApplicationsByInternshipId([FromRoute] Guid internshipId)
+    {
+        var query = new GetApplicationsByInternshipIdQuery(internshipId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpPost("AcceptApplication/{applicationId:guid}")]
+    public async Task<IResult> AcceptApplication([FromRoute] Guid applicationId, [FromBody] ApplicationFeedbackRequest request)
+    {
+        var command = new AcceptApplicationCommand(applicationId, request.FeedbackNotes);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpPost("RejectApplication/{applicationId:guid}")]
+    public async Task<IResult> RejectApplication([FromRoute] Guid applicationId, [FromBody] ApplicationFeedbackRequest request)
+    {
+        var command = new RejectApplicationCommand(applicationId, request.FeedbackNotes);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpPost("SetApplicationUnderReview/{applicationId:guid}")]
+    public async Task<IResult> SetApplicationUnderReview([FromRoute] Guid applicationId, [FromBody] ApplicationFeedbackRequest request)
+    {
+        var command = new SetApplicationUnderReviewCommand(applicationId, request.FeedbackNotes);
+        var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 }
