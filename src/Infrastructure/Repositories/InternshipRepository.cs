@@ -18,12 +18,12 @@ public sealed class InternshipRepository : IInternshipRepository
     public async Task<Internship?> GetByIdAsync(Guid id, bool includeApplications = false)
     {
         var query = _context.Internships.AsQueryable();
-        
+
         if (includeApplications)
         {
             query = query.Include(i => i.Applications);
         }
-        
+
         return await query.FirstOrDefaultAsync(i => i.Id == id);
     }
 
@@ -35,8 +35,8 @@ public sealed class InternshipRepository : IInternshipRepository
     public async Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.Internships
-        .Where(i => i.CompanyProfileId == companyId)
-        .ToListAsync();
+            .Where(i => i.CompanyProfileId == companyId)
+            .ToListAsync();
     }
 
     public async Task AddAsync(Internship internship)
@@ -64,7 +64,8 @@ public sealed class InternshipRepository : IInternshipRepository
             .FirstOrDefaultAsync(a => a.Id == applicationId);
     }
 
-    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByInternshipIdAsync(Guid internshipId)
+    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByInternshipIdAsync(
+        Guid internshipId)
     {
         return await _context.Applications
             .Where(a => a.InternshipId == internshipId)
@@ -72,7 +73,8 @@ public sealed class InternshipRepository : IInternshipRepository
             .ToListAsync();
     }
 
-    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByStudentIdAsync(Guid studentProfileId)
+    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetApplicationsByStudentIdAsync(
+        Guid studentProfileId)
     {
         return await _context.Applications
             .Where(a => a.StudentProfileId == studentProfileId)
@@ -85,12 +87,17 @@ public sealed class InternshipRepository : IInternshipRepository
     {
         await _context.Applications.AddAsync(application);
         await _context.SaveChangesAsync();
-
     }
 
     public async Task RemoveApplication(Domain.Aggregates.Internships.Application application)
     {
         _context.Applications.Remove(application);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateApplicationAsync(Domain.Aggregates.Internships.Application application)
+    {
+        _context.Applications.Update(application);
         await _context.SaveChangesAsync();
     }
 }

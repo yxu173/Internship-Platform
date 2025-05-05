@@ -16,4 +16,5 @@ public interface IInternshipRepository
     Task<IReadOnlyList<Application>> GetApplicationsByStudentIdAsync(Guid studentProfileId);
     Task AddApplicationAsync(Application application);
     Task RemoveApplication(Application application);
+    Task UpdateApplicationAsync(Application application);
 }
