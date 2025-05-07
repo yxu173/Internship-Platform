@@ -24,7 +24,7 @@ public sealed class
         var user = await _userRepository.GetByIdAsync(request.Id);
         var company = await _companyRepository.GetByCompanyProfileWithInternships(request.Id,
             p => new CompleteCompanyProfile(
-                p.LogoUrl,
+                string.IsNullOrEmpty(p.LogoUrl) ? "/uploads/company-logos/default-logo.png" : p.LogoUrl,
                 new CompanyBasicInfoDto(
                     p.CompanyName,
                     p.Description,

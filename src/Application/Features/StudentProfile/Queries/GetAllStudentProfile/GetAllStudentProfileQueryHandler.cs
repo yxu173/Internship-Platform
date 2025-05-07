@@ -35,8 +35,8 @@ public sealed class
                 Gender: studentProfile.Gender.ToString(),
                 Bio: studentProfile.Bio ?? string.Empty,
                 PhoneNumber: studentProfile.PhoneNumber.Value,
-                ProfilePictureUrl: studentProfile.ProfilePictureUrl ?? string.Empty,
-                ResumeUrl: studentProfile.ResumeUrl ?? string.Empty
+                ProfilePictureUrl: string.IsNullOrEmpty(studentProfile.ProfilePictureUrl) ? "/uploads/profile-pics/default-profile.png" : studentProfile.ProfilePictureUrl,
+                ResumeUrl: string.IsNullOrEmpty(studentProfile.ResumeUrl) ? string.Empty : studentProfile.ResumeUrl
             ),
             Skills: studentProfile.Skills
                 .Select(ss => new SkillResponse(

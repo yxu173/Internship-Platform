@@ -32,13 +32,20 @@ public sealed class InternshipRepository : IInternshipRepository
         return _context.Internships.FirstOrDefaultAsync(i => i.Id == id);
     }
 
+    public async Task<Internship> GetByInternshipIdWithCompanyAsync(Guid internshipId)
+    {
+        return await _context.Internships
+            .Include(i => i.CompanyProfile)
+            .FirstOrDefaultAsync(i => i.Id == internshipId);
+    }
+
     public async Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.Internships
             .Where(i => i.CompanyProfileId == companyId)
             .ToListAsync();
     }
-    
+
     public async Task<IReadOnlyList<Internship>> GetActiveInternshipsAsync()
     {
         return await _context.Internships
@@ -47,7 +54,7 @@ public sealed class InternshipRepository : IInternshipRepository
             .Include(i => i.Applications)
             .ToListAsync();
     }
-    
+
     public async Task<IReadOnlyList<Internship>> GetRecentInternshipsAsync(int count)
     {
         return await _context.Internships

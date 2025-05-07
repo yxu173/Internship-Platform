@@ -6,6 +6,7 @@ public interface IInternshipRepository
 {
     Task<Internship?> GetByIdAsync(Guid id, bool includeApplications = false);
     Task<Internship?> GetById(Guid id);
+    Task<Internship> GetByInternshipIdWithCompanyAsync(Guid internshipId);
     Task<IReadOnlyList<Internship>> GetByCompanyIdAsync(Guid companyId);
     Task<IReadOnlyList<Internship>> GetActiveInternshipsAsync();
     Task<IReadOnlyList<Internship>> GetRecentInternshipsAsync(int count);

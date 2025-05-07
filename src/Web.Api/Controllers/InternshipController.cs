@@ -2,6 +2,7 @@ using Application.Features.Internships.AcceptApplication;
 using Application.Features.Internships.CreateApplication;
 using Application.Features.Internships.CreateInternship;
 using Application.Features.Internships.GetApplicationsByInternshipId;
+using Application.Features.Internships.GetByInternshipId;
 using Application.Features.Internships.GetInternshipsByCompanyId;
 using Application.Features.Internships.RejectApplication;
 using Application.Features.Internships.RemoveApplication;
@@ -19,6 +20,15 @@ namespace Web.Api.Controllers;
 [Authorize]
 public class InternshipController : BaseController
 {
+    
+    [HttpGet("GetInternship/{id:guid}")]
+    public async Task<IResult> GetInternships([FromRoute] Guid id)
+    {
+        var query = new GetByInternshipIdCommand(id);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
     [HttpPost("CreateInternship")]
     public async Task<IResult> CreateInternship([FromBody] CreateInternshipRequest request)
     {
