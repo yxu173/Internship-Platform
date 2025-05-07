@@ -43,26 +43,66 @@ public class StudentController : BaseController
     public async Task<IResult> UploadProfilePicture([FromForm] IFormFile file)
     {
         var result = await _photoUploadService.UploadProfilePhoto(file);
+        if (result.IsSuccess)
+        {
+            var command = new UpdateStudentProfilePicCommand(UserId, result.Value);
+            await _mediator.Send(command);
+        }
+
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("upload-resume")]
+    public async Task<IResult> UploadResume([FromForm] IFormFile file)
+    {
+        var result = await _photoUploadService.UploadResumeFile(file);
+        if (result.IsSuccess)
+        {
+            var command = new UpdateStudentResumeUrlCommand(UserId, result.Value);
+            await _mediator.Send(command);
+        }
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
     [HttpPost("profiles")]
-    public async Task<IResult> CreateStudentProfile([FromBody] CreateStudentProfileRequest request)
+    public async Task<IResult> CreateStudentProfile([FromForm] string fullName,
+        [FromForm] string university,
+        [FromForm] string faculty,
+        [FromForm] int graduationYear,
+        [FromForm] int enrollmentYear,
+        [FromForm] int age,
+        [FromForm] string gender,
+        [FromForm] string phoneNumber,
+        [FromForm] string? bio,
+        [FromForm] IFormFile? profilePicture)
     {
+        string? profilePictureUrl = null;
+
+        if (profilePicture != null && profilePicture.Length > 0)
+        {
+            var pictureResult = await _photoUploadService.UploadProfilePhoto(profilePicture);
+
+
+            profilePictureUrl = pictureResult.Value;
+        }
+
         var command = new CreateStudentProfileCommand(
             UserId,
-            request.FullName,
-            request.University,
-            request.Faculty,
-            request.GraduationYear,
-            request.EnrollmentYear,
-            request.Age,
-            request.Gender,
-            request.PhoneNumber,
-            request.Bio,
-            request.ProfilePictureUrl);
+            fullName,
+            university,
+            faculty,
+            graduationYear,
+            enrollmentYear,
+            age,
+            gender,
+            phoneNumber,
+            bio,
+            profilePictureUrl);
 
         var result = await _mediator.Send(command);
+
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -95,22 +135,6 @@ public class StudentController : BaseController
             request.Age,
             request.Bio,
             request.Gender);
-        var result = await _mediator.Send(command);
-        return result.Match(Results.Ok, CustomResults.Problem);
-    }
-
-    [HttpPatch("profiles/me/picture")]
-    public async Task<IResult> UpdateStudentProfilePicture([FromBody] string profilePicture)
-    {
-        var command = new UpdateStudentProfilePicCommand(UserId, profilePicture);
-        var result = await _mediator.Send(command);
-        return result.Match(Results.Ok, CustomResults.Problem);
-    }
-
-    [HttpPatch("profiles/me/resume")]
-    public async Task<IResult> UpdateStudentResume([FromBody] string resume)
-    {
-        var command = new UpdateStudentResumeUrlCommand(UserId, resume);
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

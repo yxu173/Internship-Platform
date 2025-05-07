@@ -1,3 +1,4 @@
+using Application.Abstractions.Services;
 using Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyAbout;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyBasicInfo;
@@ -19,6 +20,12 @@ namespace Web.Api.Controllers;
 [Authorize]
 public class CompanyController : BaseController
 {
+    private readonly IPhotoUploadService _photoUploadService;
+
+    public CompanyController(IPhotoUploadService photoUploadService)
+    {
+        _photoUploadService = photoUploadService;
+    }
     [HttpGet("profiles")]
     public async Task<IResult> GetCompleteCompanyProfile()
     {
@@ -29,18 +36,41 @@ public class CompanyController : BaseController
 
 
     [HttpPost("profiles")]
-    public async Task<IResult> CreateCompanyProfile([FromBody] CreateCompanyProfileRequest request)
+    public async Task<IResult> CreateCompanyProfile(
+        [FromForm] string companyName,
+        [FromForm] string taxId,
+        [FromForm] string governorate,
+        [FromForm] string city,
+        [FromForm] string street,
+        [FromForm] string industry,
+        [FromForm] IFormFile? logo)
     {
+        string? logoUrl = null;
+        
+        if (logo != null && logo.Length > 0)
+        {
+            var logoResult = await _photoUploadService.UploadCompanyLogo(logo);
+           
+                
+            logoUrl = logoResult.Value;
+        }
+        
         var command = new CreateCompanyProfileCommand(
             UserId,
-            request.CompanyName,
-            request.TaxId,
-            request.Governorate,
-            request.City,
-            request.Street,
-            request.Industry);
-
+            companyName,
+            taxId,
+            governorate,
+            city,
+            street,
+            industry);
+        
         var result = await _mediator.Send(command);
+        
+        if (result.IsSuccess && logoUrl != null)
+        {
+            await _mediator.Send(new UpdateCompanyLogoCommand(UserId, logoUrl));
+        }
+        
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -105,14 +135,15 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpPatch("profiles/logo")]
-    public async Task<IResult> UpdateCompanyLogo( [FromBody] string logoUrl)
+    [HttpPost("upload-logo")]
+    public async Task<IResult> UploadCompanyLogo([FromForm] IFormFile file)
     {
-        var command = new UpdateCompanyLogoCommand(
-            UserId,
-            logoUrl
-        );
-        var result = await _mediator.Send(command);
+        var result = await _photoUploadService.UploadCompanyLogo(file);
+        if (result.IsSuccess)
+        {
+            var command = new UpdateCompanyLogoCommand(UserId, result.Value);
+            await _mediator.Send(command);
+        }
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 

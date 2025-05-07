@@ -1,4 +1,4 @@
-﻿using Domain.Aggregates.Roadmaps;
+using Domain.Aggregates.Roadmaps;
 using Domain.Aggregates.Users;
 using Domain.Common;
 using Domain.DomainErrors;
@@ -195,19 +195,19 @@ public sealed class StudentProfile : BaseAuditableEntity
         _projects.Remove(project);
     }
 
-    public Result UpdateResumeUrl(string? resumeUrl)
-    {
-        if (resumeUrl is null)
-            resumeUrl = null;
-        ResumeUrl = resumeUrl?.Trim();
-        return Result.Success();
-    }
-
     public Result UpdateProfilePicture(string? profilePictureUrl)
     {
         if (profilePictureUrl is null)
             profilePictureUrl = null;
         ProfilePictureUrl = profilePictureUrl?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateResumeUrl(string? resumeUrl)
+    {
+        if (resumeUrl is null)
+            resumeUrl = null;
+        ResumeUrl = resumeUrl?.Trim();
         return Result.Success();
     }
 }
