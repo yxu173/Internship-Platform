@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Enums;
 using Domain.Repositories;
 using SharedKernel;
 
@@ -131,8 +132,7 @@ public sealed class GetHomePageDataQueryHandler : IQueryHandler<GetHomePageDataQ
                 .ToList();
             
             var realWorldProjects = allInternships
-                .Where(i => i.Title.Contains("Project", StringComparison.OrdinalIgnoreCase) ||
-                           i.KeyResponsibilities.Contains("Project", StringComparison.OrdinalIgnoreCase))
+                .Where(i => i.Type == InternshipType.ProjectBased)
                 .Take(10)
                 .Select(i => new ProjectCardDto(
                     i.Id,
@@ -149,7 +149,7 @@ public sealed class GetHomePageDataQueryHandler : IQueryHandler<GetHomePageDataQ
             // Get roadmaps
             var roadmaps = await _roadmapRepository.GetPublicRoadmapsAsync();
             var roadmapDtos = roadmaps
-                .Where(r => r.Company != null)
+                .Where(r => r.CompanyId != null)
                 .Take(10)
                 .Select(r => new RoadmapCardDto(
                     r.Id,
