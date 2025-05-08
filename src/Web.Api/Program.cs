@@ -33,9 +33,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("Policy", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -80,9 +81,9 @@ app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
+app.UseCors("Policy");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("Policy");
 app.MapControllers();
 app.MapHub<NotificationHub>("/Notification");
 

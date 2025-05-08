@@ -4,5 +4,5 @@ using SharedKernel;
 namespace Application.Features.Bookmarks.Commands.UnbookmarkInternship;
 
 public sealed record UnbookmarkInternshipCommand(
-    Guid StudentId,
+    Guid UserId,
     Guid InternshipId) : ICommand<bool>; 

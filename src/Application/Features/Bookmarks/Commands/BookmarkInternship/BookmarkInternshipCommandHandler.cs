@@ -39,7 +39,7 @@ internal sealed class BookmarkInternshipCommandHandler : ICommandHandler<Bookmar
             return Result.Failure<bool>(BookmarkErrors.InvalidInternshipId);
         }
 
-        var existingBookmark = await _internshipBookmarkRepository.FindByUserAndInternshipIdAsync(
+        var existingBookmark = await _internshipBookmarkRepository.FindByStudentAndInternshipIdAsync(
             student.Id, request.InternshipId, cancellationToken);
         if (existingBookmark is not null)
         {

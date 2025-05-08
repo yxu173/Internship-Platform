@@ -18,4 +18,8 @@ public sealed record InternshipResponse(
     decimal Salary,
     string Currency,
     bool IsActive,
+    string Mission,
+    string Vision,
+    string AboutCompany,
+    bool IsBookmarked,
     DateTime CreatedAt);

@@ -19,7 +19,7 @@ internal sealed class UnbookmarkInternshipCommandHandler : ICommandHandler<Unboo
     public async Task<Result<bool>> Handle(UnbookmarkInternshipCommand request, CancellationToken cancellationToken)
     {
         var bookmark = await _internshipBookmarkRepository.FindByUserAndInternshipIdAsync(
-            request.StudentId, request.InternshipId, cancellationToken);
+            request.UserId, request.InternshipId, cancellationToken);
 
         if (bookmark is null)
         {
