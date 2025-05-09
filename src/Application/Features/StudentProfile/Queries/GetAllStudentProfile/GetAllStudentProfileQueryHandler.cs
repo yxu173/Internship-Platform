@@ -25,18 +25,25 @@ public sealed class
 
         return Result.Success(new CompleteStudentProfileResponse(
             Id: studentProfile.Id,
+            Bio: studentProfile.Bio,
+            ProfilePictureUrl: string.IsNullOrEmpty(studentProfile.ProfilePictureUrl)
+                ? "/uploads/profile-pics/default-profile.png"
+                : studentProfile.ProfilePictureUrl,
+            ResumeUrl: string.IsNullOrEmpty(studentProfile.ResumeUrl) ? string.Empty : studentProfile.ResumeUrl,
             BasicInfo: new BasicInfoResponse(
                 FullName: studentProfile.FullName,
-                University: studentProfile.University.ToString(),
-                Faculty: studentProfile.Faculty,
-                GraduationYear: studentProfile.GraduationYear.Value,
-                EnrollmentYear: studentProfile.EnrollmentYear.Value,
                 Age: studentProfile.Age,
                 Gender: studentProfile.Gender.ToString(),
-                Bio: studentProfile.Bio ?? string.Empty,
                 PhoneNumber: studentProfile.PhoneNumber.Value,
-                ProfilePictureUrl: string.IsNullOrEmpty(studentProfile.ProfilePictureUrl) ? "/uploads/profile-pics/default-profile.png" : studentProfile.ProfilePictureUrl,
-                ResumeUrl: string.IsNullOrEmpty(studentProfile.ResumeUrl) ? string.Empty : studentProfile.ResumeUrl
+                Location: studentProfile.Location,
+                Email: " "
+            ),
+            Education: new EducationResponse(
+                studentProfile.University.ToString(),
+                studentProfile.Faculty,
+                studentProfile.GraduationYear.Value,
+                studentProfile.EnrollmentYear.Value,
+                studentProfile.Role
             ),
             Skills: studentProfile.Skills
                 .Select(ss => new SkillResponse(

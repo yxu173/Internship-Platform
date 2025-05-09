@@ -2,7 +2,11 @@ namespace Application.Features.StudentProfile.Queries.GetAllStudentProfile;
 
 public sealed record CompleteStudentProfileResponse(
     Guid Id,
+    string Bio,
+    string ProfilePictureUrl,
+    string ResumeUrl,
     BasicInfoResponse BasicInfo,
+    EducationResponse Education,
     List<SkillResponse> Skills,
     List<ExperienceResponse> Experiences,
     List<ProjectResponse> Projects
@@ -10,16 +14,19 @@ public sealed record CompleteStudentProfileResponse(
 
 public sealed record BasicInfoResponse(
     string FullName,
+    int Age,
+    string Gender,
+    string PhoneNumber,
+    string Location,
+    string Email
+);
+
+public sealed record EducationResponse(
     string University,
     string Faculty,
     int GraduationYear,
     int EnrollmentYear,
-    int Age,
-    string Gender,
-    string Bio,
-    string PhoneNumber,
-    string ProfilePictureUrl,
-    string ResumeUrl
+    string Role
 );
 
 public sealed record SkillResponse(

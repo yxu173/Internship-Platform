@@ -15,6 +15,8 @@ using Application.Features.StudentProfile.Queries.GetAllStudentExperiences;
 using Application.Features.StudentProfile.Queries.GetAllStudentProfile;
 using Application.Features.StudentProfile.Queries.GetAllStudentProjects;
 using Application.Features.StudentProfile.Queries.GetAllStudentSkills;
+using Application.Features.StudentProfile.Queries.GetStudentBio;
+using Application.Features.StudentProfile.Queries.GetStudentEducation;
 using Application.Features.StudentProfile.Queries.GetStudentProfile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -109,7 +111,7 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/basic/me")]
+    [HttpGet("profiles/info")]
     public async Task<IResult> GetStudentProfile()
     {
         var query = new GetStudentProfileQuery(UserId);
@@ -117,13 +119,13 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("profiles/basic/{id:guid}")]
-    public async Task<IResult> GetStudentProfileById([FromRoute] Guid id)
-    {
-        var query = new GetStudentProfileQuery(id);
-        var result = await _mediator.Send(query);
-        return result.Match(Results.Ok, CustomResults.Problem);
-    }
+    // [HttpGet("profiles/basic/{id:guid}")]
+    // public async Task<IResult> GetStudentProfileById([FromRoute] Guid id)
+    // {
+    //     var query = new GetStudentProfileQuery(id);
+    //     var result = await _mediator.Send(query);
+    //     return result.Match(Results.Ok, CustomResults.Problem);
+    // }
 
     [HttpPut("profiles/Info")]
     public async Task<IResult> UpdateStudentProfile([FromBody] UpdateStudentProfileRequest request)
@@ -153,6 +155,15 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    [HttpGet("profiles/Education")]
+    public async Task<IResult> UpdateEducation()
+    {
+        var query = new GetStudentEducationQuery(
+            UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
     [HttpPut("profiles/bio")]
     public async Task<IResult> UpdateBio([FromBody] UpdateBioRequest request)
     {
@@ -160,6 +171,15 @@ public class StudentController : BaseController
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    [HttpGet("profiles/bio")]
+    public async Task<IResult> UpdateBio()
+    {
+        var query = new GetStudentBioQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
 
     // Add Student ID to the route
     [HttpGet("profiles/skills")]

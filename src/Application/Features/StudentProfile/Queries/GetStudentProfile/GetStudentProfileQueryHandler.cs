@@ -4,7 +4,7 @@ using SharedKernel;
 
 namespace Application.Features.StudentProfile.Queries.GetStudentProfile;
 
-public sealed class GetStudentProfileQueryHandler 
+public sealed class GetStudentProfileQueryHandler
     : IQueryHandler<GetStudentProfileQuery, StudentProfileDto>
 {
     private readonly IStudentRepository _studentRepository;
@@ -15,11 +15,11 @@ public sealed class GetStudentProfileQueryHandler
     }
 
     public async Task<Result<StudentProfileDto>> Handle(
-        GetStudentProfileQuery request, 
+        GetStudentProfileQuery request,
         CancellationToken cancellationToken)
     {
         var profile = await _studentRepository.GetByUserIdAsync(request.UserId);
-        
+
         if (profile is null)
             return Result.Failure<StudentProfileDto>(Domain.DomainErrors.StudentErrors.ProfileNotFound);
 
@@ -27,13 +27,9 @@ public sealed class GetStudentProfileQueryHandler
             profile.Id,
             profile.UserId,
             profile.FullName,
-            profile.University.ToString(),
-            profile.Faculty,
-            profile.GraduationYear.Value,
+            profile.PhoneNumber.Value,
+            profile.Location,
             profile.Age,
-            profile.Bio,
-            profile.Skills
-                .Select(ss => ss.Skill.Name)
-                .ToList());
+            profile.Gender.ToString());
     }
 }

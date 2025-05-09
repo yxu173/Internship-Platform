@@ -4,10 +4,8 @@ public sealed record StudentProfileDto(
     Guid StudentId,
     Guid UserId,
     string FullName,
-    string University,
-    string Faculty,
-    int GraduationYear,
+    string? PhoneNumber,
+    string? Location,
     int Age,
-    string? Bio,
-    List<string> Skills
+    string Gender
 );
