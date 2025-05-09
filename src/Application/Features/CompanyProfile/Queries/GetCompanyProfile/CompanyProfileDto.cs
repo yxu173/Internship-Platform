@@ -6,7 +6,6 @@ public sealed record CompanyProfileDto(
     string CompanyName,
     string Governorate,
     string City,
-    string Street,
     string Industry,
     string? WebsiteUrl,
     string? Description,

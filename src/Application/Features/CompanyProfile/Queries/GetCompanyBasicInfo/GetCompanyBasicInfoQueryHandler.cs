@@ -20,11 +20,10 @@ public class GetCompanyBasicInfoQueryHandler : IQueryHandler<GetCompanyBasicInfo
     {
         var company = await _companyRepository.GetByUserIdAsync(request.UserId,
             p => new CompanyBasicInfoDto(
-                p.CompanyName,
-                p.Description,
                 p.Industry,
                 p.Size.ToString(),
-                p.WebsiteUrl
+                p.WebsiteUrl,
+                p.YearOfEstablishment
             )
         );
 

@@ -1,5 +1,7 @@
 using Application.Abstractions.Messaging;
 using Application.Features.CompanyProfile.Dtos;
+using Application.Features.CompanyProfile.Queries.GetCompanyContact;
+using Application.Features.CompanyProfile.Queries.GetCompanyInfo;
 using Application.Features.Internships.GetInternshipsByCompanyId;
 using Domain.Repositories;
 using SharedKernel;
@@ -25,22 +27,19 @@ public sealed class
         var company = await _companyRepository.GetByCompanyProfileWithInternships(request.Id,
             p => new CompleteCompanyProfile(
                 string.IsNullOrEmpty(p.LogoUrl) ? "/uploads/company-logos/default-logo.png" : p.LogoUrl,
-                new CompanyBasicInfoDto(
+                new CompanyInfoResponse(
                     p.CompanyName,
-                    p.Description,
+                    p.Description),
+                new CompanyBasicInfoDto(
                     p.Industry,
                     p.Size.ToString(),
-                    p.WebsiteUrl),
-                new CompanyAddressDto(
+                    p.WebsiteUrl,
+                    p.YearOfEstablishment),
+                new CompanyContactResponse(
                     user.Email,
                     p.Address.Governorate.ToString(),
-                    p.Address.City,
-                    p.Address.Street
+                    p.Address.City
                 ),
-                new CompanyAboutDto(
-                    p.About.About,
-                    p.About.Mission,
-                    p.About.Vision),
                 p.Internships.Select(i => new CompanyInternshipsDto(
                     i.Id,
                     i.Title,

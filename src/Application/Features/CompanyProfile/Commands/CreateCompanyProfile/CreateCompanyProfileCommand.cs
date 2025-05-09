@@ -8,5 +8,4 @@ public sealed record CreateCompanyProfileCommand(
     string TaxId,
     string Governorate,
     string City,
-    string Street,
     string Industry) : ICommand<Guid>;

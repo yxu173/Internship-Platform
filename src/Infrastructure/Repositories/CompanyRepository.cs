@@ -23,7 +23,6 @@ public class CompanyRepository : ICompanyRepository
         string taxId,
         string governorate,
         string city,
-        string street,
         string industry)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId);
@@ -36,24 +35,29 @@ public class CompanyRepository : ICompanyRepository
         user.CreateCompanyProfile(companyName, taxId,
             governorate,
             city,
-            street,
             industry);
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Result.Success(user.CompanyProfile);
     }
 
+    public async Task Update(CompanyProfile company)
+    {
+        _context.CompanyProfiles.Update(company);
+        await _context.SaveChangesAsync();
+    }
+
+
     public async Task<Result<bool>> UpdateBasicInfoAsync(Guid userId,
-        string name,
         string industry,
-        string description,
         string websiteUrl,
-        string companySize)
+        string companySize,
+        string yearOfEstablishment)
     {
         var company = await GetCompanyByIdAsync(userId);
         if (company == null)
             return Result.Failure<bool>(CompanyErrors.ProfileNotFound);
-        company.UpdateDetails(name, industry, websiteUrl, description, companySize.ToString());
+        company.UpdateDetails(industry, websiteUrl, companySize.ToString(),yearOfEstablishment);
         await UpdateAsync(company);
         return Result.Success(true);
     }

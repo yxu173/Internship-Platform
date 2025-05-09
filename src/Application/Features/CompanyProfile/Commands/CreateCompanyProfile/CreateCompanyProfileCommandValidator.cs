@@ -36,10 +36,6 @@ public sealed class CreateCompanyProfileCommandValidator : AbstractValidator<Cre
             .WithMessage("City must be at least 2 characters")
             .MaximumLength(50)
             .WithMessage("City cannot exceed 50 characters");
-        RuleFor(x => x.Street)
-            .NotEmpty()
-            .WithMessage("Street is required");
-
         RuleFor(x => x.Industry)
             .NotEmpty()
             .WithMessage("Industry is required")

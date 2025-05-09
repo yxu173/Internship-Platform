@@ -16,13 +16,12 @@ public sealed class UpdateCompanyBasicInfoCommandHandler : ICommandHandler<Updat
     public async Task<Result<bool>> Handle(UpdateCompanyBasicInfoCommand request, CancellationToken cancellationToken)
     {
         var result = await _companyRepository.UpdateBasicInfoAsync(request.UserId,
-            request.Name,
             request.Industry,
-            request.Description,
             request.WebsiteUrl,
-            request.CompanySize
+            request.CompanySize,
+            request.YearOfEstablishment
         );
-        
+
         return result.IsFailure ? Result.Failure<bool>(result.Error) : Result.Success(true);
     }
 }

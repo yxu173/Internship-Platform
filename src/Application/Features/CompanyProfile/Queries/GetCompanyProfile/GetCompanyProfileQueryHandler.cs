@@ -30,7 +30,6 @@ public sealed class GetCompanyProfileQueryHandler
             profile.CompanyName,
             profile.Address.Governorate.ToString(),
             profile.Address.City,
-            profile.Address.Street,
             profile.Industry,
             profile.WebsiteUrl,
             profile.Description,

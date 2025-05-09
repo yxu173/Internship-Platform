@@ -1,10 +1,14 @@
 using Application.Abstractions.Services;
 using Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyAbout;
+using Application.Features.CompanyProfile.Commands.UpdateCompanyAddress;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyBasicInfo;
+using Application.Features.CompanyProfile.Commands.UpdateCompanyInfo;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyLogo;
 using Application.Features.CompanyProfile.Queries.GetCompanyAbout;
 using Application.Features.CompanyProfile.Queries.GetCompanyBasicInfo;
+using Application.Features.CompanyProfile.Queries.GetCompanyContact;
+using Application.Features.CompanyProfile.Queries.GetCompanyInfo;
 using Application.Features.CompanyProfile.Queries.GetCompanyLogo;
 using Application.Features.CompanyProfile.Queries.GetCompanyProfile;
 using Application.Features.CompanyProfile.Queries.GetCompleteCompanyProfile;
@@ -26,6 +30,7 @@ public class CompanyController : BaseController
     {
         _photoUploadService = photoUploadService;
     }
+
     [HttpGet("profiles")]
     public async Task<IResult> GetCompleteCompanyProfile()
     {
@@ -41,36 +46,34 @@ public class CompanyController : BaseController
         [FromForm] string taxId,
         [FromForm] string governorate,
         [FromForm] string city,
-        [FromForm] string street,
         [FromForm] string industry,
         [FromForm] IFormFile? logo)
     {
         string? logoUrl = null;
-        
+
         if (logo != null && logo.Length > 0)
         {
             var logoResult = await _photoUploadService.UploadCompanyLogo(logo);
-           
-                
+
+
             logoUrl = logoResult.Value;
         }
-        
+
         var command = new CreateCompanyProfileCommand(
             UserId,
             companyName,
             taxId,
             governorate,
             city,
-            street,
             industry);
-        
+
         var result = await _mediator.Send(command);
-        
+
         if (result.IsSuccess && logoUrl != null)
         {
             await _mediator.Send(new UpdateCompanyLogoCommand(UserId, logoUrl));
         }
-        
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -92,16 +95,15 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }*/
 
-    [HttpPatch("profiles/me/basic")]
+    [HttpPatch("profiles/basic")]
     public async Task<IResult> UpdateBasicInfo([FromBody] UpdateCompanyBasicInfoRequest request)
     {
         var command = new UpdateCompanyBasicInfoCommand(
             UserId,
-            request.Name,
             request.Industry,
-            request.Description,
             request.WebsiteUrl,
-            request.CompanySize);
+            request.CompanySize,
+            request.yearOfEstablishment);
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
@@ -110,6 +112,26 @@ public class CompanyController : BaseController
     public async Task<IResult> GetCompanyBasicInfo()
     {
         var query = new GetCompanyBasicInfoQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPatch("profiles/info")]
+    public async Task<IResult> UpdateInfo([FromBody] UpdateCompanyInfoRequest request)
+    {
+        var command = new UpdateCompanyInfoCommand(
+            UserId,
+            request.Name,
+            request.Description);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("profiles/info")]
+    public async Task<IResult> GetInfo()
+    {
+        var query = new GetCompanyInfoQuery(
+            UserId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
@@ -123,7 +145,7 @@ public class CompanyController : BaseController
     }
 
     [HttpPatch("profiles/about")]
-    public async Task<IResult> UpdateCompanyAbout( [FromBody] UpdateCompanyAboutRequest request)
+    public async Task<IResult> UpdateCompanyAbout([FromBody] UpdateCompanyAboutRequest request)
     {
         var command = new UpdateCompanyAboutCommand(
             UserId,
@@ -132,6 +154,22 @@ public class CompanyController : BaseController
             request.Vision
         );
         var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPatch("profiles/address")]
+    public async Task<IResult> UpdateCompanyAddress([FromBody] UpdateAddressRequest request)
+    {
+        var command = new UpdateCompanyAddressCommand(UserId, request.Governorate, request.City);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("profiles/contact")]
+    public async Task<IResult> GetCompanyContact()
+    {
+        var query = new GetCompanyContactQuery(UserId);
+        var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -144,6 +182,7 @@ public class CompanyController : BaseController
             var command = new UpdateCompanyLogoCommand(UserId, result.Value);
             await _mediator.Send(command);
         }
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 

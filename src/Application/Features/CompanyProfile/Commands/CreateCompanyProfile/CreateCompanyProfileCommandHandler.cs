@@ -21,7 +21,6 @@ public sealed class CreateCompanyProfileCommandHandler : ICommandHandler<CreateC
             request.TaxId,
             request.Governorate,
             request.City,
-            request.Street,
             request.Industry);
 
         if (result.IsFailure)

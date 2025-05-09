@@ -67,10 +67,9 @@ public sealed class User : IdentityUser<Guid>
         string taxId,
         string governorate,
         string city,
-        string street,
         string industry)
     {
-        var profileResult = CompanyProfile.Create(companyName, taxId, governorate, city, street, industry);
+        var profileResult = CompanyProfile.Create(companyName, taxId, governorate, city, industry);
         if (profileResult.IsFailure)
             return profileResult;
 

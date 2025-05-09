@@ -47,8 +47,6 @@ public class CompanyProfileConfiguration : IEntityTypeConfiguration<CompanyProfi
                 .IsRequired();
             address.Property(t => t.City)
                 .IsRequired();
-            address.Property(t => t.Street)
-                .IsRequired();
         });
         builder.OwnsOne(cp => cp.About, about =>
         {

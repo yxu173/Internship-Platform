@@ -12,6 +12,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
     private CompanyProfile()
     {
     }
+
     private readonly List<Guid> _roadmapIds = new();
     private readonly List<Internship> _internships = new();
     private readonly List<Application> _applications = new();
@@ -21,6 +22,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
     public string CompanyName { get; private set; }
     public string? Description { get; private set; }
     public string Industry { get; private set; }
+    public string? YearOfEstablishment { get; private set; }
     public EgyptianTaxId TaxId { get; private set; }
     public CompanyAbout About { get; private set; }
 
@@ -50,7 +52,6 @@ public sealed class CompanyProfile : BaseAuditableEntity
         string taxId,
         string governorate,
         string city,
-        string street,
         string industry)
     {
         var taxIdResult = EgyptianTaxId.Create(taxId);
@@ -58,7 +59,7 @@ public sealed class CompanyProfile : BaseAuditableEntity
         if (taxIdResult.IsFailure)
             return Result.Failure<CompanyProfile>(taxIdResult.Error);
 
-        var addressResult = ValueObjects.Address.Create(governorate, city, street);
+        var addressResult = ValueObjects.Address.Create(governorate, city);
         if (addressResult.IsFailure)
             return Result.Failure<CompanyProfile>(addressResult.Error);
 
@@ -71,20 +72,18 @@ public sealed class CompanyProfile : BaseAuditableEntity
     }
 
     public Result UpdateDetails(
-        string companyName,
         string industry,
         string websiteUrl,
-        string description,
-        string size)
+        string size,
+        string yearOfEstablishment)
     {
-        CompanyName = companyName;
         Industry = industry;
         WebsiteUrl = websiteUrl;
-        Description = description;
         Size = Enum.Parse<CompanySize>(size);
-
+        YearOfEstablishment = yearOfEstablishment;
         return Result.Success();
     }
+
     public Result UpdateLogo(string logoUrl)
     {
         if (string.IsNullOrWhiteSpace(logoUrl))
@@ -93,12 +92,19 @@ public sealed class CompanyProfile : BaseAuditableEntity
         LogoUrl = logoUrl.Trim();
         return Result.Success();
     }
-    public Result AddRoadmap(Guid roadmapId)
-    {
-        if (_roadmapIds.Contains(roadmapId))
-            return Result.Failure(CompanyErrors.DuplicateRoadmap);
 
-        _roadmapIds.Add(roadmapId);
+    public Result UpdateInfo(string name, string description)
+    {
+        CompanyName = name.Trim();
+        Description = description?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateAddress(string governorate, string city)
+    {
+        var newAddress = Address.Create(governorate, city).Value;
+
+        Address = newAddress;
         return Result.Success();
     }
 }

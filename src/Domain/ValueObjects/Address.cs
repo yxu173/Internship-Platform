@@ -8,19 +8,17 @@ public sealed record Address : ValueObject
 {
     public Governorate Governorate { get; }
     public string City { get; }
-    public string Street { get; }
-    private Address(Governorate governorate, string city, string street)
-        => (Governorate, City, Street) = (governorate, city, street);
+    private Address(Governorate governorate, string city)
+        => (Governorate, City) = (governorate, city);
 
-    public static Result<Address> Create(string governorate, string city, string street)
+    public static Result<Address> Create(string governorate, string city)
     {
         var governorateResult = Enum.Parse<Governorate>(governorate);
-        return new Address(governorateResult, city, street);
+        return new Address(governorateResult, city);
     }
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Governorate;
         yield return City;
-        yield return Street;
     }
 }
