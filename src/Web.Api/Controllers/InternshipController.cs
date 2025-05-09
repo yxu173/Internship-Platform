@@ -104,8 +104,8 @@ public class InternshipController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpGet("GetInternshipById/{id:guid}")]
-    public async Task<IResult> GetInternshipById([FromRoute] Guid id)
+    [HttpGet("GetInternshipById")]
+    public async Task<IResult> GetInternshipById()
     {
         var query = new GetInternshipsByCompanyIdQuery(UserId);
         var result = await _mediator.Send(query);

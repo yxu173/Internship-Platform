@@ -76,11 +76,11 @@ public sealed class Internship : BaseAuditableEntity
 
         if (applicationDeadline > duration.StartDate)
             return Result.Failure<Internship>(InternshipErrors.InvalidDeadline);
-        
+
         var workingModelResult = Enum.Parse<WorkingModel>(workingModel);
-        
+
         var salaryResult = Salary.Create(salary, currency).Value;
-        
+
         return Result.Success(new Internship(
             Guid.NewGuid(),
             title,
@@ -146,7 +146,7 @@ public sealed class Internship : BaseAuditableEntity
         ModifiedAt = DateTime.UtcNow;
         return Result.Success();
     }
-    
+
     public bool IsRemote()
     {
         return WorkingModel == WorkingModel.Remote;

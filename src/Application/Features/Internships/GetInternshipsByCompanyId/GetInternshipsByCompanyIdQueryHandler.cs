@@ -23,7 +23,7 @@ public sealed class GetInternshipsByCompanyIdQueryHandler :
         GetInternshipsByCompanyIdQuery request,
         CancellationToken cancellationToken)
     {
-        var internships = await _internshipRepository.GetByCompanyIdAsync(request.UserId);
+        var internships = await _internshipRepository.GetCompanyIntenshipsByUserIdAsync(request.UserId);
         return Result.Success<IReadOnlyList<InternshipDto>>(
             internships.Select(i => new InternshipDto
                 (

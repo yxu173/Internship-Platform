@@ -46,6 +46,13 @@ public sealed class InternshipRepository : IInternshipRepository
             .ToListAsync();
     }
 
+    public async Task<IReadOnlyList<Internship>> GetCompanyIntenshipsByUserIdAsync(Guid userId)
+    {
+        return await _context.Internships
+            .Where(i => i.CompanyProfile.UserId == userId)
+            .ToListAsync();
+    }
+
     public async Task<IReadOnlyList<Internship>> GetActiveInternshipsAsync()
     {
         return await _context.Internships
