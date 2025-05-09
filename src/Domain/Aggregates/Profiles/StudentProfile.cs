@@ -30,6 +30,8 @@ public sealed class StudentProfile : BaseAuditableEntity
     public EgyptianUniversity University { get; private set; }
     public Year EnrollmentYear { get; private set; }
     public Year GraduationYear { get; private set; }
+    public string Role { get; private set; }
+    public string? Location { get; private set; }
     public IReadOnlyList<Enrollment> Enrollments => _enrollments.AsReadOnly();
     public IReadOnlyList<StudentSkill> Skills => _skills.AsReadOnly();
     public IReadOnlyList<StudentExperience> Experiences => _experiences.AsReadOnly();
@@ -113,86 +115,45 @@ public sealed class StudentProfile : BaseAuditableEntity
         _skills.Remove(skill);
     }
 
-    public Result AddExperience(
-        string jobTitle,
-        string companyName,
-        DateTime startDate,
-        DateTime? endDate)
-    {
-        var experienceResult = StudentExperience.Create(
-            Id,
-            jobTitle,
-            companyName,
-            startDate,
-            endDate);
-
-        if (experienceResult.IsFailure)
-            return Result.Failure(experienceResult.Error);
-
-        _experiences.Add(experienceResult.Value);
-        return Result.Success();
-    }
-
-    public Result AddProject(
-        string projectName,
-        string description,
-        string? projectUrl)
-    {
-        var projectResult = StudentProject.Create(
-            Id,
-            projectName,
-            description,
-            projectUrl);
-
-        if (projectResult.IsFailure)
-            return Result.Failure(projectResult.Error);
-
-        _projects.Add(projectResult.Value);
-        return Result.Success();
-    }
-
     public Result UpdateInformation(
         string fullName,
-        string university,
-        string faculty,
-        int enrollmentYear,
-        int graduationYear,
+        string? phoneNumber,
+        string? location,
         int age,
-        string bio,
         string gender
     )
     {
         var genderResult = Enum.Parse<Gender>(gender);
-        var universityResult = Enum.Parse<EgyptianUniversity>(university);
-
-        var graduationYearResult = Year.Create(graduationYear);
-        if (graduationYearResult.IsFailure)
-            return Result.Failure(graduationYearResult.Error);
-
-
-        var enrollmentYearResult = Year.Create(enrollmentYear);
-        if (enrollmentYearResult.IsFailure)
-            return Result.Failure(enrollmentYearResult.Error);
 
         FullName = fullName;
-        Faculty = faculty;
+        if (phoneNumber != null)
+        {
+            var phoneResult = PhoneNumber.Create(phoneNumber);
+
+            if (phoneResult.IsFailure)
+                return Result.Failure<StudentProfile>(phoneResult.Error);
+            PhoneNumber = phoneResult.Value;
+        }
+
+        Location = location;
         Age = age;
-        Bio = bio;
         Gender = genderResult;
-        University = universityResult;
-        GraduationYear = graduationYearResult.Value;
-        EnrollmentYear = enrollmentYearResult.Value;
         return Result.Success();
     }
 
-    public void RemoveExperience(StudentExperience experience)
+    public Result UpdateEducation(string university, string faculty, int graduationYear, int enrollmentYear,
+        string role)
     {
-        _experiences.Remove(experience);
-    }
+        var universityResult = Enum.Parse<EgyptianUniversity>(university);
+        var graduationYearResult = Year.Create(graduationYear);
+        var enrollmentYearResult = Year.Create(enrollmentYear);
 
-    public void RemoveProject(StudentProject project)
-    {
-        _projects.Remove(project);
+        University = universityResult;
+        Faculty = faculty;
+        GraduationYear = graduationYearResult.Value;
+        EnrollmentYear = enrollmentYearResult.Value;
+        Role = role;
+        return Result.Success(true);
     }
 
     public Result UpdateProfilePicture(string? profilePictureUrl)
@@ -208,6 +169,12 @@ public sealed class StudentProfile : BaseAuditableEntity
         if (resumeUrl is null)
             resumeUrl = null;
         ResumeUrl = resumeUrl?.Trim();
+        return Result.Success();
+    }
+
+    public Result UpdateBio(string bio)
+    {
+        Bio = bio;
         return Result.Success();
     }
 }

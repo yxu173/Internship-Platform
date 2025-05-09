@@ -5,10 +5,7 @@ namespace Application.Features.StudentProfile.Commands.UpdateStudentInfo;
 public sealed record UpdateStudentInfoCommand(
     Guid UserId,
     string FullName,
-    string University,
-    string Faculty,
-    int EnrollmentYear,
-    int GraduationYear,
+    string? PhoneNumber,
+    string? Location,
     int Age,
-    string Bio,
     string Gender) : ICommand<bool>;

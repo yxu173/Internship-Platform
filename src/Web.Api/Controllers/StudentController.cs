@@ -4,6 +4,9 @@ using Application.Features.StudentProfile.Commands.CreateStudentProfile;
 using Application.Features.StudentProfile.Commands.CreateStudentProject;
 using Application.Features.StudentProfile.Commands.RemoveStudentExperience;
 using Application.Features.StudentProfile.Commands.RemoveStudentProject;
+using Application.Features.StudentProfile.Commands.UpdateStudentBio;
+using Application.Features.StudentProfile.Commands.UpdateStudentEducation;
+using Application.Features.StudentProfile.Commands.UpdateStudentExperience;
 using Application.Features.StudentProfile.Commands.UpdateStudentInfo;
 using Application.Features.StudentProfile.Commands.UpdateStudentProfilePic;
 using Application.Features.StudentProfile.Commands.UpdateStudentProject;
@@ -122,19 +125,38 @@ public class StudentController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
-    [HttpPut("profiles/me")]
+    [HttpPut("profiles/Info")]
     public async Task<IResult> UpdateStudentProfile([FromBody] UpdateStudentProfileRequest request)
     {
         var command = new UpdateStudentInfoCommand(
             UserId,
             request.FullName,
+            request.PhoneNumber,
+            request.Location,
+            request.Age,
+            request.Gender);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPut("profiles/Education")]
+    public async Task<IResult> UpdateEducation([FromBody] UpdateEducationRequest request)
+    {
+        var command = new UpdateStudentEducationCommand(
+            UserId,
             request.University,
             request.Faculty,
             request.GraduationYear,
             request.EnrollmentYear,
-            request.Age,
-            request.Bio,
-            request.Gender);
+            request.Role);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPut("profiles/bio")]
+    public async Task<IResult> UpdateBio([FromBody] UpdateBioRequest request)
+    {
+        var command = new UpdateStudentBioCommand(UserId, request.Bio);
         var result = await _mediator.Send(command);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
@@ -153,6 +175,19 @@ public class StudentController : BaseController
     {
         var command = new CreateStudentExperienceCommand(
             UserId,
+            request.JobTitle,
+            request.CompanyName,
+            request.StartDate,
+            request.EndDate);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPut("profiles/{experienceId:guid}/experience")]
+    public async Task<IResult> UpdateExperience([FromRoute] Guid experienceId, AddExperienceRequest request)
+    {
+        var command = new UpdateStudentExperienceCommand(UserId,
+            experienceId,
             request.JobTitle,
             request.CompanyName,
             request.StartDate,

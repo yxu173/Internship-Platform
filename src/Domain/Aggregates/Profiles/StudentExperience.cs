@@ -29,7 +29,7 @@ public sealed class StudentExperience : BaseEntity
         DateRange = DateRange.Create(startDate, endDate ?? DateTime.UtcNow).Value;
     }
 
-    public static Result<StudentExperience> Create(
+    public static Result<StudentExperience?> Create(
         Guid studentProfileId,
         string jobTitle,
         string companyName,
@@ -42,5 +42,15 @@ public sealed class StudentExperience : BaseEntity
             companyName,
             startDate,
             endDate));
+    }
+
+    public Result UpdateStudentExperience(string jobTitle, string companyName,
+        DateTime startDate, DateTime? endDate)
+    {
+        JobTitle = jobTitle;
+        CompanyName = companyName;
+        DateRange = DateRange.Create(startDate, endDate ?? DateTime.UtcNow).Value;
+
+        return Result.Success();
     }
 }

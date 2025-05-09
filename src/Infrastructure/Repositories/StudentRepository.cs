@@ -50,7 +50,7 @@ public class StudentRepository : IStudentRepository
             bio,
             profilePictureUrl);
 
-   //     _context.Users.Update(user);
+        //     _context.Users.Update(user);
         await _context.StudentProfiles.AddAsync(student.Value);
         await _context.SaveChangesAsync();
         return Result.Success(student.Value);
@@ -103,6 +103,18 @@ public class StudentRepository : IStudentRepository
         return Result.Success();
     }
 
+    public async Task<StudentExperience?> GetStudentExperienceById(Guid studentExperienceId)
+    {
+        return await _context.StudentExperiences
+            .FirstOrDefaultAsync(x => x.Id == studentExperienceId);
+    }
+
+    public async Task UpdateStudentExperience(StudentExperience studentExperience)
+    {
+        _context.Update(studentExperience);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<Result> RemoveStudentExperienceAsync(Guid experienceId)
     {
         var studentExperience = await _context.StudentExperiences.FirstOrDefaultAsync(se => se.Id == experienceId);
@@ -113,7 +125,7 @@ public class StudentRepository : IStudentRepository
         return Result.Success();
     }
 
-    public async Task<IReadOnlyList<StudentExperience>> GetAllStudentExperiences(Guid studentId)
+    public async Task<IReadOnlyList<StudentExperience?>> GetAllStudentExperiences(Guid studentId)
     {
         return await _context.StudentExperiences
             .Where(se => se.StudentProfileId == studentId)

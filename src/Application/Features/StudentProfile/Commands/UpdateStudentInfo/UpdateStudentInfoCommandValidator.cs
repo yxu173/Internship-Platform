@@ -9,19 +9,6 @@ public sealed class UpdateStudentInfoCommandValidator : AbstractValidator<Update
         RuleFor(x => x.FullName)
             .NotEmpty()
             .WithMessage("Full name is required.");
-        //TODO: Add more validation rules for university
-        RuleFor(x => x.University)
-            .NotEmpty()
-            .WithMessage("University is required.");
-        RuleFor(x => x.Faculty)
-            .NotEmpty()
-            .WithMessage("Faculty is required.");
-        RuleFor(x => x.EnrollmentYear)
-            .NotEmpty()
-            .WithMessage("Enrollment year is required.");
-        RuleFor(x => x.GraduationYear)
-            .NotEmpty()
-            .WithMessage("Graduation year is required.");
         RuleFor(x => x.Age)
             .NotEmpty()
             .WithMessage("Age is required.");

@@ -19,16 +19,13 @@ public sealed class UpdateStudentInfoCommandHandler : ICommandHandler<UpdateStud
 
         result.UpdateInformation(
             request.FullName,
-            request.University,
-            request.Faculty,
-            request.EnrollmentYear,
-            request.GraduationYear,
+            request.PhoneNumber,
+            request.Location,
             request.Age,
-            request.Bio,
             request.Gender);
-        
+
         await _studentRepository.UpdateAsync(result);
-        
+
         return Result.Success(true);
     }
 }

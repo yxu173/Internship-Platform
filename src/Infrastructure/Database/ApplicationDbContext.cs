@@ -15,7 +15,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     : IdentityDbContext<User, Role, Guid>(options), IApplicationDbContext
 {
     public DbSet<StudentProfile> StudentProfiles { get; set; }
-    public DbSet<StudentExperience> StudentExperiences { get; set; }
+    public DbSet<StudentExperience?> StudentExperiences { get; set; }
     public DbSet<StudentProject> StudentProjects { get; set; }
     public DbSet<CompanyProfile> CompanyProfiles { get; set; }
     public DbSet<Skill> Skills { get; set; }

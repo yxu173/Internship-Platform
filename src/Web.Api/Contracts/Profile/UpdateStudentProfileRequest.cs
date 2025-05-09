@@ -2,11 +2,8 @@ namespace Web.Api.Contracts.Profile;
 
 public record UpdateStudentProfileRequest(
     string FullName,
-    string University,
-    string Faculty,
-    int GraduationYear,
-    int EnrollmentYear,
+    string? PhoneNumber,
+    string? Location,
     int Age,
-    string Bio,
     string Gender
-    );
+);

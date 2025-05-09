@@ -11,7 +11,7 @@ public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
     DbSet<StudentProfile> StudentProfiles { get; }
-    DbSet<StudentExperience> StudentExperiences { get; }
+    DbSet<StudentExperience?> StudentExperiences { get; }
     DbSet<StudentProject> StudentProjects { get; }
     DbSet<CompanyProfile> CompanyProfiles { get; }
     DbSet<Skill> Skills { get; }

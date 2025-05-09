@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.Aggregates.Profiles;
 using Domain.Repositories;
 using SharedKernel;
 
