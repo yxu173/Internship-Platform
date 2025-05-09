@@ -30,7 +30,7 @@ public sealed class StudentProfile : BaseAuditableEntity
     public EgyptianUniversity University { get; private set; }
     public Year EnrollmentYear { get; private set; }
     public Year GraduationYear { get; private set; }
-    public string Role { get; private set; }
+    public string? Role { get; private set; }
     public string? Location { get; private set; }
     public IReadOnlyList<Enrollment> Enrollments => _enrollments.AsReadOnly();
     public IReadOnlyList<StudentSkill> Skills => _skills.AsReadOnly();
