@@ -20,6 +20,14 @@ public sealed class CreateApplicationCommandHandler : ICommandHandler<CreateAppl
     {
         var studentProfile = await _studentRepository.GetByIdAsync(request.UserId);
         var internship = await _internshipRepository.GetById(request.InternshipId);
+        
+        var studentApplications = await _internshipRepository.GetApplicationsByStudentIdAsync(studentProfile.Id);
+
+        if (studentApplications.Any(a => a.InternshipId == request.InternshipId))
+        {
+            return Result.Failure<bool>(Error.Validation("Duplicate Application", "Duplicate Application"));
+        }
+        
         if (internship == null)
             return Result.Failure<bool>(InternshipErrors.NotFound);
         
