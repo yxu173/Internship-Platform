@@ -14,6 +14,20 @@ internal sealed class RoadmapBookmarkRepository : IRoadmapBookmarkRepository
         _dbContext = dbContext;
     }
 
+    public async Task<Dictionary<Guid, int>> GetBookmarkCountsForRoadmapsAsync(List<Guid> roadmapIds, CancellationToken cancellationToken = default)
+    {
+        if (roadmapIds == null || !roadmapIds.Any())
+            return new Dictionary<Guid, int>();
+            
+        var bookmarkCounts = await _dbContext.RoadmapBookmarks
+            .Where(b => roadmapIds.Contains(b.RoadmapId))
+            .GroupBy(b => b.RoadmapId)
+            .Select(g => new { RoadmapId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.RoadmapId, x => x.Count, cancellationToken);
+            
+        return bookmarkCounts;
+    }
+
     public async Task AddAsync(RoadmapBookmark bookmark, CancellationToken cancellationToken = default)
     {
         await _dbContext.RoadmapBookmarks.AddAsync(bookmark, cancellationToken);

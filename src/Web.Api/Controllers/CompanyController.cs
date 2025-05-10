@@ -12,6 +12,7 @@ using Application.Features.CompanyProfile.Queries.GetCompanyInfo;
 using Application.Features.CompanyProfile.Queries.GetCompanyLogo;
 using Application.Features.CompanyProfile.Queries.GetCompanyProfile;
 using Application.Features.CompanyProfile.Queries.GetCompleteCompanyProfile;
+using Application.Features.CompanyProfile.Queries.GetCompanyPosts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.CompanyProfile;
@@ -190,6 +191,14 @@ public class CompanyController : BaseController
     public async Task<IResult> GetCompanyLogo()
     {
         var query = new GetCompanyLogoQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
+    [HttpGet("posts")]
+    public async Task<IResult> GetCompanyPosts([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+    {
+        var query = new GetCompanyPostsQuery(UserId, page, pageSize);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

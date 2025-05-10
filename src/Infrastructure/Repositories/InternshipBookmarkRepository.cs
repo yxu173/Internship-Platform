@@ -27,6 +27,20 @@ internal sealed class InternshipBookmarkRepository : IInternshipBookmarkReposito
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Dictionary<Guid, int>> GetBookmarkCountsForInternshipsAsync(List<Guid> internshipIds, CancellationToken cancellationToken = default)
+    {
+        if (internshipIds == null || !internshipIds.Any())
+            return new Dictionary<Guid, int>();
+            
+        var bookmarkCounts = await _dbContext.InternshipBookmarks
+            .Where(b => internshipIds.Contains(b.InternshipId))
+            .GroupBy(b => b.InternshipId)
+            .Select(g => new { InternshipId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.InternshipId, x => x.Count, cancellationToken);
+            
+        return bookmarkCounts;
+    }
+
     public async Task AddAsync(InternshipBookmark bookmark, CancellationToken cancellationToken = default)
     {
         await _dbContext.InternshipBookmarks.AddAsync(bookmark, cancellationToken);
