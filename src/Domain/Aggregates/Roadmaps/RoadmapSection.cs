@@ -42,7 +42,7 @@ public sealed class RoadmapSection : BaseEntity
     }
 
     public Result<Guid> AddItem(string title, string description, string type,
-        List<ValueObjects.ResourceLink> resources, int order)
+        List<ResourceLink> resources, int order)
     {
         if (_items.Any(i => i.Order == order))
         {
@@ -61,7 +61,7 @@ public sealed class RoadmapSection : BaseEntity
     }
 
     public Result UpdateItem(Guid itemId, string title, string description, string type,
-        List<ValueObjects.ResourceLink> resources, int order)
+        List<ResourceLink> resources, int order)
     {
         var item = _items.FirstOrDefault(i => i.Id == itemId);
         if (item is null)

@@ -21,18 +21,10 @@ public class RoadmapItemConfiguration : IEntityTypeConfiguration<RoadmapItem>
         builder.Property(x => x.Order)
             .IsRequired();
 
-        builder.OwnsMany(x => x.Resources, r =>
-        {
-            r.Property(x => x.Title)
-                .IsRequired()
-                .HasMaxLength(100);
-            r.Property(x => x.Url)
-                .IsRequired()
-                .HasMaxLength(200);
-            r.Property(x => x.Type)
-                .HasConversion<string>()
-                .IsRequired();
-        });
+        builder.HasMany(x => x.Resources)
+               .WithOne()
+               .HasForeignKey("RoadmapItemId")
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(x => x.Resources)  
                .HasField("_resourceLinks")  

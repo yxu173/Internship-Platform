@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511025213_AddIDToResourceLink")]
+    partial class AddIDToResourceLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -383,38 +386,6 @@ namespace Infrastructure.Database.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("Enrollments", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceLink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("RoadmapItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoadmapItemId");
-
-                    b.ToTable("ResourceLink", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceProgress", b =>
@@ -1187,15 +1158,6 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceLink", b =>
-                {
-                    b.HasOne("Domain.Aggregates.Roadmaps.RoadmapItem", null)
-                        .WithMany("Resources")
-                        .HasForeignKey("RoadmapItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.ResourceProgress", b =>
                 {
                     b.HasOne("Domain.Aggregates.Roadmaps.Enrollment", "Enrollment")
@@ -1225,6 +1187,43 @@ namespace Infrastructure.Database.Migrations
                         .HasForeignKey("SectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsMany("Domain.ValueObjects.ResourceLink", "Resources", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<Guid>("RoadmapItemId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Title")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<string>("Type")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Url")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("character varying(200)");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("RoadmapItemId");
+
+                            b1.ToTable("ResourceLink");
+
+                            b1.WithOwner()
+                                .HasForeignKey("RoadmapItemId");
+                        });
+
+                    b.Navigation("Resources");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>
@@ -1339,11 +1338,6 @@ namespace Infrastructure.Database.Migrations
                     b.Navigation("Enrollments");
 
                     b.Navigation("Sections");
-                });
-
-            modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapItem", b =>
-                {
-                    b.Navigation("Resources");
                 });
 
             modelBuilder.Entity("Domain.Aggregates.Roadmaps.RoadmapSection", b =>

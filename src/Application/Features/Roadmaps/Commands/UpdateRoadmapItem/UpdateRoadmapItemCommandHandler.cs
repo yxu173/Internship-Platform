@@ -6,6 +6,7 @@ using Domain.Aggregates.Roadmaps;
 using Domain.ValueObjects;
 using System.Linq;
 using System.Collections.Generic;
+using ResourceLink = Domain.Aggregates.Roadmaps.ResourceLink;
 
 namespace Application.Features.Roadmaps.Commands.UpdateRoadmapItem;
 
@@ -39,7 +40,7 @@ internal sealed class UpdateRoadmapItemCommandHandler : ICommandHandler<UpdateRo
         {
             try
             {
-                var resourceLink = new ResourceLink(resourceDto.Title, resourceDto.Url, resourceDto.Type);
+                var resourceLink = ResourceLink.Create(resourceDto.Title, resourceDto.Url, resourceDto.Type);
                 resourceLinks.Add(resourceLink);
             }
             catch (ArgumentException ex) 

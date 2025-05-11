@@ -22,6 +22,7 @@ public interface IApplicationDbContext
     DbSet<Roadmap> Roadmaps { get; }
     DbSet<RoadmapSection> RoadmapSections { get; }
     DbSet<RoadmapItem> RoadmapItems { get; }
+    DbSet<ResourceLink> ResourceLinks { get; }
     DbSet<ResourceProgress> ResourceProgresses { get; }
     DbSet<InternshipBookmark> InternshipBookmarks { get; }
     DbSet<RoadmapBookmark> RoadmapBookmarks { get; }

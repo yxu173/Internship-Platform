@@ -21,7 +21,8 @@ public class RoadmapRepository : IRoadmapRepository
         if (includeSections)
         {
             query = query.Include(x => x.Sections)
-                .ThenInclude(s => s.Items);
+                .ThenInclude(s => s.Items)
+                .ThenInclude(i => i.Resources);
         }
 
         return await query.FirstOrDefaultAsync(x => x.Id == id);
@@ -50,32 +51,19 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task Update(Roadmap roadmap)
     {
-        _context.Entry(roadmap).State = EntityState.Modified;
-
-        foreach (var section in roadmap.Sections)
+        var existingRoadmap = await _context.Roadmaps
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == roadmap.Id);
+            
+        if (existingRoadmap == null)
         {
-            if (section.Id == Guid.Empty)
-            {
-                _context.Entry(section).State = EntityState.Added;
-            }
-            else
-            {
-                _context.Entry(section).State = EntityState.Modified;
-            }
-
-            foreach (var item in section.Items)
-            {
-                if (item.Id == Guid.Empty)
-                {
-                    _context.Entry(item).State = EntityState.Added;
-                }
-                else
-                {
-                    _context.Entry(item).State = EntityState.Modified;
-                }
-            }
+            _context.Roadmaps.Add(roadmap);
         }
-
+        else
+        {
+            _context.Roadmaps.Update(roadmap);
+        }
+        
         await _context.SaveChangesAsync();
     }
 
@@ -91,7 +79,8 @@ public class RoadmapRepository : IRoadmapRepository
 
         if (includeItems)
         {
-            query = query.Include(s => s.Items);
+            query = query.Include(s => s.Items)
+                  .ThenInclude(i => i.Resources);
         }
 
         return await query.FirstOrDefaultAsync(x => x.Id == sectionId);

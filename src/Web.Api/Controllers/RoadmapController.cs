@@ -1,5 +1,6 @@
 using Application.Features.Roadmaps.Commands.CreateRoadmap;
 using Application.Features.Roadmaps.Commands.CreateRoadmapSection;
+using Application.Features.Roadmaps.Commands.CreateRoadmapSectionWithItems;
 using Application.Features.Roadmaps.Commands.UpdateRoadmap;
 using Application.Features.Roadmaps.Commands.DeleteRoadmap;
 using Application.Features.Roadmaps.Commands.UpdateRoadmapSection;
@@ -101,6 +102,31 @@ public class RoadmapController : BaseController
         var result = await _mediator.Send(command);
         return result.Match(sectionId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}", sectionId),
             CustomResults.Problem);
+    }
+    
+    [HttpPost("{roadmapId}/sections-with-items")]
+    public async Task<IResult> CreateSectionWithItems([FromRoute] Guid roadmapId, [FromBody] CreateRoadmapSectionWithItemsRequest request)
+    {
+        var items = request.Items.Select(item => new RoadmapItemDto(
+            item.Title,
+            item.Description,
+            item.Type,
+            item.Resources.Select(r => new Application.Features.Roadmaps.DTOs.ResourceLinkDto(r.Title, r.Url, r.Type)).ToList(),
+            item.Order
+        )).ToList();
+
+        var command = new CreateRoadmapSectionWithItemsCommand(
+            roadmapId,
+            request.SectionTitle,
+            request.SectionOrder,
+            items
+        );
+        
+        var result = await _mediator.Send(command);
+        return result.Match(
+            sectionId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}", sectionId),
+            CustomResults.Problem
+        );
     }
 
     [HttpPut("{roadmapId}/sections/{sectionId}")]

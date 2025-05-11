@@ -8,6 +8,7 @@ using Domain.ValueObjects;
 using Infrastructure.Database.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ResourceLink = Domain.Aggregates.Roadmaps.ResourceLink;
 
 namespace Infrastructure.Database;
 
@@ -26,6 +27,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Roadmap> Roadmaps { get; set; }
     public DbSet<RoadmapSection> RoadmapSections { get; set; }
     public DbSet<RoadmapItem> RoadmapItems { get; set; }
+    public DbSet<ResourceLink> ResourceLinks { get; set; }
     public DbSet<ResourceProgress> ResourceProgresses { get; set; }
     public DbSet<InternshipBookmark> InternshipBookmarks { get; set; }
     public DbSet<RoadmapBookmark> RoadmapBookmarks { get; set; }

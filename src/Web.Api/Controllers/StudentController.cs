@@ -43,7 +43,60 @@ public class StudentController : BaseController
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+    
+    [HttpGet("profile-picture/{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetProfilePicture([FromRoute] Guid id)
+    {
+        var query = new GetAllStudentProfileQuery(id);
+        var result = await _mediator.Send(query);
+        
+        if (result.IsFailure)
+            return NotFound();
+            
+        var profilePicUrl = result.Value.ProfilePictureUrl;
+        
+        if (string.IsNullOrEmpty(profilePicUrl))
+            profilePicUrl = "/uploads/profile-pics/default-profile.png";
+            
+        // Remove the base URL if it exists
+        var path = profilePicUrl;
+        if (profilePicUrl.Contains("/uploads/"))
+        {
+            path = profilePicUrl[(profilePicUrl.IndexOf("/uploads/"))..]; 
+        }
+        
+        // Get the file path
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/'));
+        
+        if (!System.IO.File.Exists(filePath))
+        {
+            // Return the default image if the file doesn't exist
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profile-pics", "default-profile.png");
+        }
+        
+        var contentType = GetContentType(filePath);
+        return PhysicalFile(filePath, contentType);
+    }
 
+    // Helper method to determine content type based on file extension
+    private string GetContentType(string filePath)
+    {
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        return extension switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".gif" => "image/gif",
+            ".bmp" => "image/bmp",
+            ".webp" => "image/webp",
+            ".pdf" => "application/pdf",
+            ".doc" => "application/msword",
+            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            _ => "application/octet-stream" // Default content type if extension is not recognized
+        };
+    }
+    
     [HttpPost("upload-profile-picture")]
     public async Task<IResult> UploadProfilePicture([FromForm] IFormFile file)
     {

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ResourceLink = Domain.Aggregates.Roadmaps.ResourceLink;
 
 namespace Application.Features.Roadmaps.Commands.AddRoadmapItem;
 
@@ -40,7 +41,7 @@ internal sealed class AddRoadmapItemCommandHandler : ICommandHandler<AddRoadmapI
         {
             try
             {
-                var resourceLink = new ResourceLink(resourceDto.Title, resourceDto.Url, resourceDto.Type);
+                var resourceLink = ResourceLink.Create(resourceDto.Title, resourceDto.Url, resourceDto.Type);
                 resourceLinks.Add(resourceLink);
             }
             catch (ArgumentException ex)

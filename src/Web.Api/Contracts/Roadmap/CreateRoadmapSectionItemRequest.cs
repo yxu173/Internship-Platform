@@ -1,3 +1,4 @@
+using Domain.Aggregates.Roadmaps;
 using Domain.ValueObjects;
 
 namespace Web.Api.Contracts.Roadmap;
