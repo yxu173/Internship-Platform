@@ -29,6 +29,8 @@ public interface IRoadmapRepository
     Task TrackProgressAsync(ResourceProgress progress);
 
     Task<IReadOnlyList<Enrollment>> GetEnrollmentsByStudentIdAsync(Guid studentId, bool includeRoadmap = false);
+    
+    Task<SearchResult<Roadmap>> SearchRoadmapsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<ResourceProgress>> GetProgressByStudentIdAsync(Guid studentId);
 

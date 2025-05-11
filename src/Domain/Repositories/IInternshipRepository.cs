@@ -22,4 +22,6 @@ public interface IInternshipRepository
     Task AddApplicationAsync(Application application);
     Task RemoveApplication(Application application);
     Task UpdateApplicationAsync(Application application);
+    
+    Task<SearchResult<Internship>> SearchInternshipsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default);
 }

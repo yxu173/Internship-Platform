@@ -109,4 +109,30 @@ public class CompanyRepository : ICompanyRepository
             .Select(selector)
             .FirstOrDefaultAsync());
     }
+    
+    public async Task<SearchResult<CompanyProfile>> SearchCompaniesAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        searchTerm = searchTerm?.ToLower() ?? string.Empty;
+        
+        var query = _context.CompanyProfiles
+            .Include(c => c.Internships)
+            .Where(c => string.IsNullOrEmpty(searchTerm) ||
+                   c.CompanyName.ToLower().Contains(searchTerm) ||
+                   (c.Industry != null && c.Industry.ToLower().Contains(searchTerm)) ||
+                   (c.About != null && c.About.About != null && c.About.About.ToLower().Contains(searchTerm)) ||
+                   (c.About != null && c.About.Mission != null && c.About.Mission.ToLower().Contains(searchTerm)) ||
+                   (c.About != null && c.About.Vision != null && c.About.Vision.ToLower().Contains(searchTerm)) ||
+                   (c.Address != null && c.Address.City != null && c.Address.City.ToLower().Contains(searchTerm)) ||
+                   (c.Address != null && c.Address.Governorate.ToString().ToLower().Contains(searchTerm)))
+            .OrderBy(c => c.CompanyName);
+        
+        var totalCount = await query.CountAsync(cancellationToken);
+        
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+        
+        return new SearchResult<CompanyProfile>(items, totalCount, page, pageSize);
+    }
 }

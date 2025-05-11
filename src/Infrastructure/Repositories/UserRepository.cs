@@ -100,4 +100,11 @@ public class UserRepository : IUserRepository
         await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();
     }
+    
+    public async Task<User?> GetByIdWithStudentProfileAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .Include(u => u.StudentProfile)
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+    }
 }

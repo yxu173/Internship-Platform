@@ -134,4 +134,32 @@ public sealed class InternshipRepository : IInternshipRepository
         _context.Applications.Update(application);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<SearchResult<Internship>> SearchInternshipsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        searchTerm = searchTerm?.ToLower() ?? string.Empty;
+        
+        var query = _context.Internships
+            .Include(i => i.CompanyProfile)
+            .Include(i => i.Applications)
+            .Where(i => i.IsActive &&
+                   (string.IsNullOrEmpty(searchTerm) ||
+                    i.Title.ToLower().Contains(searchTerm) ||
+                    i.Requirements.ToLower().Contains(searchTerm) ||
+                    i.KeyResponsibilities.ToLower().Contains(searchTerm) ||
+                    i.CompanyProfile.CompanyName.ToLower().Contains(searchTerm) ||
+                    i.Type.ToString().ToLower().Contains(searchTerm) ||
+                    i.WorkingModel.ToString().ToLower().Contains(searchTerm) ||
+                    i.CompanyProfile.Industry.ToLower().Contains(searchTerm)))
+            .OrderByDescending(i => i.CreatedAt);
+        
+        var totalCount = await query.CountAsync(cancellationToken);
+        
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+        
+        return new SearchResult<Internship>(items, totalCount, page, pageSize);
+    }
 }

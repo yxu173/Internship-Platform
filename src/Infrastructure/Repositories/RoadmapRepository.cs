@@ -187,4 +187,31 @@ public class RoadmapRepository : IRoadmapRepository
             .Where(rp => enrollmentIds.Contains(rp.EnrollmentId))
             .ToListAsync();
     }
+    
+    public async Task<SearchResult<Roadmap>> SearchRoadmapsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        searchTerm = searchTerm?.ToLower() ?? string.Empty;
+        
+        var query = _context.Roadmaps
+            .Include(r => r.Company)
+            .Include(r => r.Sections)
+                .ThenInclude(s => s.Items)
+            .Where(r => string.IsNullOrEmpty(searchTerm) ||
+                   r.Title.ToLower().Contains(searchTerm) ||
+                   r.Description.ToLower().Contains(searchTerm) ||
+                   r.Technology.ToLower().Contains(searchTerm) ||
+                   r.Company.CompanyName.ToLower().Contains(searchTerm) ||
+                   r.Sections.Any(s => s.Title.ToLower().Contains(searchTerm)) ||
+                   r.Sections.Any(s => s.Items.Any(i => i.Title.ToLower().Contains(searchTerm))))
+            .OrderByDescending(r => r.CreatedAt);
+        
+        var totalCount = await query.CountAsync(cancellationToken);
+        
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+        
+        return new SearchResult<Roadmap>(items, totalCount, page, pageSize);
+    }
 }

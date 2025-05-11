@@ -19,4 +19,5 @@ public interface IUserRepository
     Task<bool> IsUsernameUniqueAsync(string username);
     Task<string> GeneratePasswordResetTokenAsync(User user);
     Task<bool> ResetPasswordAsync(User user, string token, string newPassword);
+    Task<User?> GetByIdWithStudentProfileAsync(Guid userId, CancellationToken cancellationToken = default);
 }
