@@ -39,6 +39,38 @@ public class CompanyController : BaseController
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+    
+    [HttpGet("company-logo/{id:guid}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetCompanyLogo([FromRoute] Guid id)
+    {
+        var query = new GetCompleteCompanyProfileQuery(id);
+        var result = await _mediator.Send(query);
+        
+        if (result.IsFailure)
+            return NotFound();
+            
+        var logoUrl = result.Value.Logo;
+        
+        if (string.IsNullOrEmpty(logoUrl))
+            logoUrl = "/uploads/company-logos/default-logo.png";
+            
+        var path = logoUrl;
+        if (logoUrl.Contains("/uploads/"))
+        {
+            path = logoUrl[(logoUrl.IndexOf("/uploads/"))..]; 
+        }
+        
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/'));
+        
+        if (!System.IO.File.Exists(filePath))
+        {
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "company-logos", "default-logo.png");
+        }
+        
+        var contentType = GetContentType(filePath);
+        return PhysicalFile(filePath, contentType);
+    }
 
 
     [HttpPost("profiles")]
@@ -174,6 +206,23 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    private string GetContentType(string filePath)
+    {
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        return extension switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".gif" => "image/gif",
+            ".bmp" => "image/bmp",
+            ".webp" => "image/webp",
+            ".pdf" => "application/pdf",
+            ".doc" => "application/msword",
+            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            _ => "application/octet-stream" // Default content type if extension is not recognized
+        };
+    }
+    
     [HttpPost("upload-logo")]
     public async Task<IResult> UploadCompanyLogo([FromForm] IFormFile file)
     {
