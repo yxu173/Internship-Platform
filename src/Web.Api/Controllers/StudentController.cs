@@ -59,19 +59,16 @@ public class StudentController : BaseController
         if (string.IsNullOrEmpty(profilePicUrl))
             profilePicUrl = "/uploads/profile-pics/default-profile.png";
             
-        // Remove the base URL if it exists
         var path = profilePicUrl;
         if (profilePicUrl.Contains("/uploads/"))
         {
             path = profilePicUrl[(profilePicUrl.IndexOf("/uploads/"))..]; 
         }
         
-        // Get the file path
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/'));
         
         if (!System.IO.File.Exists(filePath))
         {
-            // Return the default image if the file doesn't exist
             filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profile-pics", "default-profile.png");
         }
         
@@ -79,7 +76,6 @@ public class StudentController : BaseController
         return PhysicalFile(filePath, contentType);
     }
 
-    // Helper method to determine content type based on file extension
     private string GetContentType(string filePath)
     {
         var extension = Path.GetExtension(filePath).ToLowerInvariant();
