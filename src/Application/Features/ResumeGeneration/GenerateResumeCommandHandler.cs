@@ -13,7 +13,6 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
     private readonly IInternshipRepository _internshipRepository;
     private readonly IStudentRepository _studentProfileRepository;
     private readonly ICompanyRepository _companyProfileRepository;
-    private readonly ISkillRepository _skillRepository;
     private readonly IGeneratedResumeRepository _resumeRepository;
     private readonly IGeminiClient _geminiClient;
     private readonly IPdfResumeRenderer _pdfRenderer;
@@ -24,7 +23,6 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
         IInternshipRepository internshipRepository,
         IStudentRepository studentProfileRepository,
         ICompanyRepository companyProfileRepository,
-        ISkillRepository skillRepository,
         IGeneratedResumeRepository resumeRepository,
         IGeminiClient geminiClient,
         IPdfResumeRenderer pdfRenderer,
@@ -34,7 +32,6 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
         _internshipRepository = internshipRepository;
         _studentProfileRepository = studentProfileRepository;
         _companyProfileRepository = companyProfileRepository;
-        _skillRepository = skillRepository;
         _resumeRepository = resumeRepository;
         _geminiClient = geminiClient;
         _pdfRenderer = pdfRenderer;
@@ -44,7 +41,6 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
 
     public async Task<Result<GenerateResumeResponse>> Handle(GenerateResumeCommand request, CancellationToken cancellationToken)
     {
-        // 1. Fetch data from repositories
         var studentProfile = await _studentProfileRepository.GetFullProfileByUserId(request.UserId);
         if (studentProfile == null)
             throw new InvalidOperationException($"Student with ID {request.UserId} not found");
@@ -60,7 +56,6 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
         var studentSkills = await _studentProfileRepository.GetStudentSkillsAsync(studentProfile.Id);
         var skills = studentSkills.Select(s => s.Skill).ToList();
 
-        // 3. Create DTO for AI model
         var resumeDto = ResumeDto.Create(
             studentProfile,
             internship,
