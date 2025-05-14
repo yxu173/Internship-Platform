@@ -18,6 +18,11 @@ public class CompanyRepository : ICompanyRepository
         _context = context;
     }
 
+    public async Task<CompanyProfile?> GetByCompanyIdAsync(Guid companyId)
+    {
+        return await _context.CompanyProfiles.FirstOrDefaultAsync(x => x.Id == companyId);
+    }
+
     public async Task<Result<CompanyProfile>> CreateAsync(Guid userId,
         string companyName,
         string taxId,

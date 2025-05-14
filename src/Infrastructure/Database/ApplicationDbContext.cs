@@ -2,6 +2,7 @@
 using Domain.Aggregates.Bookmarks;
 using Domain.Aggregates.Internships;
 using Domain.Aggregates.Profiles;
+using Domain.Aggregates.Resumes;
 using Domain.Aggregates.Roadmaps;
 using Domain.Aggregates.Users;
 using Domain.ValueObjects;
@@ -32,6 +33,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<InternshipBookmark> InternshipBookmarks { get; set; }
     public DbSet<RoadmapBookmark> RoadmapBookmarks { get; set; }
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<GeneratedResume> GeneratedResumes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

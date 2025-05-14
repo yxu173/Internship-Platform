@@ -19,6 +19,16 @@ public class StudentRepository : IStudentRepository
     }
 
 
+    public async Task<StudentProfile> GetFullProfileByUserId(Guid id)
+    {
+        return await _context.StudentProfiles
+            .Include(s => s.Skills)
+            .ThenInclude(ss => ss.Skill)
+            .Include(s => s.Experiences)
+            .Include(s => s.Projects)
+            .FirstOrDefaultAsync(s => s.UserId == id);
+    }
+
     public async Task<Result<StudentProfile>> CreateAsync(Guid userId,
         string fullName,
         string university,

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -7,11 +7,14 @@ using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
 using Application.Abstractions.Services;
 using Application.Common.Interfaces;
+using Domain.Aggregates.Resumes;
 using Domain.Aggregates.Users;
 using Domain.Repositories;
+using Infrastructure.AI.Gemini;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Options;
 using Infrastructure.Database;
+using Infrastructure.Pdf;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -26,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using QuestPDF.Infrastructure;
 
 namespace Infrastructure;
 
@@ -190,6 +194,31 @@ public static class DependencyInjection
                 };
             });
         services.AddAuthorization();
+        
+        
+        
+        
+        
+        
+     
+        
+        
+        QuestPDF.Settings.License = LicenseType.Community;
+            
+        // Register repositories
+        services.AddScoped<IGeneratedResumeRepository, GeneratedResumeRepository>();
+            
+        // Register PDF renderer
+        services.AddTransient<IPdfResumeRenderer, PdfResumeRenderer>();
+        services.AddScoped<ITemplateService, TemplateService>();
+            
+        // Register Gemini client
+        services.AddHttpClient<IGeminiClient, GeminiClient>();
+        services.AddScoped<ITemplateService, TemplateService>();
+        // Ensure storage directory exists
+        var storagePath = configuration["StoragePath"] ?? "storage";
+        var resumesPath = Path.Combine(storagePath, "resumes");
+        Directory.CreateDirectory(resumesPath);
 
         return services;
     }

@@ -7,6 +7,7 @@ namespace Domain.Repositories;
 public interface IStudentRepository
 {
     Task<StudentProfile> GetByIdAsync(Guid id);
+    Task<StudentProfile> GetFullProfileByUserId(Guid id);
 
     Task<Result<StudentProfile>> CreateAsync(Guid userId,
         string fullName,

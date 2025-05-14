@@ -7,6 +7,7 @@ namespace Domain.Repositories;
 public interface ICompanyRepository
 {
     Task<CompanyProfile?> GetCompanyByIdAsync(Guid id);
+    Task<CompanyProfile?> GetByCompanyIdAsync(Guid companyId);
 
     Task<Result<CompanyProfile>> CreateAsync(Guid userId,
         string companyName,
