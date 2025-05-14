@@ -44,9 +44,9 @@ public class GeminiClient : IGeminiClient
     {
         var systemInstruction =
             "You are a professional resume writer and designer with expertise in crafting compelling resumes for students applying to internships. " +
-            "Your task is to generate resume content and select appropriate styling that will help the student stand out to employers. " +
+            "Your task is to generate resume content and select appropriate styling that will help the student stand out to employers, ensuring the content is concise and designed to fit within a single page. " +
             "When a resume template is provided, analyze its structure, layout, typography, and color scheme carefully. " +
-            "Your generated resume content should follow a similar design philosophy and structure as the template. " +
+            "Your generated resume content should follow a similar design philosophy and structure as the template, focusing on the most relevant information. " +
             "Pay attention to how the template organizes sections, uses white space, font combinations, and visual hierarchy. " +
             "Focus on highlighting relevant skills, experience, and projects that align with the internship requirements.";
 
@@ -135,6 +135,13 @@ public class GeminiClient : IGeminiClient
                         new[] { new { text = promptText } }
                 }
             },
+            generationConfig = new
+            {
+                temperature = 0.7,
+                topP = 0.7,
+                topK = 5,
+                thinkingConfig = new { thinkingBudget = 1024 }
+            },
             tools = new[]
             {
                 new
@@ -172,6 +179,7 @@ public class GeminiClient : IGeminiClient
         int currentRetry = 0;
         bool succeeded = false;
 
+        _httpClient.Timeout = TimeSpan.FromSeconds(300);
         while (currentRetry < maxRetries && !succeeded)
         {
             try
@@ -230,6 +238,12 @@ public class GeminiClient : IGeminiClient
         if (responseBody?.Candidates == null || responseBody.Candidates.Count == 0)
         {
             throw new InvalidOperationException("No response candidates from Gemini API");
+        }
+
+        if (responseBody.Candidates[0].FinishReason == "MAX_TOKENS")
+        {
+            _logger?.LogWarning("Gemini API hit MAX_TOKENS limit. Consider shortening prompt or increasing tokens.");
+            throw new InvalidOperationException("MAX_TOKENS limit reached; response incomplete.");
         }
 
         foreach (var part in responseBody.Candidates[0].Content.Parts)
