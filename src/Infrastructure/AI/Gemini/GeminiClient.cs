@@ -44,11 +44,39 @@ public class GeminiClient : IGeminiClient
     {
         var systemInstruction =
             "You are a professional resume writer and designer with expertise in crafting compelling resumes for students applying to internships. " +
+            "Your task is to generate resume content and select appropriate styling that will help the student stand out to employers. " +
             "When a resume template is provided, analyze its structure, layout, typography, and color scheme carefully. " +
             "Your generated resume content should follow a similar design philosophy and structure as the template. " +
             "Pay attention to how the template organizes sections, uses white space, font combinations, and visual hierarchy. " +
-            "Focus on highlighting relevant skills, experience, and projects that align with the internship requirements, " +
-            "while maintaining a design that will help the student stand out to employers.";
+            "Focus on highlighting relevant skills, experience, and projects that align with the internship requirements.";
+
+        // Extract available themes, templates, and fonts information to include in the prompt
+        var optionsInfo = JsonSerializer.Serialize(new
+        {
+            Templates = new[]
+            {
+                new { Name = "Classic", Description = "Traditional resume layout with clean sections organized vertically" },
+                new { Name = "Modern", Description = "Contemporary design with colored section headers and modern typography" },
+                new { Name = "Creative", Description = "Distinctive design with visual elements, icons, and creative section layouts" },
+                new { Name = "Minimalist", Description = "Clean, simple design with minimal elements and focused content" },
+                new { Name = "TwoColumn", Description = "Efficient two-column layout with sidebar for skills and education" }
+            },
+            Themes = new[]
+            {
+                new { Name = "Professional", Description = "Blue-based color scheme with a corporate feel, suitable for traditional industries" },
+                new { Name = "Modern", Description = "Dark neutral colors with a clean, contemporary look" },
+                new { Name = "Creative", Description = "Purple-focused palette with vibrant accents, ideal for creative roles" },
+                new { Name = "Bold", Description = "Red-based palette with strong accents, makes a statement" },
+                new { Name = "Elegant", Description = "Teal and blue-green tones with a sophisticated feel" },
+                new { Name = "Corporate", Description = "Deep blue professional color scheme for formal business environments" },
+                new { Name = "Minimalist", Description = "Subtle grayscale with minimal color for a clean, simple look" },
+            },
+            Fonts = new[]
+            {
+                "Arial", "Helvetica", "Times New Roman", "Calibri", "Georgia", "Garamond",
+                "Verdana", "Roboto", "Tahoma", "Trebuchet MS"
+            }
+        }, _jsonOptions);
 
         var promptText = templateFile != null ?
             "I'm providing a resume template PDF along with student profile and internship details. " +
@@ -57,18 +85,22 @@ public class GeminiClient : IGeminiClient
             "the color scheme, how different sections are organized, and any other design elements. " +
             "Then create resume content that would fit this exact template style while highlighting skills and experiences " +
             "that match the internship requirements. Focus on content that will help the student secure this specific opportunity.\n\n" +
-            "Consider using similar fonts such as Arial, Calibri, Georgia, Helvetica, Times New Roman, Garamond, or Roboto. " +
-            "For colors, maintain a professional palette that complements the template (black, navy, dark gray for text; " +
-            "accent colors like blue, teal, or burgundy for headings or dividers).\n\n" +
+            "As part of your response, please select both a template design layout AND appropriate styling for the resume. " +
+            "First select which template layout best fits the student's profile, then choose a color theme and fonts or create a custom color scheme. " +
+            "Your choices should complement the student's field, career stage, and the specific internship.\n\n" +
+            "Available options (templates, themes, and fonts):\n" + optionsInfo + "\n\n" +
+            "You may also create a custom color scheme by defining specific colors for different resume elements.\n\n" +
             "Student and Internship data:\n" +
             JsonSerializer.Serialize(functionParameters, _jsonOptions) :
             
             "Please analyze the following student profile and internship details to generate a professional resume. " +
             "The resume should highlight skills and experiences that match the internship requirements. " +
             "Create a concise, well-structured resume that will help the student secure this internship opportunity.\n\n" +
-            "Consider using professional fonts such as Arial, Calibri, Georgia, Helvetica, Times New Roman, Garamond, or Roboto. " +
-            "For colors, maintain a professional palette (black, navy, dark gray for text; " +
-            "accent colors like blue, teal, or burgundy for headings or dividers).\n\n" +
+            "As part of your response, please select both a template design layout AND appropriate styling for the resume. " +
+            "First select which template layout best fits the student's profile, then choose a color theme and fonts or create a custom color scheme. " +
+            "Your choices should complement the student's field, career stage, and the specific internship.\n\n" +
+            "Available options (templates, themes, and fonts):\n" + optionsInfo + "\n\n" +
+            "You may also create a custom color scheme by defining specific colors for different resume elements.\n\n" +
             "Student and Internship data:\n" +
             JsonSerializer.Serialize(functionParameters, _jsonOptions);
 
@@ -212,6 +244,7 @@ public class GeminiClient : IGeminiClient
         }
 
         _logger?.LogError("No function call found in Gemini API response");
+        _logger?.LogInformation("Debug: Full Gemini response content - {Response}", JsonSerializer.Serialize(responseBody, _jsonOptions));
         string rawResponse = JsonSerializer.Serialize(responseBody, _jsonOptions);
         throw new InvalidOperationException($"No function call in response. Raw response: {rawResponse}");
     }
@@ -313,9 +346,50 @@ public class GeminiClient : IGeminiClient
                                 }
                             },
                             required = new[] { "university", "degree", "gradYear" }
+                        },
+                        stylePreferences = new
+                        {
+                            type = "object",
+                            description = "Style preferences for the resume including template design, theme name and font choices",
+                            properties = new
+                            {
+                                templateName = new
+                                {
+                                    type = "string",
+                                    description = "Name of the resume template to use from predefined list: Classic, Modern, Creative, Minimalist, or TwoColumn. Choose a template layout that best showcases the student's experience and fits the internship position."
+                                },
+                                themeName = new 
+                                { 
+                                    type = "string", 
+                                    description = "Name of the theme to use from predefined list: Professional, Modern, Creative, Bold, Elegant, Corporate, or Minimalist. Choose one that best fits the student's career field and the internship position." 
+                                },
+                                mainFont = new 
+                                { 
+                                    type = "string", 
+                                    description = "Font family for main text content. Choose one of: Arial, Helvetica, Times New Roman, Calibri, Georgia, Garamond, Verdana, Roboto, Tahoma, or Trebuchet MS." 
+                                },
+                                headerFont = new 
+                                { 
+                                    type = "string", 
+                                    description = "Font family for headings and titles. Choose one of: Arial, Helvetica, Times New Roman, Calibri, Georgia, Garamond, Verdana, Roboto, Tahoma, or Trebuchet MS." 
+                                },
+                                customColors = new
+                                {
+                                    type = "object",
+                                    description = "Optional custom color scheme if not using a predefined theme",
+                                    properties = new
+                                    {
+                                        primaryColor = new { type = "string", description = "Main title color in hex format (e.g., #1a365d)" },
+                                        secondaryColor = new { type = "string", description = "Section headings color in hex format (e.g., #2c5282)" },
+                                        tertiaryColor = new { type = "string", description = "Subheadings color in hex format (e.g., #2d3748)" },
+                                        textColor = new { type = "string", description = "Normal text color in hex format (e.g., #4a5568)" },
+                                        dividerColor = new { type = "string", description = "Color of horizontal dividers in hex format (e.g., #CBD5E0)" }
+                                    }
+                                }
+                            }
                         }
                     },
-                    required = new[] { "title", "summary", "skills", "education" }
+                    required = new[] { "title", "summary", "skills", "education", "stylePreferences" }
                 }
             };
         }

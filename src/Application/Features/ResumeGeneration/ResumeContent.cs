@@ -14,6 +14,8 @@ public class ResumeContent
     public string PhoneNumber { get; set; }
     public string Location { get; set; }
     
+    public StylePreferences StylePreferences { get; set; }
+    
     public class ExperienceItem
     {
         public string Role { get; set; }
