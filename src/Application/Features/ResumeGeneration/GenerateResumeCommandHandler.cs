@@ -2,7 +2,6 @@ using Application.Abstractions.Messaging;
 using Application.Abstractions.Services;
 using Domain.Aggregates.Resumes;
 using Domain.Repositories;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using SharedKernel;
 

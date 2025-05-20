@@ -2,10 +2,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Web.Api.Infrastructure;
 using Application.Abstractions.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Web.Api.Services;
 
 namespace Web.Api;

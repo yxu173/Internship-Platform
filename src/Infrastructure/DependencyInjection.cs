@@ -55,6 +55,7 @@ public static class DependencyInjection
         services.AddScoped<IRoadmapBookmarkRepository, RoadmapBookmarkRepository>();
         services.AddScoped<IInternshipBookmarkRepository, InternshipBookmarkRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<ICompanyDashboardRepository, CompanyDashboardRepository>();
         
         // Payment service registration
         services.Configure<PaymobSettings>(configuration.GetSection(nameof(PaymobSettings)));

@@ -20,7 +20,6 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
-
 builder.Services.AddSignalR(options =>
 {
     options.EnableDetailedErrors = true;
@@ -86,6 +85,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<NotificationHub>("/Notification");
-
 
 await app.RunAsync();

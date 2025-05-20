@@ -3,6 +3,7 @@ using Domain.Repositories;
 using Domain.DomainErrors;
 using SharedKernel;
 using Domain.Aggregates.Roadmaps;
+using Domain.Enums;
 
 namespace Application.Features.Roadmaps.Commands.EnrollStudent;
 
@@ -35,13 +36,13 @@ internal sealed class EnrollStudentCommandHandler : ICommandHandler<EnrollStuden
         if (existingEnrollment is not null)
         {
             // If already enrolled and payment completed, return success
-            if (existingEnrollment.PaymentStatus == Domain.ValueObjects.PaymentStatus.Completed)
+            if (existingEnrollment.PaymentStatus == PaymentStatus.Completed)
             {
                 return Result.Success();
             }
             
             // If pending payment, also return success (let frontend initiate payment if needed)
-            if (existingEnrollment.PaymentStatus == Domain.ValueObjects.PaymentStatus.Pending)
+            if (existingEnrollment.PaymentStatus == PaymentStatus.Pending)
             {
                 return Result.Success(); 
             }

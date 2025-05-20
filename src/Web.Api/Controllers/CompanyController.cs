@@ -1,4 +1,5 @@
 using Application.Abstractions.Services;
+using Application.Features.CompanyDashboard.Queries.GetCompanyDashboard;
 using Application.Features.CompanyProfile.Commands.CreateCompanyProfile;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyAbout;
 using Application.Features.CompanyProfile.Commands.UpdateCompanyAddress;
@@ -198,6 +199,14 @@ public class CompanyController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    [HttpGet("dashboard")]
+    public async Task<IResult> GetCompanyDashboard()
+    {
+        var query = new GetCompanyDashboardQuery(UserId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    
     [HttpGet("profiles/contact")]
     public async Task<IResult> GetCompanyContact()
     {

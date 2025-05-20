@@ -1,6 +1,7 @@
 using Domain.Aggregates.Profiles;
 using Domain.Common;
 using Domain.DomainErrors;
+using Domain.Enums;
 using Domain.ValueObjects;
 using SharedKernel;
 

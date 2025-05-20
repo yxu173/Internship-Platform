@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
+using Domain.Enums;
 
 namespace Application.Features.Payments.Commands.InitiatePayment;
 
@@ -69,7 +70,7 @@ public class InitiateRoadmapPaymentCommandHandler
             _context.Enrollments.Add(enrollmentResult.Value);
             await _context.SaveChangesAsync(cancellationToken);
         }
-        else if (existingEnrollment.PaymentStatus == Domain.ValueObjects.PaymentStatus.Completed)
+        else if (existingEnrollment.PaymentStatus == PaymentStatus.Completed)
         {
             return Result.Failure<PaymentInitiationResponse>(
                 Error.Conflict("Enrollment.AlreadyCompleted", "You are already enrolled in this roadmap."));

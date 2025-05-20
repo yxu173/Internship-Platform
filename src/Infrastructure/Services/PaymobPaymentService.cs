@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System;
 using Application.Abstractions.Data;
+using Domain.Enums;
 using Domain.ValueObjects;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
