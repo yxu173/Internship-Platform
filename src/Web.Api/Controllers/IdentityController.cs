@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.Abstractions.Authentication;
+using Application.Features.Identity.ChangePassword;
 using Application.Features.Identity.ForgetPassword;
 using Application.Features.Identity.Login;
 using Application.Features.Identity.Logout;
@@ -87,6 +88,14 @@ public class IdentityController : BaseController
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
+    [HttpPost("changePassword")]
+    public async Task<IResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var command = new ChangePasswordCommand(UserId, request.OldPassword, request.NewPassword);
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
     [HttpGet("google-login")]
     public IActionResult GoogleLogin()
     {
@@ -145,22 +154,22 @@ public class IdentityController : BaseController
                 }
 
                 user = Domain.Aggregates.Users.User.Create(
-                email,
-                givenName
+                    email,
+                    givenName
                 ).Value;
 
                 var createResult = await _userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
                 {
                     return BadRequest("User creation failed: " +
-                        string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                                      string.Join(", ", createResult.Errors.Select(e => e.Description)));
                 }
 
                 var roleResult = await _userManager.AddToRoleAsync(user, Roles.Basic.ToString());
                 if (!roleResult.Succeeded)
                 {
                     return BadRequest("Role assignment failed: " +
-                        string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                                      string.Join(", ", roleResult.Errors.Select(e => e.Description)));
                 }
             }
 
@@ -168,7 +177,7 @@ public class IdentityController : BaseController
             if (!addLoginResult.Succeeded)
             {
                 return BadRequest("Failed to add external login: " +
-                    string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
+                                  string.Join(", ", addLoginResult.Errors.Select(e => e.Description)));
             }
 
             await _signInManager.SignInAsync(user, isPersistent: false);
@@ -182,7 +191,7 @@ public class IdentityController : BaseController
         var notificationCommand = new SendNotificationCommand(
             user.Id,
             isNewUser ? "Welcome to the Platform!" : "Welcome Back!",
-            isNewUser 
+            isNewUser
                 ? $"Welcome to the platform! We're glad you joined us through {info.LoginProvider}."
                 : $"Welcome back! You've successfully logged in through {info.LoginProvider}.",
             "Login",
@@ -198,7 +207,8 @@ public class IdentityController : BaseController
     public IActionResult ExternalLogin()
     {
         var redirectUrl = Url.Action("ExternalLoginCallback");
-        return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, GoogleDefaults.AuthenticationScheme);
+        return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl },
+            GoogleDefaults.AuthenticationScheme);
     }
 
     [HttpGet("user-type")]
