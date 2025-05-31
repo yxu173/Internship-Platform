@@ -33,10 +33,10 @@ public class CompanyController : BaseController
         _photoUploadService = photoUploadService;
     }
 
-    [HttpGet("profiles")]
-    public async Task<IResult> GetCompleteCompanyProfile()
+    [HttpGet("profiles/{id:guid}")]
+    public async Task<IResult> GetCompleteCompanyProfile([FromRoute] Guid id)
     {
-        var query = new GetCompleteCompanyProfileQuery(UserId);
+        var query = new GetCompleteCompanyProfileQuery(id);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }

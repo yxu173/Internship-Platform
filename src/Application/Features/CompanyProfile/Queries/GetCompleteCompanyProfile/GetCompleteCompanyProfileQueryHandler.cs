@@ -23,8 +23,9 @@ public sealed class
     public async Task<Result<CompleteCompanyProfile>> Handle(GetCompleteCompanyProfileQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.Id);
-        var company = await _companyRepository.GetByCompanyProfileWithInternships(request.Id,
+        var companyProfile = await _companyRepository.GetByCompanyIdAsync(request.Id);
+        var user = await _userRepository.GetByIdAsync(companyProfile.UserId);
+        var company = await _companyRepository.GetByCompanyProfileWithInternships(companyProfile.UserId,
             p => new CompleteCompanyProfile(
                 string.IsNullOrEmpty(p.LogoUrl) ? "/uploads/company-logos/default-logo.png" : p.LogoUrl,
                 new CompanyInfoResponse(
