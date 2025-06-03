@@ -26,6 +26,12 @@ public interface IApplicationDbContext
     DbSet<ResourceProgress> ResourceProgresses { get; }
     DbSet<InternshipBookmark> InternshipBookmarks { get; }
     DbSet<RoadmapBookmark> RoadmapBookmarks { get; }
+    
+    // Quiz related entities
+    DbSet<Quiz> Quizzes { get; }
+    DbSet<QuizQuestion> QuizQuestions { get; }
+    DbSet<QuizOption> QuizOptions { get; }
+    DbSet<QuizAttempt> QuizAttempts { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

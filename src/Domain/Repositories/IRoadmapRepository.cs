@@ -14,7 +14,7 @@ public interface IRoadmapRepository
     Task Delete(Roadmap roadmap);
 
     // Section Operations
-    Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false);
+    Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false, bool includeQuiz = false);
     Task AddSectionAsync(Guid roadmapId, RoadmapSection section);
     Task UpdateSectionAsync(RoadmapSection section);
     Task DeleteSectionAsync(RoadmapSection section);

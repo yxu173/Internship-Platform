@@ -2,6 +2,7 @@ using Domain.Aggregates.Roadmaps;
 using Domain.Repositories;
 using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Infrastructure.Repositories;
 
@@ -22,7 +23,9 @@ public class RoadmapRepository : IRoadmapRepository
         {
             query = query.Include(x => x.Sections)
                 .ThenInclude(s => s.Items)
-                .ThenInclude(i => i.Resources);
+                .ThenInclude(i => i.Resources)
+                .Include(x => x.Sections)
+                .ThenInclude(s => s.Quiz);
         }
 
         return await query.FirstOrDefaultAsync(x => x.Id == id);
@@ -74,7 +77,7 @@ public class RoadmapRepository : IRoadmapRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false)
+    public async Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false, bool includeQuiz = false)
     {
         var query = _context.RoadmapSections.AsQueryable();
 
@@ -82,6 +85,13 @@ public class RoadmapRepository : IRoadmapRepository
         {
             query = query.Include(s => s.Items)
                   .ThenInclude(i => i.Resources);
+        }
+
+        if (includeQuiz)
+        {
+            query = query.Include(s => s.Quiz)
+                .ThenInclude(q => q.Questions)
+                .ThenInclude(q => q.Options);
         }
 
         return await query.FirstOrDefaultAsync(x => x.Id == sectionId);
@@ -106,7 +116,8 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task<Enrollment?> GetEnrollmentAsync(Guid studentId, Guid roadmapId)
     {
-        return await _context.Enrollments.AsNoTracking()
+        return await _context.Enrollments
+            .Include(e => e.SectionProgress)
             .FirstOrDefaultAsync(x => x.StudentId == studentId && x.RoadmapId == roadmapId);
     }
 
@@ -118,6 +129,35 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task UpdateEnrollmentAsync(Enrollment enrollment)
     {
+        // Check if we have any new section progress records that need to be added
+        var existingSectionProgressIds = await _context.Entry(enrollment)
+            .Collection(e => e.SectionProgress)
+            .Query()
+            .Select(sp => sp.SectionId)
+            .ToListAsync();
+            
+        var modifiedEntries = _context.ChangeTracker
+            .Entries<SectionProgress>()
+            .Where(e => e.State == EntityState.Modified)
+            .ToList();
+
+        // For any missing section progress, manually add it
+        foreach (var sectionProgress in enrollment.SectionProgress)
+        {
+            if (!existingSectionProgressIds.Contains(sectionProgress.SectionId))
+            {
+                // Manually add a new SectionProgress record to the database
+                var sql = $@"
+                    INSERT INTO ""SectionProgress"" (""SectionId"", ""EnrollmentId"", ""QuizPassed"")
+                    VALUES (@sectionId, @enrollmentId, @quizPassed)";
+                
+                await _context.Database.ExecuteSqlRawAsync(sql, 
+                    new NpgsqlParameter("@sectionId", sectionProgress.SectionId),
+                    new NpgsqlParameter("@enrollmentId", enrollment.Id),
+                    new NpgsqlParameter("@quizPassed", sectionProgress.QuizPassed));
+            }
+        }
+        
         _context.Enrollments.Update(enrollment);
         await _context.SaveChangesAsync();
     }

@@ -34,6 +34,11 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<RoadmapBookmark> RoadmapBookmarks { get; set; }
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<GeneratedResume> GeneratedResumes { get; set; }
+    
+    public DbSet<Quiz> Quizzes { get; set; }
+    public DbSet<QuizQuestion> QuizQuestions { get; set; }
+    public DbSet<QuizOption> QuizOptions { get; set; }
+    public DbSet<QuizAttempt> QuizAttempts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

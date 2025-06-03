@@ -95,4 +95,49 @@ public static class RoadmapErrors
         "Enrollment.NotFound",
         "Student enrollment not found for this roadmap."
     );
+    
+    public static Error QuizNotFound => Error.NotFound(
+        "Quiz.NotFound",
+        "Quiz not found for this section."
+    );
+    
+    public static Error QuizAlreadyPassed => Error.Conflict(
+        "Quiz.AlreadyPassed",
+        "Quiz has already been passed for this section."
+    );
+    
+    public static Error InvalidQuizAttempt => Error.Validation(
+        "Quiz.InvalidAttempt",
+        "This quiz attempt does not belong to this enrollment."
+    );
+    
+    public static Error SectionNotAccessible => Error.Validation(
+        "Section.NotAccessible",
+        "This section is not accessible. Complete previous sections first."
+    );
+    
+    public static Error NoQuestionsInQuiz => Error.Validation(
+        "Quiz.NoQuestions",
+        "Quiz must have at least one question."
+    );
+    
+    public static Error QuestionNotFound => Error.NotFound(
+        "Quiz.QuestionNotFound",
+        "Question not found in this quiz."
+    );
+    
+    public static Error InvalidQuizAnswer => Error.Validation(
+        "Quiz.InvalidAnswer",
+        "The provided answer is invalid for this question."
+    );
+
+    public static Error InvalidQuizParams => Error.Validation(
+        "Quiz.InvalidParameters",
+        "Quiz parameters are invalid. Passing score must be between 0 and 100."
+    );
+
+    public static Error OptionNotFound => Error.NotFound(
+        "Quiz.OptionNotFound",
+        "Option not found in this quiz."
+    );
 }

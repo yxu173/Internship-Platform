@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Web.Api.Infrastructure;
 using Application.Features.Payments.Commands.InitiatePayment; // Assuming command location
 using Application.Features.Payments.Commands.ProcessCallback; // Assuming command location
+using Application.Features.Payments.Commands.ProcessRedirect;
 using Microsoft.AspNetCore.Authorization; // Likely needed for initiation
 using Microsoft.Extensions.Logging; // For logging callback details
 using System.IO; // To read callback body
@@ -62,6 +63,43 @@ public class PaymentController : BaseController
         return Results.Ok(testCards);
     }
 
+    [HttpGet("payment-return")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PaymentReturn()
+    {
+        string orderId = Request.Query["order"].FirstOrDefault() ?? string.Empty;
+        string success = Request.Query["success"].FirstOrDefault() ?? "false";
+        string txnId = Request.Query["id"].FirstOrDefault() ?? string.Empty;
+        
+        _logger.LogInformation("Payment return received. OrderId: {OrderId}, Success: {Success}, TxnId: {TxnId}", 
+            orderId, success, txnId);
+            
+        if (string.IsNullOrEmpty(orderId) || string.IsNullOrEmpty(txnId) || !bool.TryParse(success, out bool isSuccess) || !isSuccess)
+        {
+            return Redirect("/payment-failed");
+        }
+        
+        var command = new ProcessPaymentRedirectCommand(orderId, txnId);
+        var result = await _mediator.Send(command);
+        
+        if (result.IsFailure)
+        {
+            return Redirect("/payment-failed");
+        }
+        
+        return Redirect("/payment-success");
+    }
+    
+    [HttpGet("/")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status302Found)]
+    public IActionResult HandleRootRedirect()
+    {
+        return RedirectToAction("PaymentReturn");
+    }
+
     [HttpPost("paymob-callback")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,5 +131,17 @@ public class PaymentController : BaseController
             () => Ok(),
             problem => { return StatusCode(StatusCodes.Status400BadRequest, problem); }
         );
+    }
+    
+    // Also handle GET requests to the callback URL for debugging purposes
+    [HttpGet("paymob-callback")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetPaymobCallback()
+    {
+        _logger.LogInformation("Received GET request to Paymob callback endpoint with query params: {QueryParams}", 
+            Request.QueryString.Value);
+            
+        return Ok("Callback endpoint is working. This endpoint should be used as a webhook by the payment provider using POST method.");
     }
 }

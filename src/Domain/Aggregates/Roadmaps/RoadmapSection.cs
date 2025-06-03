@@ -15,6 +15,8 @@ public sealed class RoadmapSection : BaseEntity
     public Guid RoadmapId { get; private set; }
     public string Title { get; private set; }
     public int Order { get; private set; }
+    public Quiz Quiz { get; private set; }
+    public bool HasQuiz => Quiz != null;
 
     public IReadOnlyList<RoadmapItem> Items => _items.AsReadOnly();
 
@@ -93,6 +95,41 @@ public sealed class RoadmapSection : BaseEntity
         }
 
         _items.Remove(item);
+        return Result.Success();
+    }
+    
+    public Result AddQuiz(int passingScore, bool isRequired)
+    {
+        var quizResult = Quiz.Create(Id, passingScore, isRequired);
+        if (quizResult.IsFailure)
+        {
+            return Result.Failure(quizResult.Error);
+        }
+        
+        Quiz = quizResult.Value;
+        return Result.Success();
+    }
+    
+    public Result UpdateQuiz(int passingScore, bool isRequired)
+    {
+        if (Quiz == null)
+        {
+            return AddQuiz(passingScore, isRequired);
+        }
+        
+        var quizResult = Quiz.Create(Id, passingScore, isRequired);
+        if (quizResult.IsFailure)
+        {
+            return Result.Failure(quizResult.Error);
+        }
+        
+        Quiz = quizResult.Value;
+        return Result.Success();
+    }
+    
+    public Result RemoveQuiz()
+    {
+        Quiz = null;
         return Result.Success();
     }
 }

@@ -233,7 +233,7 @@ public class PaymobPaymentService : IPaymentService
             PaymentMethods = new List<object> { 5061257 }, //TODO: Add this into appsettings.json
             MerchantOrderId = $"{itemId}_{userId}",
             NotificationUrl = "https://localhost:7089/api/payments/paymob-callback",
-            RedirectionUrl = "https://localhost:7089",
+            RedirectionUrl = "https://localhost:7089/api/payments/payment-return",
             Items = new List<PaymobItem>
             {
                 new PaymobItem

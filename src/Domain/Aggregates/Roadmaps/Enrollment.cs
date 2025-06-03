@@ -14,6 +14,8 @@ public sealed class Enrollment : BaseAuditableEntity
     }
 
     private readonly List<ResourceProgress> _progress = new();
+    private readonly List<SectionProgress> _sectionProgress = new();
+    private readonly List<QuizAttempt> _quizAttempts = new();
 
     public Guid StudentId { get; private set; }
     public StudentProfile? Student { get; set; }
@@ -24,6 +26,8 @@ public sealed class Enrollment : BaseAuditableEntity
     public decimal? AmountPaid { get; private set; }
     public PaymentStatus PaymentStatus { get; private set; }
     public IReadOnlyList<ResourceProgress> Progress => _progress.AsReadOnly();
+    public IReadOnlyList<SectionProgress> SectionProgress => _sectionProgress.AsReadOnly();
+    public IReadOnlyList<QuizAttempt> QuizAttempts => _quizAttempts.AsReadOnly();
 
     private Enrollment(Guid studentId, Guid roadmapId)
     {
@@ -73,5 +77,80 @@ public sealed class Enrollment : BaseAuditableEntity
     {
         var totalItems = roadmap.Sections.Sum(s => s.Items.Count);
         return totalItems > 0 ? (double)_progress.Count / totalItems * 100 : 0;
+    }
+    
+    public bool CanAccessSection(Guid sectionId, List<RoadmapSection> orderedSections)
+    {
+        // First section is always accessible
+        var firstSection = orderedSections.FirstOrDefault();
+        if (firstSection != null && firstSection.Id == sectionId)
+            return true;
+            
+        // Find previous section
+        var sectionIndex = orderedSections.FindIndex(s => s.Id == sectionId);
+        if (sectionIndex <= 0) return false;
+        
+        var previousSection = orderedSections[sectionIndex - 1];
+        
+        // Check if previous section's quiz is passed or not required
+        return !previousSection.HasQuiz || 
+               _sectionProgress.Any(sp => sp.SectionId == previousSection.Id && sp.QuizPassed);
+    }
+    
+    public Result<QuizAttempt> StartQuizAttempt(Guid quizId, Guid sectionId)
+    {
+        // Check if section exists and has a quiz
+        if (_sectionProgress.Any(sp => sp.SectionId == sectionId && sp.QuizPassed))
+        {
+            return Result.Failure<QuizAttempt>(RoadmapErrors.QuizAlreadyPassed);
+        }
+        
+        var attemptResult = QuizAttempt.Create(Id, quizId);
+        if (attemptResult.IsFailure)
+        {
+            return Result.Failure<QuizAttempt>(attemptResult.Error);
+        }
+        
+        var attempt = attemptResult.Value;
+        _quizAttempts.Add(attempt);
+        
+        return Result.Success(attempt);
+    }
+    
+    public Result RecordQuizResult(QuizAttempt attempt, Quiz quiz)
+    {
+        if (attempt.EnrollmentId != Id)
+        {
+            return Result.Failure(RoadmapErrors.InvalidQuizAttempt);
+        }
+        
+        var passed = quiz.IsPassed(attempt.Score);
+        attempt.SetPassed(passed);
+        
+        var sectionProgress = _sectionProgress.FirstOrDefault(sp => sp.SectionId == quiz.SectionId);
+        if (sectionProgress == null)
+        {
+            sectionProgress = new SectionProgress(quiz.SectionId, Id);
+            _sectionProgress.Add(sectionProgress);
+        }
+        
+        if (passed)
+        {
+            sectionProgress.SetQuizResult(true);
+        }
+        
+        ModifiedAt = DateTime.UtcNow;
+        return Result.Success();
+    }
+    
+    public int GetSectionCompletionPercentage(Guid sectionId, RoadmapSection section)
+    {
+        int totalItems = section.Items.Count;
+        if (totalItems == 0) return 100;
+        
+        int completedItems = _progress.Count(p => 
+            section.Items.Any(i => i.Id == p.ItemId));
+            
+        return (completedItems * 100) / totalItems;
     }
 }
