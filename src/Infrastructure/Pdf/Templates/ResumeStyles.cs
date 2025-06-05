@@ -160,10 +160,10 @@ namespace Infrastructure.Pdf.Templates
         public string Divider { get; set; } // Color of horizontal dividers
         
         // Methods to convert hex strings to QuestPDF-compatible colors
-        public string GetPrimary() => Primary;
-        public string GetSecondary() => Secondary;
-        public string GetTertiary() => Tertiary;
-        public string GetText() => Text;
-        public string GetDivider() => Divider;
+        public string GetPrimary() => Primary.ToRgbColor();
+        public string GetSecondary() => Secondary.ToRgbColor();
+        public string GetTertiary() => Tertiary.ToRgbColor();
+        public string GetText() => Text.ToRgbColor();
+        public string GetDivider() => Divider.ToRgbColor();
     }
 }

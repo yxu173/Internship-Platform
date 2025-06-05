@@ -42,13 +42,25 @@ public class GeminiClient : IGeminiClient
     public async Task<T> InvokeFunctionAsync<T>(string functionName, object functionParameters,
         byte[] templateFile = null, CancellationToken cancellationToken = default)
     {
-        var systemInstruction =
-            "You are a professional resume writer and designer with expertise in crafting compelling resumes for students applying to internships. " +
-            "Your task is to generate resume content and select appropriate styling that will help the student stand out to employers, ensuring the content is concise and designed to fit within a single page. " +
-            "When a resume template is provided, analyze its structure, layout, typography, and color scheme carefully. " +
-            "Your generated resume content should follow a similar design philosophy and structure as the template, focusing on the most relevant information. " +
-            "Pay attention to how the template organizes sections, uses white space, font combinations, and visual hierarchy. " +
-            "Focus on highlighting relevant skills, experience, and projects that align with the internship requirements.";
+        string systemInstruction;
+        if (templateFile != null)
+        {
+            systemInstruction =
+                "You are an expert resume writer and career coach. A resume template PDF AND comprehensive student data (including potentially extensive experience, projects, and skills) AND specific internship details are provided.\n" +
+                "Your primary goal is to craft a highly targeted resume for the SPECIFIC internship.\n" +
+                "1. Style Analysis: Analyze the provided resume template PDF for its visual style (structure, layout, typography, color scheme). Determine the 'stylePreferences' (templateName, themeName, fonts, customColors) based SOLELY on this template. Do NOT use any textual content from the template PDF for the resume's content fields.\n" +
+                "2. Strategic Content Selection & Generation: From the comprehensive student data, CRITICALLY EVALUATE and SELECT ONLY the most RELEVANT experiences, projects, skills, and educational highlights that directly align with the requirements and keywords of the SPECIFIC internship. Do NOT include all student data; be highly selective. Generate concise, impactful descriptions for the selected items, tailoring them to the internship. The 'title' and 'summary' should also be specifically crafted for this internship.\n" +
+                "3. Output: Populate all fields of the 'generate_resume' function. 'stylePreferences' must reflect the template's style. All other content fields ('title', 'summary', 'experience', 'projects', 'skills', 'education') must contain ONLY the selectively chosen and tailored information relevant to the target internship. Aim for a single-page resume.";
+        }
+        else
+        {
+            systemInstruction =
+                "You are an expert resume writer and career coach. Comprehensive student data (including potentially extensive experience, projects, and skills) AND specific internship details are provided.\n" +
+                "Your primary goal is to craft a highly targeted resume for the SPECIFIC internship.\n" +
+                "1. Strategic Content Selection & Generation: From the comprehensive student data, CRITICALLY EVALUATE and SELECT ONLY the most RELEVANT experiences, projects, skills, and educational highlights that directly align with the requirements and keywords of the SPECIFIC internship. Do NOT include all student data; be highly selective. Generate concise, impactful descriptions for the selected items, tailoring them to the internship. The 'title' and 'summary' should also be specifically crafted for this internship.\n" +
+                "2. Style Selection: Choose appropriate 'stylePreferences' (templateName, themeName, fonts, customColors) that best suit the student's field, the selected content, and the target internship. You have a list of predefined options, or you can define custom colors.\n" +
+                "3. Output: Populate all fields of the 'generate_resume' function. All content fields ('title', 'summary', 'experience', 'projects', 'skills', 'education') must contain ONLY the selectively chosen and tailored information. Aim for a single-page resume.";
+        }
 
         // Extract available themes, templates, and fonts information to include in the prompt
         var optionsInfo = JsonSerializer.Serialize(new
