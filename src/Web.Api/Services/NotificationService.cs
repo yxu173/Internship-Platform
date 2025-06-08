@@ -1,8 +1,8 @@
 using Application.Abstractions.Services;
 using Application.Abstractions.Pagination;
 using Application.Features.Notifications.Common;
-using Application.Features.Notifications.Queries.GetAllNotifications; // Added for the query
-using MediatR; // Added for ISender
+using Application.Features.Notifications.Queries.GetAllNotifications;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using SharedKernel;
 using System;
@@ -15,13 +15,12 @@ namespace Web.Api.Services;
 public class NotificationService : INotificationService
 {
     private readonly IHubContext<NotificationHub> _hubContext;
-    private readonly ISender _sender; // Added ISender
+    private readonly ISender _sender;
 
-    // Updated constructor
     public NotificationService(IHubContext<NotificationHub> hubContext, ISender sender)
     {
         _hubContext = hubContext;
-        _sender = sender; // Initialize ISender
+        _sender = sender;
     }
 
     public async Task SendNotificationAsync(Guid userId, string title, string message, string entity, Guid entityId)
@@ -33,13 +32,12 @@ public class NotificationService : INotificationService
             Entity = entity,
             EntityId = entityId,
             Timestamp = DateTime.UtcNow
-        };
+        };  
 
         await _hubContext.Clients.Group(userId.ToString())
             .SendAsync("ReceiveNotification", notification);
     }
 
-    // New method implementation
     public async Task<Result<PagedList<NotificationResponse>>> GetAllNotificationsAsync(
         Guid userId,
         int pageNumber,
