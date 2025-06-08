@@ -1,6 +1,9 @@
 using Application.Features.Notifications.Commands.MarkAsRead;
 using Application.Features.Notifications.Commands.SendNotification;
 using Application.Features.Notifications.Queries.GetUnreadNotifications;
+using Application.Features.Notifications.Queries.GetAllNotifications; // Added for the new query
+using Application.Abstractions.Pagination; // For PagedList
+using Application.Features.Notifications.Common; // For NotificationResponse
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Notifications;
@@ -42,5 +45,19 @@ public class NotificationsController : BaseController
         var command = new MarkNotificationAsReadCommand(id);
         var result = await _mediator.Send(command);
         return result.Match(() => Results.NoContent(), CustomResults.Problem);
+    }
+
+    [HttpGet("all")]
+    public async Task<IResult> GetAllNotifications(
+        CancellationToken cancellationToken,
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 10)
+    {
+        var query = new GetAllNotificationsQuery(UserId, pageNumber, pageSize);
+        var result = await _mediator.Send(query, cancellationToken);
+        
+        return result.Match(
+            pagedList => Results.Ok(pagedList),
+            CustomResults.Problem);
     }
 }
