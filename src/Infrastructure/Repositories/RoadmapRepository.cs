@@ -46,6 +46,12 @@ public class RoadmapRepository : IRoadmapRepository
         return await _context.Roadmaps.AsNoTracking().Where(x => !x.IsPremium).ToListAsync();
         //return await _context.Roadmaps.AsNoTracking().ToListAsync();
     }
+    
+    public async Task<IReadOnlyList<Roadmap>> GetPremiumRoadmapsAsync()
+    {
+        return await _context.Roadmaps.AsNoTracking().Where(x => x.IsPremium).ToListAsync();
+        //return await _context.Roadmaps.AsNoTracking().ToListAsync();
+    }
 
     public async Task AddAsync(Roadmap roadmap)
     {

@@ -28,6 +28,7 @@ using Web.Api.Contracts.Roadmap;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 using Application.Features.Payments.Commands.InitiatePayment;
+using Application.Features.Roadmaps.Queries.GetPremiumRoadmaps;
 
 namespace Web.Api.Controllers;
 
@@ -98,6 +99,13 @@ public class RoadmapController : BaseController
     public async Task<IResult> GetPublic()
     {
         var query = new GetPublicRoadmapsQuery();
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+    [HttpGet("premium")]
+    public async Task<IResult> GetPremium()
+    {
+        var query = new GetPremiumRoadmapsQuery();
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
