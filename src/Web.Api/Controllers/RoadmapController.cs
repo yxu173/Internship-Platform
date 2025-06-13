@@ -23,6 +23,7 @@ using Application.Features.Roadmaps.Commands.AddQuizOption;
 using Application.Features.Roadmaps.Commands.SubmitQuizAttempt;
 using Application.Features.Roadmaps.Queries.GetQuizById;
 using Application.Features.Roadmaps.Queries.GetAccessibleSections;
+using Application.Features.Roadmaps.Commands.AddQuizQuestionWithOptions;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Roadmap;
 using Web.Api.Extensions;
@@ -328,6 +329,32 @@ public class RoadmapController : BaseController
             quizId,
             request.Text,
             request.Points
+        );
+        
+        var result = await _mediator.Send(command);
+        
+        return result.Match(
+            questionId => Results.Created(
+                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}", 
+                questionId),
+            CustomResults.Problem
+        );
+    }
+    
+    [HttpPost("{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions-with-options")]
+    public async Task<IResult> AddQuizQuestionWithOptions(
+        [FromRoute] Guid roadmapId,
+        [FromRoute] Guid sectionId,
+        [FromRoute] Guid quizId,
+        [FromBody] AddQuizQuestionWithOptionsRequest request)
+    {
+        var command = new AddQuizQuestionWithOptionsCommand(
+            roadmapId,
+            sectionId,
+            quizId,
+            request.QuestionText,
+            request.QuestionPoints,
+            request.Options
         );
         
         var result = await _mediator.Send(command);
