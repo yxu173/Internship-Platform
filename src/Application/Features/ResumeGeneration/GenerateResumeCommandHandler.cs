@@ -13,29 +13,26 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
     private readonly IStudentRepository _studentProfileRepository;
     private readonly ICompanyRepository _companyProfileRepository;
     private readonly IGeneratedResumeRepository _resumeRepository;
-    private readonly IGeminiClient _geminiClient;
-    private readonly IPdfResumeRenderer _pdfRenderer;
+    private readonly IGeminiAIService _geminiAIService;
+    private readonly IPdfGenerationService _pdfGenerationService;
     private readonly IConfiguration _configuration;
-    private readonly ITemplateService _templateService;
 
     public GenerateResumeCommandHandler(
         IInternshipRepository internshipRepository,
         IStudentRepository studentProfileRepository,
         ICompanyRepository companyProfileRepository,
         IGeneratedResumeRepository resumeRepository,
-        IGeminiClient geminiClient,
-        IPdfResumeRenderer pdfRenderer,
-        IConfiguration configuration,
-        ITemplateService templateService)
+        IGeminiAIService geminiAIService,
+        IPdfGenerationService pdfGenerationService,
+        IConfiguration configuration)
     {
         _internshipRepository = internshipRepository;
         _studentProfileRepository = studentProfileRepository;
         _companyProfileRepository = companyProfileRepository;
         _resumeRepository = resumeRepository;
-        _geminiClient = geminiClient;
-        _pdfRenderer = pdfRenderer;
+        _geminiAIService = geminiAIService;
+        _pdfGenerationService = pdfGenerationService;
         _configuration = configuration;
-        _templateService = templateService;
     }
 
     public async Task<Result<GenerateResumeResponse>> Handle(GenerateResumeCommand request, CancellationToken cancellationToken)
@@ -72,63 +69,34 @@ public class GenerateResumeCommandHandler : ICommandHandler<GenerateResumeComman
             await _resumeRepository.UpdateAsync(existingResume);
         }
 
-        byte[] templatePdf = null;
-        if (!string.IsNullOrWhiteSpace(request.TemplateName))
-        {
-            templatePdf = await _templateService.GetResumeTemplateAsync(request.TemplateName, cancellationToken);
-            if (templatePdf == null)
-            {
-                throw new InvalidOperationException($"Resume template '{request.TemplateName}' not found");
-            }
-        }
-        
-        var resumeContent = await _geminiClient.InvokeFunctionAsync<ResumeContent>(
-            "generate_resume",
-            resumeDto,
-            templatePdf,
-            cancellationToken);
+        // Generate AI-powered resume content in markdown format
+        var aiResult = await _geminiAIService.GenerateResumeMarkdownAsync(resumeDto, cancellationToken);
+        if (aiResult.IsFailure)
+            return Result.Failure<GenerateResumeResponse>(aiResult.Error);
 
-        resumeContent.PhoneNumber = studentProfile.PhoneNumber.Value;
-        resumeContent.Location = studentProfile.Location;
+        // Generate PDF from markdown content using IronPDF
+        var pdfResult = await _pdfGenerationService.GenerateResumePdfAsync(aiResult.Value, cancellationToken);
+        if (pdfResult.IsFailure)
+            return Result.Failure<GenerateResumeResponse>(pdfResult.Error);
 
-        var pdfBytes = _pdfRenderer.Render(resumeContent);
-
-        var storagePath = _configuration["StoragePath"] ?? "storage";
-        var resumesPath = Path.Combine(storagePath, "resumes", request.UserId.ToString());
-        Directory.CreateDirectory(resumesPath);
-
-        var resumeId = Guid.NewGuid();
-        var fileName = $"{resumeId}.pdf";
-        var filePath = Path.Combine(resumesPath, fileName);
-        await File.WriteAllBytesAsync(filePath, pdfBytes, cancellationToken);
-
-        var relativeFilePath = Path.Combine("resumes", request.UserId.ToString(), fileName);
+        // Create and save the generated resume record
         var generatedResumeResult = GeneratedResume.Create(
-            request.UserId,
+            studentProfile.Id,
             request.InternshipId,
-            relativeFilePath);
+            pdfResult.Value);
 
         if (generatedResumeResult.IsFailure)
-            throw new InvalidOperationException(generatedResumeResult.Error.Description ??
-                                                "Failed to create GeneratedResume entity");
+            return Result.Failure<GenerateResumeResponse>(generatedResumeResult.Error);
 
-        generatedResumeResult.Value.Id = resumeId;
-        var addResult = await _resumeRepository.AddAsync(generatedResumeResult.Value);
+        await _resumeRepository.AddAsync(generatedResumeResult.Value);
 
-        if (!addResult)
-            throw new InvalidOperationException("Failed to save GeneratedResume entity to database");
+        // Generate download URL
+        var baseUrl = _configuration["BaseUrl"] ?? "http://localhost:5000";
+        var downloadUrl = $"{baseUrl}/api/resumes/download/{generatedResumeResult.Value.Id}";
 
-        var downloadUrl = $"/files/{relativeFilePath}";
-        var updateResult = studentProfile.UpdateResumeUrl(downloadUrl);
-
-        if (updateResult.IsFailure)
-            throw new InvalidOperationException(updateResult.Error.Description);
-
-        await _studentProfileRepository.UpdateAsync(studentProfile);
-
-        return new GenerateResumeResponse(
-            resumeId,
-            relativeFilePath,
-            downloadUrl);
+        return Result.Success(new GenerateResumeResponse(
+            generatedResumeResult.Value.Id,
+            pdfResult.Value,
+            downloadUrl));
     }
 }

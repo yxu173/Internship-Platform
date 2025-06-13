@@ -10,11 +10,9 @@ using Application.Common.Interfaces;
 using Domain.Aggregates.Resumes;
 using Domain.Aggregates.Users;
 using Domain.Repositories;
-using Infrastructure.AI.Gemini;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Options;
 using Infrastructure.Database;
-using Infrastructure.Pdf;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -56,6 +54,11 @@ public static class DependencyInjection
         services.AddScoped<IInternshipBookmarkRepository, InternshipBookmarkRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ICompanyDashboardRepository, CompanyDashboardRepository>();
+        
+        // AI and PDF Generation Services
+        services.AddHttpClient<IGeminiAIService, GeminiAIService>();
+        services.AddScoped<IGeminiAIService, GeminiAIService>();
+        services.AddScoped<IPdfGenerationService, PdfGenerationService>();
         
         // Payment service registration
         services.Configure<PaymobSettings>(configuration.GetSection(nameof(PaymobSettings)));
@@ -209,18 +212,8 @@ public static class DependencyInjection
         // Register repositories
         services.AddScoped<IGeneratedResumeRepository, GeneratedResumeRepository>();
             
-        // Register PDF renderer
-        services.AddTransient<IPdfResumeRenderer, PdfResumeRenderer>();
-        services.AddScoped<ITemplateService, TemplateService>();
-            
-        // Register Gemini client
-        services.AddHttpClient<IGeminiClient, GeminiClient>();
-        services.AddScoped<ITemplateService, TemplateService>();
-        // Ensure storage directory exists
-        var storagePath = configuration["StoragePath"] ?? "storage";
-        var resumesPath = Path.Combine(storagePath, "resumes");
-        Directory.CreateDirectory(resumesPath);
-
+       
+      
         return services;
     }
 }

@@ -17,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
+IronPdf.License.LicenseKey = "IRONSUITE.MOHAMEDSAMIR177.OUTLOOK.COM.16354-AB6C3EA22E-GWBATIJQIQXVQC-EL3JKFT2R7PN-EMC3Z232AAGO-VKMTCX7PYLR6-4O627TG63PKN-ZG3QV57SEBU5-EZLRJA-TEYENWB6VSKPUA-DEPLOYMENT.TRIAL-F4E7EK.TRIAL.EXPIRES.13.JUL.2025";
+
 
 builder.Services
     .AddPresentation()

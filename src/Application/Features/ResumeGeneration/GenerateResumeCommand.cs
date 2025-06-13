@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Features.ResumeGeneration;
 
-public record GenerateResumeCommand(Guid UserId, Guid InternshipId, string TemplateName = null) : ICommand<GenerateResumeResponse>;
+public record GenerateResumeCommand(Guid UserId, Guid InternshipId) : ICommand<GenerateResumeResponse>;
 public class GenerateResumeResponse
 {
     public Guid ResumeId { get; set; }
