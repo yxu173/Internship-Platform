@@ -45,8 +45,6 @@ internal sealed class GetRoadmapByIdQueryHandler : IQueryHandler<GetRoadmapByIdQ
                     section.Order,
                     section.Items.Select(item => new RoadmapItemDto(
                         item.Title,
-                        item.Description,
-                        item.Type.ToString(),
                         item.Resources.Select(r => new ResourceLinkDto(
                             r.Title, 
                             r.Url, 

@@ -12,12 +12,6 @@ public class RoadmapItemConfiguration : IEntityTypeConfiguration<RoadmapItem>
         builder.Property(x => x.Title)
             .IsRequired()
             .HasMaxLength(100);
-        builder.Property(x => x.Description)
-            .IsRequired()
-            .HasMaxLength(1000);
-        builder.Property(x => x.Type)
-            .HasConversion<string>()
-            .IsRequired();
         builder.Property(x => x.Order)
             .IsRequired();
 

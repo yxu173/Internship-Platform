@@ -116,8 +116,6 @@ public class RoadmapController : BaseController
     {
         var items = request.Items.Select(item => new RoadmapItemDto(
             item.Title,
-            item.Description,
-            item.Type,
             item.Resources.Select(r => new Application.Features.Roadmaps.DTOs.ResourceLinkDto(r.Title, r.Url, r.Type)).ToList(),
             item.Order
         )).ToList();
@@ -176,8 +174,6 @@ public class RoadmapController : BaseController
             roadmapId,
             sectionId,
             request.Title,
-            request.Description,
-            request.Type,
             resourceDtos,
             request.Order
         );
@@ -205,8 +201,6 @@ public class RoadmapController : BaseController
             roadmapId,
             sectionId,
             itemId,
-            request.Title,
-            request.Description,
             request.Type,
             resourceDtos,
             request.Order

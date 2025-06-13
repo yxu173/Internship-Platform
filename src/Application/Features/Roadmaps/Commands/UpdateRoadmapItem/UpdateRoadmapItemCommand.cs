@@ -10,8 +10,6 @@ public record UpdateRoadmapItemCommand(
     Guid SectionId,
     Guid ItemId,         
     string Title,
-    string Description,
-    string Type,          
     List<ResourceLinkDto> Resources, 
     int Order
 ) : ICommand;

@@ -15,8 +15,6 @@ public record CreateRoadmapSectionWithItemsCommand(
 
 public record RoadmapItemDto(
     string Title,
-    string Description,
-    string Type,
     List<ResourceLinkDto> Resources,
     int Order
 );

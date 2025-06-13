@@ -89,8 +89,6 @@ public sealed class CreateRoadmapSectionWithItemsCommandHandler : ICommandHandle
 
                 var addItemResult = section.AddItem(
                     itemDto.Title,
-                    itemDto.Description,
-                    itemDto.Type,
                     resourceLinks,
                     itemDto.Order
                 );

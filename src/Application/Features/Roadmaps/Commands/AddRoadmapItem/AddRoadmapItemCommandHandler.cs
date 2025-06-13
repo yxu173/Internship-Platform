@@ -52,8 +52,6 @@ internal sealed class AddRoadmapItemCommandHandler : ICommandHandler<AddRoadmapI
 
         var addItemResult = section.AddItem(
             request.Title,
-            request.Description,
-            request.Type,
             resourceLinks,
             request.Order
         );

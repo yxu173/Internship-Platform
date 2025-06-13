@@ -50,8 +50,6 @@ internal sealed class GetStudentRoadmapProgressQueryHandler : IQueryHandler<GetS
                 itemDtos.Add(new RoadmapItemProgressDto(
                     item.Id,
                     item.Title,
-                    item.Description,
-                    item.Type.ToString(),
                     resourceDtos,
                     item.Order,
                     completedItemIds.Contains(item.Id)

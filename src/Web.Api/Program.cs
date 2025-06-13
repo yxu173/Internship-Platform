@@ -8,6 +8,9 @@ using Serilog;
 using Web.Api;
 using Web.Api.Extensions;
 using Web.Api.Hubs;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,37 @@ builder.Services
     .AddPresentation()
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
+
+// Add OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder => tracerProviderBuilder
+        .AddSource("WebApi") // Matches the source name used in manual tracing if any
+        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService(serviceName: "web-api", serviceVersion: "1.0.0") // As defined in compose.yaml
+            .AddTelemetrySdk())
+        .AddAspNetCoreInstrumentation(options =>
+        {
+            options.RecordException = true; // Enable recording of exceptions as trace events
+        })
+        .AddHttpClientInstrumentation() // Instrument outgoing HTTP requests
+        .AddOtlpExporter(opts => // Export traces to OTLP endpoint
+        {
+            // Endpoint is typically configured via environment variable OTEL_EXPORTER_OTLP_ENDPOINT
+            // but can be set here explicitly if needed.
+            // opts.Endpoint = new Uri(builder.Configuration.GetValue<string>("Otlp:Endpoint"));
+        }))
+    .WithMetrics(metricsProviderBuilder => metricsProviderBuilder
+        .SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService(serviceName: "web-api", serviceVersion: "1.0.0")
+            .AddTelemetrySdk())
+        .AddAspNetCoreInstrumentation() // Instrument ASP.NET Core for metrics
+        .AddHttpClientInstrumentation() // Instrument outgoing HTTP requests for metrics
+        .AddRuntimeInstrumentation()    // Collect runtime metrics (GC, JIT, etc.)
+        .AddOtlpExporter(opts =>      // Export metrics to OTLP endpoint
+        {
+            // Endpoint is typically configured via environment variable OTEL_EXPORTER_OTLP_ENDPOINT
+            // opts.Endpoint = new Uri(builder.Configuration.GetValue<string>("Otlp:Endpoint"));
+        }));
 
 builder.Services.AddSignalR(options =>
 {

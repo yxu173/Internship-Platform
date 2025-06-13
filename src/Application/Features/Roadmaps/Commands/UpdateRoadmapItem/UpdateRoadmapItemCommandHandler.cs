@@ -52,8 +52,6 @@ internal sealed class UpdateRoadmapItemCommandHandler : ICommandHandler<UpdateRo
         var updateResult = section.UpdateItem(
             request.ItemId,
             request.Title,
-            request.Description,
-            request.Type,
             resourceLinks,
             request.Order
         );

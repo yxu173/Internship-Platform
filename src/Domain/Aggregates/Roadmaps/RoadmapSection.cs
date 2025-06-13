@@ -43,7 +43,7 @@ public sealed class RoadmapSection : BaseEntity
         Order = order;
     }
 
-    public Result<Guid> AddItem(string title, string description, string type,
+    public Result<Guid> AddItem(string title,
         List<ResourceLink> resources, int order)
     {
         if (_items.Any(i => i.Order == order))
@@ -51,7 +51,7 @@ public sealed class RoadmapSection : BaseEntity
             return Result.Failure<Guid>(RoadmapErrors.DuplicateItemOrder);
         }
 
-        var itemResult = RoadmapItem.Create(title, description, type, resources, order);
+        var itemResult = RoadmapItem.Create(title, resources, order);
         if (itemResult.IsFailure)
         {
             return Result.Failure<Guid>(itemResult.Error);
@@ -62,7 +62,7 @@ public sealed class RoadmapSection : BaseEntity
         return Result.Success(itemResult.Value.Id);
     }
 
-    public Result UpdateItem(Guid itemId, string title, string description, string type,
+    public Result UpdateItem(Guid itemId, string title,
         List<ResourceLink> resources, int order)
     {
         var item = _items.FirstOrDefault(i => i.Id == itemId);
@@ -76,7 +76,7 @@ public sealed class RoadmapSection : BaseEntity
             return Result.Failure(RoadmapErrors.DuplicateItemOrder);
         }
 
-        var updateResult = item.UpdateDetails(title, description, type, resources, order);
+        var updateResult = item.UpdateDetails(title, resources, order);
         if (updateResult.IsFailure)
         {
             return updateResult;

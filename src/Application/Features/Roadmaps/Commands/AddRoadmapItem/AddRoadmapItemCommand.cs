@@ -9,8 +9,6 @@ public record AddRoadmapItemCommand(
     Guid RoadmapId,       
     Guid SectionId,      
     string Title,
-    string Description,
-    string Type,          
     List<ResourceLinkDto> Resources, 
     int Order
 ) : ICommand<Guid>; 
