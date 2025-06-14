@@ -85,7 +85,10 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false, bool includeQuiz = false)
     {
-        var query = _context.RoadmapSections.AsQueryable();
+        var query = _context.RoadmapSections
+            .AsNoTracking()
+            .Include(x => x.Items)
+            .AsQueryable();
 
         if (includeItems)
         {

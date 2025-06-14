@@ -30,6 +30,7 @@ using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 using Application.Features.Payments.Commands.InitiatePayment;
 using Application.Features.Roadmaps.Queries.GetPremiumRoadmaps;
+using Application.Features.Roadmaps.Queries.GetSectionById;
 
 namespace Web.Api.Controllers;
 
@@ -92,6 +93,14 @@ public class RoadmapController : BaseController
     public async Task<IResult> GetByCompanyId([FromRoute] Guid companyId)
     {
         var query = new GetRoadmapsByCompanyIdQuery(companyId);
+        var result = await _mediator.Send(query);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("sections/{sectionId:guid}")]
+    public async Task<IResult> GetSectionById([FromRoute] Guid sectionId)
+    {
+        var query = new GetSectionByIdQuery(sectionId);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
