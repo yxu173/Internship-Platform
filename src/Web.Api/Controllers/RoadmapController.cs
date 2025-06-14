@@ -24,6 +24,7 @@ using Application.Features.Roadmaps.Commands.SubmitQuizAttempt;
 using Application.Features.Roadmaps.Queries.GetQuizById;
 using Application.Features.Roadmaps.Queries.GetAccessibleSections;
 using Application.Features.Roadmaps.Commands.AddQuizQuestionWithOptions;
+using Application.Features.Roadmaps.Commands.CreateQuizWithQuestions;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Roadmap;
 using Web.Api.Extensions;
@@ -442,5 +443,29 @@ public class RoadmapController : BaseController
         var result = await _mediator.Send(query);
         
         return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpPost("{roadmapId}/sections/{sectionId}/create-quiz-with-questions")]
+    public async Task<IResult> CreateQuizWithQuestions(
+        [FromRoute] Guid roadmapId,
+        [FromRoute] Guid sectionId,
+        [FromBody] CreateQuizWithQuestionsRequest request)
+    {
+        var command = new CreateQuizWithQuestionsCommand(
+            roadmapId,  
+            sectionId,  
+            request.PassingScore,
+            request.IsRequired,
+            request.Questions.Select(q => 
+            new QuestionQuizDto(q.Text, q.Points, q.Options
+            .Select(o => new QuizOptionRequest(o.Text, o.IsCorrect)).ToList())).ToList() 
+        );
+        
+        var result = await _mediator.Send(command);
+        
+        return result.Match(
+            quizId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}", quizId),
+            CustomResults.Problem
+        );
     }
 }

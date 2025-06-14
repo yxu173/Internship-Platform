@@ -53,7 +53,7 @@ public sealed class CreateRoadmapSectionWithItemsCommandHandler : ICommandHandle
             {
                 var resourceLinks = new List<ResourceLink>();
                 
-                if (itemDto.Resources == null || !itemDto.Resources.Any())
+                if (itemDto.Resources == null || itemDto.Resources.Count == 0)
                 {
                     return Result.Failure<Guid>(new Error(
                         "RoadmapItem.ResourcesRequired", 

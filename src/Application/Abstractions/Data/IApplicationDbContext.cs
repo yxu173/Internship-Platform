@@ -1,9 +1,10 @@
-﻿using Domain.Aggregates.Bookmarks;
+using Domain.Aggregates.Bookmarks;
 using Domain.Aggregates.Internships;
 using Domain.Aggregates.Profiles;
 using Domain.Aggregates.Roadmaps;
 using Domain.Aggregates.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Application.Abstractions.Data;
 
@@ -34,4 +35,6 @@ public interface IApplicationDbContext
     DbSet<QuizAttempt> QuizAttempts { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    EntityEntry Update(object entity);
+    EntityEntry<TEntity> Add<TEntity>(TEntity entity) where TEntity : class;
 }

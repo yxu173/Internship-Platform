@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Data;
+using Application.Abstractions.Data;
 using Domain.Aggregates.Bookmarks;
 using Domain.Aggregates.Internships;
 using Domain.Aggregates.Profiles;
@@ -59,5 +59,15 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         var result = await base.SaveChangesAsync(cancellationToken);
 
         return result;
+    }
+
+    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry Update(object entity)
+    {
+        return base.Update(entity);
+    }
+
+    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Add<TEntity>(TEntity entity) where TEntity : class
+    {
+        return base.Add(entity);
     }
 }

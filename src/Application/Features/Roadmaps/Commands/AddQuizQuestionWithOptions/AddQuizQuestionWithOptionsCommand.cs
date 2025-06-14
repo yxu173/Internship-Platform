@@ -12,6 +12,4 @@ namespace Application.Features.Roadmaps.Commands.AddQuizQuestionWithOptions
         int QuestionPoints,
         List<QuizOptionRequest> Options
     ) : ICommand<Guid>;
-
-    // Removed QuizOptionInput record as it's now redundant; use QuizOptionRequest from AddQuizQuestionWithOptionsRequest.cs
 }

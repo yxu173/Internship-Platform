@@ -17,7 +17,7 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task<Roadmap?> GetByIdAsync(Guid id, bool includeSections = false)
     {
-        var query = _context.Roadmaps.AsNoTracking();
+        IQueryable<Roadmap> query = _context.Roadmaps;
 
         if (includeSections)
         {
@@ -33,24 +33,24 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task<IReadOnlyList<Roadmap>> GetByTechnologyAsync(string technology)
     {
-        return await _context.Roadmaps.AsNoTracking().Where(x => x.Technology == technology).ToListAsync();
+        return await _context.Roadmaps.Where(x => x.Technology == technology).ToListAsync();
     }
 
     public async Task<IReadOnlyList<Roadmap>> GetByCompanyIdAsync(Guid companyId)
     {
-        return await _context.Roadmaps.AsNoTracking().Where(x => x.CompanyId == companyId).ToListAsync();
+        return await _context.Roadmaps.Where(x => x.CompanyId == companyId).ToListAsync();
     }
 
     public async Task<IReadOnlyList<Roadmap>> GetPublicRoadmapsAsync()
     {
-        return await _context.Roadmaps.AsNoTracking().Where(x => !x.IsPremium).ToListAsync();
-        //return await _context.Roadmaps.AsNoTracking().ToListAsync();
+        return await _context.Roadmaps.Where(x => !x.IsPremium).ToListAsync();
+        //return await _context.Roadmaps.ToListAsync();
     }
     
     public async Task<IReadOnlyList<Roadmap>> GetPremiumRoadmapsAsync()
     {
-        return await _context.Roadmaps.AsNoTracking().Where(x => x.IsPremium).ToListAsync();
-        //return await _context.Roadmaps.AsNoTracking().ToListAsync();
+        return await _context.Roadmaps.Where(x => x.IsPremium).ToListAsync();
+        //return await _context.Roadmaps.ToListAsync();
     }
 
     public async Task AddAsync(Roadmap roadmap)
@@ -60,20 +60,7 @@ public class RoadmapRepository : IRoadmapRepository
     }
 
     public async Task Update(Roadmap roadmap)
-    {
-        var existingRoadmap = await _context.Roadmaps
-            .AsNoTracking()
-            .FirstOrDefaultAsync(r => r.Id == roadmap.Id);
-            
-        if (existingRoadmap == null)
-        {
-            _context.Roadmaps.Add(roadmap);
-        }
-        else
-        {
-            _context.Roadmaps.Update(roadmap);
-        }
-        
+    {  
         await _context.SaveChangesAsync();
     }
 
@@ -86,7 +73,7 @@ public class RoadmapRepository : IRoadmapRepository
     public async Task<RoadmapSection?> GetSectionByIdAsync(Guid sectionId, bool includeItems = false, bool includeQuiz = false)
     {
         var query = _context.RoadmapSections
-            .AsNoTracking()
+            
             .Include(x => x.Items)
             .AsQueryable();
 
@@ -173,7 +160,7 @@ public class RoadmapRepository : IRoadmapRepository
 
     public async Task<ResourceProgress?> GetProgressAsync(Guid enrollmentId, Guid itemId)
     {
-        return await _context.ResourceProgresses.AsNoTracking()
+        return await _context.ResourceProgresses
             .FirstOrDefaultAsync(x => x.EnrollmentId == enrollmentId && x.ItemId == itemId);
     }
 
@@ -186,7 +173,7 @@ public class RoadmapRepository : IRoadmapRepository
     public async Task<IReadOnlyList<Enrollment>> GetEnrollmentsByStudentIdAsync(Guid studentId,
         bool includeRoadmap = false)
     {
-        var query = _context.Enrollments.AsNoTracking().Where(e => e.StudentId == studentId);
+        var query = _context.Enrollments.Where(e => e.StudentId == studentId);
 
         if (includeRoadmap)
         {
@@ -208,14 +195,14 @@ public class RoadmapRepository : IRoadmapRepository
             return new List<ResourceProgress>();
         }
 
-        return await _context.ResourceProgresses.AsNoTracking()
+        return await _context.ResourceProgresses
             .Where(rp => enrollmentIds.Contains(rp.EnrollmentId))
             .ToListAsync();
     }
 
     public async Task<IReadOnlyList<ResourceProgress>> GetProgressByEnrollmentIdAsync(Guid enrollmentId)
     {
-        return await _context.ResourceProgresses.AsNoTracking()
+        return await _context.ResourceProgresses
             .Where(rp => rp.EnrollmentId == enrollmentId)
             .ToListAsync();
     }
@@ -224,7 +211,7 @@ public class RoadmapRepository : IRoadmapRepository
     {
         if (roadmapIds == null || !roadmapIds.Any()) return new List<Enrollment>();
 
-        return await _context.Enrollments.AsNoTracking()
+        return await _context.Enrollments
             .Where(e => roadmapIds.Contains(e.RoadmapId))
             .ToListAsync();
     }
@@ -233,11 +220,16 @@ public class RoadmapRepository : IRoadmapRepository
     {
         if (enrollmentIds == null || !enrollmentIds.Any()) return new List<ResourceProgress>();
 
-        return await _context.ResourceProgresses.AsNoTracking()
+        return await _context.ResourceProgresses
             .Where(rp => enrollmentIds.Contains(rp.EnrollmentId))
             .ToListAsync();
     }
-    
+
+    public void AddQuiz(Quiz quiz)
+    {
+        _context.Quizzes.Add(quiz);
+    }
+
     public async Task<SearchResult<Roadmap>> SearchRoadmapsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default)
     {
         searchTerm = searchTerm?.ToLower() ?? string.Empty;
