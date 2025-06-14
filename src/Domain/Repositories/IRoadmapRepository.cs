@@ -40,4 +40,6 @@ public interface IRoadmapRepository
     Task<IReadOnlyList<Enrollment>> GetEnrollmentsByRoadmapIdsAsync(IEnumerable<Guid> roadmapIds);
 
     Task<IReadOnlyList<ResourceProgress>> GetProgressByEnrollmentIdsAsync(IEnumerable<Guid> enrollmentIds);
+    
+    void AddQuiz(Quiz quiz);
 }
