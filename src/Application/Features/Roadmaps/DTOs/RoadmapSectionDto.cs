@@ -7,5 +7,6 @@ public record RoadmapSectionDto(
     Guid Id,
     string Title,
     int Order,
+    Guid? QuizId,
     IReadOnlyList<RoadmapItemDto> Items
 );

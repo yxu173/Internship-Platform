@@ -11,13 +11,13 @@ public sealed class CreateQuizWithQuestionsRequest
 }   
 
 public record QuestionDto(
-     string? Text,  
+     string Text,  
     int Points,
     List<OptionDto> Options
 );
 
 public class OptionDto
 {
-    public string? Text { get; set; }  
+    public string Text { get; set; } = string.Empty;
     public bool IsCorrect { get; set; }
 }

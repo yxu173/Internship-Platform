@@ -45,7 +45,6 @@ public sealed class CreateQuizWithQuestionsCommandHandler : ICommandHandler<Crea
         }
 
         var quiz = section.Quiz;
-        _roadmapRepository.AddQuiz(quiz);
 
         // Build questions & options first
         foreach (var questionDto in request.Questions)
@@ -72,8 +71,8 @@ public sealed class CreateQuizWithQuestionsCommandHandler : ICommandHandler<Crea
             }
         }
 
-
-        await _context.SaveChangesAsync(cancellationToken);
+        // Save the entire roadmap with all its sections and quiz
+        await _roadmapRepository.Update(roadmap);
 
         return Result.Success(quiz.Id);
     }

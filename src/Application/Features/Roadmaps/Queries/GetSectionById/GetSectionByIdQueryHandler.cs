@@ -28,6 +28,7 @@ public sealed class GetSectionByIdQueryHandler : IQueryHandler<GetSectionByIdQue
             section.Id,
             section.Title,
             section.Order,
+            section.Quiz?.Id,
             section.Items.Select(item => new RoadmapItemDto(
                 item.Title,
                 item.Resources.Select(r => new ResourceLinkDto(
