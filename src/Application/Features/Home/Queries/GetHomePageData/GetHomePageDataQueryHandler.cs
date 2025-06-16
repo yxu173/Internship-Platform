@@ -147,7 +147,7 @@ public sealed class GetHomePageDataQueryHandler : IQueryHandler<GetHomePageDataQ
                 .ToList();
 
             // Get roadmaps
-            var roadmaps = await _roadmapRepository.GetPublicRoadmapsAsync();
+            var roadmaps = await _roadmapRepository.GetPremiumRoadmapsAsync();
             var roadmapDtos = roadmaps
                 .Where(r => r.CompanyId != null)
                 .Take(10)
