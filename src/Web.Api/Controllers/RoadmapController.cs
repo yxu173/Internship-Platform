@@ -31,6 +31,7 @@ using Web.Api.Extensions;
 using Web.Api.Infrastructure;
 using Application.Features.Payments.Commands.InitiatePayment;
 using Application.Features.Roadmaps.Queries.GetPremiumRoadmaps;
+using Application.Features.Roadmaps.Queries.GetQuizAttempt;
 using Application.Features.Roadmaps.Queries.GetSectionById;
 
 namespace Web.Api.Controllers;
@@ -113,6 +114,7 @@ public class RoadmapController : BaseController
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
     [HttpGet("premium")]
     public async Task<IResult> GetPremium()
     {
@@ -129,13 +131,15 @@ public class RoadmapController : BaseController
         return result.Match(sectionId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}", sectionId),
             CustomResults.Problem);
     }
-    
+
     [HttpPost("{roadmapId}/sections-with-items")]
-    public async Task<IResult> CreateSectionWithItems([FromRoute] Guid roadmapId, [FromBody] CreateRoadmapSectionWithItemsRequest request)
+    public async Task<IResult> CreateSectionWithItems([FromRoute] Guid roadmapId,
+        [FromBody] CreateRoadmapSectionWithItemsRequest request)
     {
         var items = request.Items.Select(item => new RoadmapItemDto(
             item.Title,
-            item.Resources.Select(r => new Application.Features.Roadmaps.DTOs.ResourceLinkDto(r.Title, r.Url, r.Type)).ToList(),
+            item.Resources.Select(r => new Application.Features.Roadmaps.DTOs.ResourceLinkDto(r.Title, r.Url, r.Type))
+                .ToList(),
             item.Order
         )).ToList();
 
@@ -145,7 +149,7 @@ public class RoadmapController : BaseController
             request.SectionOrder,
             items
         );
-        
+
         var result = await _mediator.Send(command);
         return result.Match(
             sectionId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}", sectionId),
@@ -252,34 +256,35 @@ public class RoadmapController : BaseController
     {
         var roadmapQuery = new GetRoadmapByIdQuery(roadmapId);
         var roadmapResult = await _mediator.Send(roadmapQuery);
-        
+
         if (roadmapResult.IsFailure)
         {
             return Results.Problem(roadmapResult.Error.Description);
         }
-        
+
         var roadmap = roadmapResult.Value;
-        
+
         if (!roadmap.IsPremium)
         {
             var enrollCommand = new EnrollStudentCommand(UserId, roadmapId);
             var result = await _mediator.Send(enrollCommand);
-            
+
             return result.Match(
-                () => Results.Ok(new { Success = true, Message = "Successfully enrolled in free roadmap" }), 
+                () => Results.Ok(new { Success = true, Message = "Successfully enrolled in free roadmap" }),
                 CustomResults.Problem
             );
         }
         else
         {
-             var paymentCommand = new InitiateRoadmapPaymentCommand(UserId, roadmapId);
+            var paymentCommand = new InitiateRoadmapPaymentCommand(UserId, roadmapId);
             var result = await _mediator.Send(paymentCommand);
-            
+
             return result.Match(
-                paymentResponse => Results.Ok(new { 
-                    Success = true, 
-                    IsPremium = true, 
-                    PaymentUrl = paymentResponse.CheckoutUrl, 
+                paymentResponse => Results.Ok(new
+                {
+                    Success = true,
+                    IsPremium = true,
+                    PaymentUrl = paymentResponse.CheckoutUrl,
                     PaymentId = paymentResponse.TransactionId,
                     Message = "Payment required to complete enrollment"
                 }),
@@ -317,15 +322,15 @@ public class RoadmapController : BaseController
             request.PassingScore,
             request.IsRequired
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(
             quizId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}", quizId),
             CustomResults.Problem
         );
     }
-    
+
     [HttpPost("{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions")]
     public async Task<IResult> AddQuizQuestion(
         [FromRoute] Guid roadmapId,
@@ -340,17 +345,17 @@ public class RoadmapController : BaseController
             request.Text,
             request.Points
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(
             questionId => Results.Created(
-                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}", 
+                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}",
                 questionId),
             CustomResults.Problem
         );
     }
-    
+
     [HttpPost("{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions-with-options")]
     public async Task<IResult> AddQuizQuestionWithOptions(
         [FromRoute] Guid roadmapId,
@@ -366,17 +371,17 @@ public class RoadmapController : BaseController
             request.QuestionPoints,
             request.Options
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(
             questionId => Results.Created(
-                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}", 
+                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}",
                 questionId),
             CustomResults.Problem
         );
     }
-    
+
     [HttpPost("{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}/options")]
     public async Task<IResult> AddQuizOption(
         [FromRoute] Guid roadmapId,
@@ -393,17 +398,17 @@ public class RoadmapController : BaseController
             request.Text,
             request.IsCorrect
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(
             optionId => Results.Created(
-                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}/options/{optionId}", 
+                $"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}/questions/{questionId}/options/{optionId}",
                 optionId),
             CustomResults.Problem
         );
     }
-    
+
     [HttpPost("{roadmapId}/sections/{sectionId}/quiz/{quizId}/submit")]
     public async Task<IResult> SubmitQuiz(
         [FromRoute] Guid roadmapId,
@@ -418,12 +423,12 @@ public class RoadmapController : BaseController
             quizId,
             request.Answers
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
-    
+
     [HttpGet("{roadmapId}/sections/{sectionId}/quiz/{quizId}")]
     public async Task<IResult> GetQuiz(
         [FromRoute] Guid roadmapId,
@@ -432,16 +437,16 @@ public class RoadmapController : BaseController
     {
         var query = new GetQuizByIdQuery(roadmapId, sectionId, quizId);
         var result = await _mediator.Send(query);
-        
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
-    
+
     [HttpGet("{roadmapId}/accessible-sections")]
     public async Task<IResult> GetAccessibleSections([FromRoute] Guid roadmapId)
     {
         var query = new GetAccessibleSectionsQuery(UserId, roadmapId);
         var result = await _mediator.Send(query);
-        
+
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 
@@ -452,20 +457,29 @@ public class RoadmapController : BaseController
         [FromBody] CreateQuizWithQuestionsRequest request)
     {
         var command = new CreateQuizWithQuestionsCommand(
-            roadmapId,  
-            sectionId,  
+            roadmapId,
+            sectionId,
             request.PassingScore,
             request.IsRequired,
-            request.Questions.Select(q => 
-            new QuestionQuizDto(q.Text, q.Points, q.Options
-            .Select(o => new QuizOptionRequest(o.Text, o.IsCorrect)).ToList())).ToList() 
+            request.Questions.Select(q =>
+                new QuestionQuizDto(q.Text, q.Points, q.Options
+                    .Select(o => new QuizOptionRequest(o.Text, o.IsCorrect)).ToList())).ToList()
         );
-        
+
         var result = await _mediator.Send(command);
-        
+
         return result.Match(
             quizId => Results.Created($"/api/roadmap/{roadmapId}/sections/{sectionId}/quiz/{quizId}", quizId),
             CustomResults.Problem
         );
+    }
+
+    [HttpGet("get-quiz-attempt/{quizId:guid}")]
+    public async Task<IResult> GetQuizAttempt([FromRoute] Guid quizId)
+    {
+        var query = new GetQuizAttemptQuery(UserId, quizId);
+        var result = await _mediator.Send(query);
+
+        return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

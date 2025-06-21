@@ -67,4 +67,4 @@ public sealed class QuizQuestion : BaseEntity
         var option = _options.FirstOrDefault(o => o.Id == optionId);
         return option?.IsCorrect ?? false;
     }
-} 
+}

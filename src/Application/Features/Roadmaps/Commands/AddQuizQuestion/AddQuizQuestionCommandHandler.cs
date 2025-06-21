@@ -47,6 +47,6 @@ public sealed class AddQuizQuestionCommandHandler : ICommandHandler<AddQuizQuest
 
         await _roadmapRepository.UpdateSectionAsync(section);
 
-        return Result.Success(questionResult.Value);
+        return Result.Success(questionResult.Value.Id);
     }
 } 

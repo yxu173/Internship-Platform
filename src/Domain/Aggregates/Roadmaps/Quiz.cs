@@ -36,11 +36,11 @@ public sealed class Quiz : BaseEntity
         return Result.Success(new Quiz(sectionId, passingScore, isRequired));
     }
     
-    public Result<Guid> AddQuestion(string text, int points)
+    public Result<QuizQuestion> AddQuestion(string text, int points)
     {
         var question = new QuizQuestion(text, points, Id);
         _questions.Add(question);
-        return Result.Success(question.Id);
+        return Result.Success(question);
     }
     
     public Result UpdateQuestion(Guid questionId, string text, int points)

@@ -19,8 +19,4 @@
     <ProjectReference Include="..\SharedKernal\SharedKernal.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Roadmaps\Queries\GetQuizAttampt\" />
-  </ItemGroup>
-
 </Project>

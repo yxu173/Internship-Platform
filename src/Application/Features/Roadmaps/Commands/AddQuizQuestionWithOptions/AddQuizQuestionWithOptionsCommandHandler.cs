@@ -45,13 +45,7 @@ namespace Application.Features.Roadmaps.Commands.AddQuizQuestionWithOptions
                 return Result.Failure<Guid>(questionResult.Error);
             }
             
-            var questionId = questionResult.Value;
-            var question = section.Quiz.Questions.FirstOrDefault(q => q.Id == questionId);
-            if (question == null)
-            {
-                return Result.Failure<Guid>(Error.NotFound("Question not found after addition"
-                ," Question with ID: " + questionId));
-            }
+            var question = questionResult.Value;
             
             foreach (var option in request.Options)
             {
@@ -64,7 +58,7 @@ namespace Application.Features.Roadmaps.Commands.AddQuizQuestionWithOptions
             
             await _roadmapRepository.UpdateSectionAsync(section);
             
-            return Result.Success(questionId);
+            return Result.Success(question.Id);
         }
     }
 }

@@ -230,6 +230,29 @@ public class RoadmapRepository : IRoadmapRepository
         _context.Quizzes.Add(quiz);
     }
 
+    public async Task<QuizAttempt?> GetQuizAttemptAsync(Guid attemptId) =>
+        await _context.QuizAttempts
+            .Include(qa => qa.Answers)
+            .FirstOrDefaultAsync(qa => qa.Id == attemptId);
+
+    public async Task<Quiz?> GetQuizByIdAsync(Guid quizId) =>
+        await _context.Quizzes
+            .Include(q => q.Questions)
+            .ThenInclude(qq => qq.Options)
+            .FirstOrDefaultAsync(q => q.Id == quizId);
+
+    public async Task<bool> HasEnrollmentAsync(Guid studentId, Guid roadmapId) =>
+        await _context.Enrollments.AnyAsync(e => e.StudentId == studentId && e.RoadmapId == roadmapId);
+
+    public async Task<QuizAttempt?> GetLatestQuizAttemptAsync(Guid userId, Guid quizId) =>
+        await _context.QuizAttempts
+            .Include(qa => qa.Answers)
+            .Where(qa => qa.QuizId == quizId && 
+            _context.Enrollments
+                .Any(e => e.Id == qa.EnrollmentId && e.Student.UserId == userId))
+            .OrderByDescending(qa => qa.CreatedAt)
+            .FirstOrDefaultAsync();
+
     public async Task<SearchResult<Roadmap>> SearchRoadmapsAsync(string searchTerm, int page, int pageSize, CancellationToken cancellationToken = default)
     {
         searchTerm = searchTerm?.ToLower() ?? string.Empty;

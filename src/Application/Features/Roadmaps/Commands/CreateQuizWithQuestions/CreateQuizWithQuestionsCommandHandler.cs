@@ -54,12 +54,8 @@ public sealed class CreateQuizWithQuestionsCommandHandler : ICommandHandler<Crea
             {
                 return Result.Failure<Guid>(addQuestionResult.Error);
             }
-            var questionId = addQuestionResult.Value; 
-            var question = quiz.Questions.FirstOrDefault(q => q.Id == questionId); 
-            if (question == null)
-            {
-                return Result.Failure<Guid>(new Error("QuizQuestionNotFound", "Question not found after addition", ErrorType.Validation));
-            }
+
+            var question = addQuestionResult.Value;
 
             foreach (var optionDto in questionDto.Options)
             {

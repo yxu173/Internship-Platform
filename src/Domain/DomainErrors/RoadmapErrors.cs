@@ -140,4 +140,8 @@ public static class RoadmapErrors
         "Quiz.OptionNotFound",
         "Option not found in this quiz."
     );
+    public static Error QuizAttemptNotFound => Error.NotFound(
+        "Quiz.AttemptNotFound",
+        "Quiz attempt not found."
+    );
 }

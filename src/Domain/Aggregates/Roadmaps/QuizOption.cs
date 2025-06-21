@@ -8,6 +8,7 @@ public sealed class QuizOption : BaseEntity
     {
     }
     
+    public Guid QuestionId { get; private set; }
     public string Text { get; private set; }
     public bool IsCorrect { get; private set; }
     
@@ -22,4 +23,4 @@ public sealed class QuizOption : BaseEntity
         Text = text.Trim();
         IsCorrect = isCorrect;
     }
-} 
+}
