@@ -4,4 +4,4 @@ using SharedKernel;
 
 namespace Application.Features.Roadmaps.Queries.GetRoadmapById;
 
-public record GetRoadmapByIdQuery(Guid RoadmapId, bool IncludeSections = false) : IQuery<RoadmapDto>; 
+public record GetRoadmapByIdQuery(Guid RoadmapId, Guid UserId, bool IncludeSections = false) : IQuery<RoadmapDto>; 

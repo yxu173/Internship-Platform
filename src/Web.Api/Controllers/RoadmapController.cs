@@ -78,7 +78,7 @@ public class RoadmapController : BaseController
     [HttpGet("{id:guid}")]
     public async Task<IResult> GetById([FromRoute] Guid id, [FromQuery] bool includeSections = false)
     {
-        var query = new GetRoadmapByIdQuery(id, includeSections);
+        var query = new GetRoadmapByIdQuery(id, UserId, includeSections);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
@@ -254,7 +254,7 @@ public class RoadmapController : BaseController
     [HttpPost("{roadmapId}/enroll")]
     public async Task<IResult> Enroll([FromRoute] Guid roadmapId)
     {
-        var roadmapQuery = new GetRoadmapByIdQuery(roadmapId);
+        var roadmapQuery = new GetRoadmapByIdQuery(roadmapId, UserId);
         var roadmapResult = await _mediator.Send(roadmapQuery);
 
         if (roadmapResult.IsFailure)
