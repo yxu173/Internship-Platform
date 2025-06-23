@@ -1,6 +1,7 @@
 using Application.Features.Internships.AcceptApplication;
 using Application.Features.Internships.CreateApplication;
 using Application.Features.Internships.CreateInternship;
+using Application.Features.Internships.GetAcceptedApplications;
 using Application.Features.Internships.GetApplicationsByInternshipId;
 using Application.Features.Internships.GetByInternshipId;
 using Application.Features.Internships.GetInternshipsByCompanyId;
@@ -141,6 +142,14 @@ public class InternshipController : BaseController
     {
         var command = new SetApplicationUnderReviewCommand(applicationId, request.FeedbackNotes);
         var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("GetAcceptedApplicationsByInternshipId/{internshipId:guid}")]
+    public async Task<IResult> GetAcceptedApplicationsByInternshipId([FromRoute] Guid internshipId)
+    {
+        var query = new AcceptedApplicationsByInternshipIdQuery(internshipId);
+        var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 }

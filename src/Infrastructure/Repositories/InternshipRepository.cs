@@ -162,4 +162,13 @@ public sealed class InternshipRepository : IInternshipRepository
         
         return new SearchResult<Internship>(items, totalCount, page, pageSize);
     }
+
+    public async Task<IReadOnlyList<Domain.Aggregates.Internships.Application>> GetAcceptedApplicationsByInternshipIdAsync(
+        Guid internshipId)
+    {
+        return await _context.Applications
+            .Where(a => a.InternshipId == internshipId && a.Status == Domain.Enums.ApplicationStatus.Accepted)
+            .Include(a => a.StudentProfile)
+            .ToListAsync();
+    }
 }
