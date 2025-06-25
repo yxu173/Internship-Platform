@@ -12,5 +12,7 @@ public record RoadmapDto(
     Guid CompanyId,
     DateTime CreatedAt,
     DateTime? UpdatedAt,
-    IReadOnlyList<RoadmapSectionDto>? Sections 
+    IReadOnlyList<RoadmapSectionDto>? Sections,
+    bool IsEnrolled,
+    RoadmapSectionDto? FirstSectionWithQuiz
 );

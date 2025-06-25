@@ -31,18 +31,27 @@ internal sealed class GetRoadmapByIdQueryHandler : IQueryHandler<GetRoadmapByIdQ
         }
 
         List<RoadmapSectionDto>? sectionDtos = null;
+        RoadmapSectionDto? firstSectionWithQuiz = null;
+        bool isEnrolled = false;
         if (request.IncludeSections && roadmap.Sections is not null)
         {
             var student = await _studentRepository.GetByUserIdAsync(request.UserId);
-            var enrollment = student != null ? await _roadmapRepository.GetEnrollmentAsync(student.Id, request.RoadmapId) : null;
+            if (student != null)
+            {
+                isEnrolled = await _roadmapRepository.HasEnrollmentAsync(student.Id, request.RoadmapId);
+            }
             var orderedSections = roadmap.Sections.OrderBy(s => s.Order).ToList();
             sectionDtos = new List<RoadmapSectionDto>();
             foreach (var section in orderedSections)
             {
-                bool isAccessible = enrollment != null && enrollment.CanAccessSection(section.Id, orderedSections);
-                if (isAccessible)
+                bool isAccessible = false;
+                var enrollment = student != null ? await _roadmapRepository.GetEnrollmentAsync(student.Id, request.RoadmapId) : null;
+                if (enrollment != null)
                 {
-                    sectionDtos.Add(new RoadmapSectionDto(
+                    isAccessible = enrollment.CanAccessSection(section.Id, orderedSections);
+                }
+                var sectionDto = isAccessible
+                    ? new RoadmapSectionDto(
                         section.Id,
                         section.Title,
                         section.Order,
@@ -56,17 +65,67 @@ internal sealed class GetRoadmapByIdQueryHandler : IQueryHandler<GetRoadmapByIdQ
                             )).ToList(),
                             item.Order
                         )).ToList()
-                    ));
-                }
-                else
-                {
-                    sectionDtos.Add(new RoadmapSectionDto(
+                    )
+                    : new RoadmapSectionDto(
                         section.Id,
                         section.Title,
                         section.Order,
                         null,
                         null
-                    ));
+                    );
+                sectionDtos.Add(sectionDto);
+            }
+            // For free roadmaps, adjust logic for FirstSectionWithQuiz
+            if (!roadmap.IsPremium)
+            {
+                if (!isEnrolled)
+                {
+                    // User not enrolled: return the first section (by order), even if it has no quiz
+                    var firstSection = orderedSections.OrderBy(s => s.Order).FirstOrDefault();
+                    if (firstSection != null)
+                    {
+                        firstSectionWithQuiz = new RoadmapSectionDto(
+                            firstSection.Id,
+                            firstSection.Title,
+                            firstSection.Order,
+                            firstSection.Quiz?.Id,
+                            firstSection.Items.Select(item => new RoadmapItemDto(
+                                item.Title,
+                                item.Resources.Select(r => new ResourceLinkDto(
+                                    r.Title,
+                                    r.Url,
+                                    r.Type.ToString()
+                                )).ToList(),
+                                item.Order
+                            )).ToList()
+                        );
+                    }
+                }
+                else
+                {
+                    // User enrolled: return the first section with a quiz (old logic)
+                    var firstWithQuiz = orderedSections
+                        .Where(s => s.Quiz != null)
+                        .OrderBy(s => s.Order)
+                        .FirstOrDefault();
+                    if (firstWithQuiz != null)
+                    {
+                        firstSectionWithQuiz = new RoadmapSectionDto(
+                            firstWithQuiz.Id,
+                            firstWithQuiz.Title,
+                            firstWithQuiz.Order,
+                            firstWithQuiz.Quiz?.Id,
+                            firstWithQuiz.Items.Select(item => new RoadmapItemDto(
+                                item.Title,
+                                item.Resources.Select(r => new ResourceLinkDto(
+                                    r.Title,
+                                    r.Url,
+                                    r.Type.ToString()
+                                )).ToList(),
+                                item.Order
+                            )).ToList()
+                        );
+                    }
                 }
             }
         }
@@ -81,7 +140,9 @@ internal sealed class GetRoadmapByIdQueryHandler : IQueryHandler<GetRoadmapByIdQ
             roadmap.CompanyId,
             roadmap.CreatedAt,
             null, 
-            sectionDtos
+            sectionDtos,
+            isEnrolled,
+            firstSectionWithQuiz
         );
 
         return roadmapDto;

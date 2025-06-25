@@ -31,7 +31,9 @@ internal sealed class GetRoadmapsByTechnologyQueryHandler : IQueryHandler<GetRoa
                 roadmap.CompanyId,
                 roadmap.CreatedAt,
                 null, 
-                null 
+                null,
+                false, // IsEnrolled
+                null   // FirstSectionWithQuiz
             )).ToList();
 
         return Result.Success<IReadOnlyList<RoadmapDto>>(roadmapDtos);

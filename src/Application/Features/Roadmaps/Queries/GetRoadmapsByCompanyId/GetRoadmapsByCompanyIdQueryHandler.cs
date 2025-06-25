@@ -31,7 +31,9 @@ internal sealed class GetRoadmapsByCompanyIdQueryHandler : IQueryHandler<GetRoad
                 roadmap.CompanyId,
                 roadmap.CreatedAt,
                 null, 
-                null 
+                null,
+                false,
+                null
             )).ToList();
 
         return Result.Success<IReadOnlyList<RoadmapDto>>(roadmapDtos);
