@@ -111,6 +111,16 @@ public sealed class Internship : BaseAuditableEntity
         return Result.Success();
     }
 
+    public Result RemoveApplication(Guid applicationId)
+    {
+        var application = _applications.FirstOrDefault(a => a.Id == applicationId);
+        if (application == null)
+            return Result.Failure(InternshipErrors.ApplicationNotFound);
+
+        _applications.Remove(application);
+        return Result.Success();
+    }
+
     public Result CloseInternship()
     {
         if (Duration.EndDate > DateTime.UtcNow)

@@ -49,6 +49,10 @@ public static class InternshipErrors
         " Internship.NotApplicationOwner",
         "You are not the owner of this application"
     );
+    public static Error NotInternshipOwner => Error.Conflict(
+        "Internship.NotInternshipOwner",
+        "You are not the owner of this internship"
+    );
     public static Error InvalidSalary => Error.Validation(
         "Internship.InvalidSalary",
         "Salary must be greater than or equal to 0"

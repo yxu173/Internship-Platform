@@ -6,4 +6,4 @@ public sealed record CreateApplicationCommand(
     Guid InternshipId,
     Guid UserId,
     string ResumeUrl
-) : ICommand<bool>;
+) : ICommand<Guid>;

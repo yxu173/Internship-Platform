@@ -7,6 +7,7 @@ using Application.Features.Internships.GetByInternshipId;
 using Application.Features.Internships.GetInternshipsByCompanyId;
 using Application.Features.Internships.RejectApplication;
 using Application.Features.Internships.RemoveApplication;
+using Application.Features.Internships.RemoveApplicationByCompany;
 using Application.Features.Internships.RemoveInternship;
 using Application.Features.Internships.SetApplicationUnderReview;
 using Application.Features.Internships.UpdateInternship;
@@ -98,6 +99,17 @@ public class InternshipController : BaseController
     public async Task<IResult> DeleteApplication([FromRoute] Guid id)
     {
         var command = new RemoveApplicationCommand(
+            id,
+            UserId
+        );
+        var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpDelete("DeleteApplicationByCompany/{id}")]
+    public async Task<IResult> DeleteApplicationByCompany([FromRoute] Guid id)
+    {
+        var command = new RemoveApplicationByCompanyCommand(
             id,
             UserId
         );

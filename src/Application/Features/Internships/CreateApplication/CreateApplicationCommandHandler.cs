@@ -5,7 +5,7 @@ using SharedKernel;
 
 namespace Application.Features.Internships.CreateApplication;
 
-public sealed class CreateApplicationCommandHandler : ICommandHandler<CreateApplicationCommand, bool>
+public sealed class CreateApplicationCommandHandler : ICommandHandler<CreateApplicationCommand, Guid>
 {
     private readonly IInternshipRepository _internshipRepository;
     private readonly IStudentRepository _studentRepository;
@@ -16,7 +16,7 @@ public sealed class CreateApplicationCommandHandler : ICommandHandler<CreateAppl
         _studentRepository = studentRepository;
     }
 
-    public async Task<Result<bool>> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
     {
         var studentProfile = await _studentRepository.GetByIdAsync(request.UserId);
         var internship = await _internshipRepository.GetById(request.InternshipId);
@@ -25,21 +25,21 @@ public sealed class CreateApplicationCommandHandler : ICommandHandler<CreateAppl
 
         if (studentApplications.Any(a => a.InternshipId == request.InternshipId))
         {
-            return Result.Failure<bool>(Error.Validation("Duplicate Application", "Duplicate Application"));
+            return Result.Failure<Guid>(Error.Validation("Duplicate Application", "Duplicate Application"));
         }
         
         if (internship == null)
-            return Result.Failure<bool>(InternshipErrors.NotFound);
+            return Result.Failure<Guid>(InternshipErrors.NotFound);
         
         var applicationResult = Domain.Aggregates.Internships.Application.CreateApplication(
             studentProfile.Id,
             request.ResumeUrl
         );
         if (applicationResult.IsFailure)
-            return Result.Failure<bool>(applicationResult.Error);
+            return Result.Failure<Guid>(applicationResult.Error);
         internship.Apply(applicationResult.Value);
         
         await _internshipRepository.AddApplicationAsync(applicationResult.Value);
-        return Result.Success(true);
+        return Result.Success(applicationResult.Value.Id);
     }
 }

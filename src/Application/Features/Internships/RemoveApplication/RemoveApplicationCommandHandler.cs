@@ -33,7 +33,19 @@ internal sealed class RemoveApplicationCommandHandler
             return Result.Failure<bool>(InternshipErrors.NotApplicationOwner);
         }
 
-        await _internshipRepository.RemoveApplication(application);
+        var internship = await _internshipRepository.GetByIdAsync(application.InternshipId);
+        if (internship == null)
+        {
+            return Result.Failure<bool>(InternshipErrors.NotFound);
+        }
+
+        var removeResult = internship.RemoveApplication(application.Id);
+        if (removeResult.IsFailure)
+        {
+            return Result.Failure<bool>(removeResult.Error);
+        }
+
+        await _internshipRepository.Update(internship);
         return Result.Success(true);
     }
 }
