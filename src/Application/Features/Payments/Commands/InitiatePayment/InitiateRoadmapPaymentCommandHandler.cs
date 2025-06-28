@@ -55,26 +55,29 @@ public class InitiateRoadmapPaymentCommandHandler
                 Error.NotFound("Student.NotFound", $"Student profile not found for user ID {request.StudentId}."));
         }
 
+        // Check if already enrolled and payment completed
         var existingEnrollment = await _context.Enrollments
             .FirstOrDefaultAsync(e => e.RoadmapId == request.RoadmapId && e.StudentId == studentProfile.Id);
 
-        if (existingEnrollment == null)
-        {
-            var enrollmentResult = Enrollment.Create(studentProfile.Id, request.RoadmapId);
-            if (enrollmentResult.IsFailure)
-            {
-                return Result.Failure<PaymentInitiationResponse>(
-                    Error.BadRequest("Enrollment.Failed", enrollmentResult.Error.Description));
-            }
-
-            _context.Enrollments.Add(enrollmentResult.Value);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        else if (existingEnrollment.PaymentStatus == PaymentStatus.Completed)
+        if (existingEnrollment != null && existingEnrollment.PaymentStatus == PaymentStatus.Completed)
         {
             return Result.Failure<PaymentInitiationResponse>(
                 Error.Conflict("Enrollment.AlreadyCompleted", "You are already enrolled in this roadmap."));
         }
+
+        // Create a temporary payment tracking record
+        // This will be used to create the enrollment during the redirect
+        var paymentTracking = new PaymentTrackingInfo
+        {
+            RoadmapId = request.RoadmapId,
+            StudentId = studentProfile.Id,
+            UserId = request.StudentId,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        // Store in a simple way - for now, we'll use a static dictionary
+        // In production, this should be stored in a database or cache
+        PaymentTrackingStore.StorePayment(paymentTracking);
 
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Id == request.StudentId, cancellationToken);

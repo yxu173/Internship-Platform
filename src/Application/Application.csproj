@@ -19,4 +19,8 @@
     <ProjectReference Include="..\SharedKernal\SharedKernal.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Abstractions\Services\ICacheService.cs" />
+  </ItemGroup>
+
 </Project>

@@ -9,6 +9,8 @@ using SharedKernel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
+using Application.Features.Payments.Commands.InitiatePayment;
 
 namespace Application.Features.Payments.Commands.ProcessRedirect;
 
@@ -32,33 +34,66 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
 
         try
         {
-            long orderId = 0;
-            if (!string.IsNullOrEmpty(request.OrderId) && !long.TryParse(request.OrderId, out orderId))
+            if (string.IsNullOrEmpty(request.OrderId))
             {
-                _logger.LogWarning("Invalid OrderId format in payment redirect: {OrderId}", request.OrderId);
-            }
-            
-            var enrollment = await _dbContext.Enrollments
-                .Where(e => e.PaymentStatus == PaymentStatus.Pending)
-                .OrderByDescending(e => e.CreatedAt)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (enrollment == null)
-            {
-                _logger.LogWarning("Could not find pending enrollment for OrderId: {OrderId}", request.OrderId);
-                return Result.Failure(Error.NotFound("Payment.EnrollmentNotFound", "Enrollment not found"));
+                _logger.LogWarning("Empty OrderId in payment redirect");
+                return Result.Failure(Error.BadRequest("Payment.InvalidOrderId", "Invalid order ID"));
             }
 
-            
-            enrollment.CompletePayment(
+            // Try to find the most recent payment tracking information
+            // Since we don't have the roadmap and user IDs from the redirect,
+            // we'll look for the most recent payment tracking record
+            var paymentTracking = PaymentTrackingStore.GetMostRecentPayment();
+
+            if (paymentTracking == null)
+            {
+                _logger.LogWarning("No payment tracking information found for redirect. OrderId: {OrderId}, TransactionId: {TransactionId}",
+                    request.OrderId, request.TransactionId);
+                return Result.Failure(Error.NotFound("Payment.NoTrackingInfo", 
+                    "No payment tracking information found for this payment."));
+            }
+
+            // Check if enrollment already exists
+            var existingEnrollment = await _dbContext.Enrollments
+                .FirstOrDefaultAsync(e => e.RoadmapId == paymentTracking.RoadmapId && e.StudentId == paymentTracking.StudentId, cancellationToken);
+
+            if (existingEnrollment != null && existingEnrollment.PaymentStatus == PaymentStatus.Completed)
+            {
+                _logger.LogInformation("Enrollment already completed for Student {StudentId} in Roadmap {RoadmapId}",
+                    paymentTracking.StudentId, paymentTracking.RoadmapId);
+                PaymentTrackingStore.RemovePayment(paymentTracking.RoadmapId, paymentTracking.UserId);
+                return Result.Success();
+            }
+
+            // Create or complete the enrollment
+            if (existingEnrollment == null)
+            {
+                var enrollmentResult = Enrollment.Create(paymentTracking.StudentId, paymentTracking.RoadmapId);
+                if (enrollmentResult.IsFailure)
+                {
+                    _logger.LogError("Failed to create enrollment for Student {StudentId} in Roadmap {RoadmapId}",
+                        paymentTracking.StudentId, paymentTracking.RoadmapId);
+                    return Result.Failure(Error.Problem("Payment.EnrollmentCreation",
+                        "Failed to create enrollment after successful payment"));
+                }
+
+                existingEnrollment = enrollmentResult.Value;
+                _dbContext.Enrollments.Add(existingEnrollment);
+            }
+
+            // Complete the payment
+            existingEnrollment.CompletePayment(
                 request.TransactionId,
-                100.0m // Extract amount from the order or defaults to 100 EGP for now
+                100.0m // Default amount - ideally should be extracted from the payment response
             );
 
             _logger.LogInformation("Completing payment for Enrollment {EnrollmentId}, Roadmap: {RoadmapId}, Student: {StudentId}",
-                enrollment.Id, enrollment.RoadmapId, enrollment.StudentId);
+                existingEnrollment.Id, existingEnrollment.RoadmapId, existingEnrollment.StudentId);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            // Remove the payment tracking information
+            PaymentTrackingStore.RemovePayment(paymentTracking.RoadmapId, paymentTracking.UserId);
 
             return Result.Success();
         }

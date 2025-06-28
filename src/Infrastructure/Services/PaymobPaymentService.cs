@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System;
 using Application.Abstractions.Data;
+using Domain.Aggregates.Roadmaps;
 using Domain.Enums;
 using Domain.ValueObjects;
 using Infrastructure.Database;
@@ -232,8 +233,8 @@ public class PaymobPaymentService : IPaymentService
             Currency = currency,
             PaymentMethods = new List<object> { 5061257 }, //TODO: Add this into appsettings.json
             MerchantOrderId = $"{itemId}_{userId}",
-            NotificationUrl = "https://localhost:7089/api/payments/paymob-callback",
-            RedirectionUrl = "https://localhost:7089/api/payments/payment-return",
+            NotificationUrl = "http://localhost:5067/api/payments/paymob-callback",
+            RedirectionUrl = "http://localhost:5067/api/payments/payment-return",
             Items = new List<PaymobItem>
             {
                 new PaymobItem
@@ -358,12 +359,10 @@ public class PaymobPaymentService : IPaymentService
             return Result.Failure(Error.BadRequest("Payment.Verification", "Invalid HMAC signature."));
         }
 
-
         if (!callbackData.Obj.Success || callbackData.Obj.Pending)
         {
             return Result.Success();
         }
-
 
         if (string.IsNullOrWhiteSpace(callbackData.Obj.Order?.MerchantOrderId))
         {
@@ -373,7 +372,7 @@ public class PaymobPaymentService : IPaymentService
 
         string[] idParts = callbackData.Obj.Order.MerchantOrderId.Split('_');
         if (idParts.Length < 2 || !Guid.TryParse(idParts[0], out Guid roadmapId) ||
-            !Guid.TryParse(idParts[1], out Guid studentId))
+            !Guid.TryParse(idParts[1], out Guid userId))
         {
             return Result.Failure(Error.BadRequest("Payment.MerchantIdFormat",
                 "Cannot process successful transaction: Invalid Merchant Order ID format."));
@@ -381,13 +380,31 @@ public class PaymobPaymentService : IPaymentService
 
         try
         {
+            // Get student profile by user ID
+            var studentProfile = await _context.StudentProfiles
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+
+            if (studentProfile == null)
+            {
+                return Result.Failure(Error.NotFound("Payment.StudentProfile",
+                    "Cannot process successful transaction: Student profile not found."));
+            }
+
             var enrollment = await _context.Enrollments
-                .FirstOrDefaultAsync(e => e.RoadmapId == roadmapId && e.StudentId == studentId);
+                .FirstOrDefaultAsync(e => e.RoadmapId == roadmapId && e.StudentId == studentProfile.Id);
 
             if (enrollment == null)
             {
-                return Result.Failure(Error.NotFound("Payment.Enrollment",
-                    "Cannot process successful transaction: Enrollment record not found."));
+                // Create new enrollment for successful payment
+                var enrollmentResult = Enrollment.Create(studentProfile.Id, roadmapId);
+                if (enrollmentResult.IsFailure)
+                {
+                    return Result.Failure(Error.Problem("Payment.EnrollmentCreation",
+                        "Failed to create enrollment after successful payment."));
+                }
+
+                enrollment = enrollmentResult.Value;
+                _context.Enrollments.Add(enrollment);
             }
 
             if (enrollment.PaymentStatus == PaymentStatus.Completed)
@@ -408,7 +425,7 @@ public class PaymobPaymentService : IPaymentService
 
             _logger.LogInformation(
                 "Successfully completed enrollment for Student {StudentId} in Roadmap {RoadmapId}. Transaction ID: {TransactionId}",
-                studentId, roadmapId, callbackData.Obj.Id);
+                studentProfile.Id, roadmapId, callbackData.Obj.Id);
 
             return Result.Success();
         }
