@@ -1,9 +1,8 @@
 using Application.Features.Notifications.Commands.MarkAsRead;
 using Application.Features.Notifications.Commands.SendNotification;
+using Application.Features.Notifications.Commands.DeleteNotification;
 using Application.Features.Notifications.Queries.GetUnreadNotifications;
-using Application.Features.Notifications.Queries.GetAllNotifications; // Added for the new query
-using Application.Abstractions.Pagination; // For PagedList
-using Application.Features.Notifications.Common; // For NotificationResponse
+using Application.Features.Notifications.Queries.GetAllNotifications; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Api.Contracts.Notifications;
@@ -43,6 +42,14 @@ public class NotificationsController : BaseController
     public async Task<IResult> MarkAsRead(Guid id)
     {
         var command = new MarkNotificationAsReadCommand(id);
+        var result = await _mediator.Send(command);
+        return result.Match(() => Results.NoContent(), CustomResults.Problem);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IResult> DeleteNotification(Guid id)
+    {
+        var command = new DeleteNotificationCommand(id);
         var result = await _mediator.Send(command);
         return result.Match(() => Results.NoContent(), CustomResults.Problem);
     }

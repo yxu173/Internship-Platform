@@ -11,4 +11,5 @@ public interface INotificationRepository
     Task<IEnumerable<Notification>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken); // New method
     Task MarkAsReadAsync(Guid notificationId);
     Task<Notification?> GetByIdAsync(Guid id);
+    Task DeleteAsync(Guid notificationId);
 }
