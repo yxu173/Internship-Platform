@@ -43,7 +43,7 @@ public class CompanyController : BaseController
     
     [HttpGet("company-logo/{id:guid}")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetCompanyLogo([FromRoute] Guid id)
+    public async Task<IActionResult> GetCompanyLogoById([FromRoute] Guid id)
     {
         var query = new GetCompleteCompanyProfileQuery(id);
         var result = await _mediator.Send(query);
@@ -66,13 +66,22 @@ public class CompanyController : BaseController
         
         if (!System.IO.File.Exists(filePath))
         {
-            filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "company-logos", "default-logo.png");
+            // If the specific logo doesn't exist, try the default logo
+            var defaultLogoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "company-logos", "default-logo.png");
+            
+            if (!System.IO.File.Exists(defaultLogoPath))
+            {
+                // If even the default logo doesn't exist, return a 404
+                return NotFound("Logo not found");
+            }
+            
+            filePath = defaultLogoPath;
         }
         
         var contentType = GetContentType(filePath);
         return PhysicalFile(filePath, contentType);
     }
-
+    
 
     [HttpPost("profiles")]
     public async Task<IResult> CreateCompanyProfile(
@@ -231,6 +240,20 @@ public class CompanyController : BaseController
             _ => "application/octet-stream" // Default content type if extension is not recognized
         };
     }
+
+    private string GetContentTypeFromUrl(string url)
+    {
+        var extension = Path.GetExtension(url).ToLowerInvariant();
+        return extension switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".gif" => "image/gif",
+            ".bmp" => "image/bmp",
+            ".webp" => "image/webp",
+            _ => "image/png" // Default to PNG for unknown extensions
+        };
+    }
     
     [HttpPost("upload-logo")]
     public async Task<IResult> UploadCompanyLogo([FromForm] IFormFile file)
@@ -259,5 +282,51 @@ public class CompanyController : BaseController
         var query = new GetCompanyPostsQuery(UserId, page, pageSize);
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("profiles/logo-data")]
+    public async Task<IActionResult> GetMyCompanyLogoData()
+    {
+        var query = new GetCompanyLogoQuery(UserId);
+        var result = await _mediator.Send(query);
+        
+        if (result.IsFailure)
+            return NotFound();
+            
+        var logoUrl = result.Value;
+        if (string.IsNullOrEmpty(logoUrl))
+            logoUrl = "/uploads/company-logos/default-logo.png";
+            
+        var path = logoUrl;
+        if (logoUrl.Contains("/uploads/"))
+        {
+            path = logoUrl[(logoUrl.IndexOf("/uploads/"))..];
+        }
+        
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path.TrimStart('/'));
+        
+        if (!System.IO.File.Exists(filePath))
+        {
+            var defaultLogoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "company-logos", "default-logo.png");
+            if (System.IO.File.Exists(defaultLogoPath))
+            {
+                filePath = defaultLogoPath;
+            }
+            else
+            {
+                return NotFound("Logo not found");
+            }
+        }
+        
+        try
+        {
+            var imageBytes = System.IO.File.ReadAllBytes(filePath);
+            var contentType = GetContentTypeFromUrl(logoUrl);
+            return File(imageBytes, contentType);
+        }
+        catch
+        {
+            return NotFound("Error reading logo file");
+        }
     }
 }

@@ -89,10 +89,15 @@ public class CompanyRepository : ICompanyRepository
 
     public async Task<Result<T?>> GetByUserIdAsync<T>(Guid userId, Expression<Func<CompanyProfile, T>> selector)
     {
-        return Result.Success(await _context.CompanyProfiles
+        var companyProfile = await _context.CompanyProfiles
             .Where(cp => cp.UserId == userId)
-            .Select(selector)
-            .FirstOrDefaultAsync());
+            .FirstOrDefaultAsync();
+
+        if (companyProfile == null)
+            return Result.Failure<T?>(CompanyErrors.ProfileNotFound);
+
+        var result = selector.Compile()(companyProfile);
+        return Result.Success(result);
     }
 
     public async Task<CompanyProfile?> GetCompanyByIdAsync(Guid id)

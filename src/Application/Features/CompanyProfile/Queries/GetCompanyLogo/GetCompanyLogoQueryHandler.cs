@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Domain.DomainErrors;
 using Domain.Repositories;
 using SharedKernel;
 
@@ -23,6 +24,10 @@ public sealed class GetCompanyLogoQueryHandler : IQueryHandler<GetCompanyLogoQue
         if (result.IsFailure)
             return Result.Failure<string?>(result.Error);
 
-        return result;
+        // If no company profile is found, return null (which is valid for string?)
+        if (result.Value == null)
+            return Result.Success<string?>(null);
+
+        return Result.Success(result.Value);
     }
 }
