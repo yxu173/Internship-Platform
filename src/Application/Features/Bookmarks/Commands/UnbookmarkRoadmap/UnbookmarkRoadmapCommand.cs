@@ -4,5 +4,5 @@ using SharedKernel;
 namespace Application.Features.Bookmarks.Commands.UnbookmarkRoadmap;
 
 public sealed record UnbookmarkRoadmapCommand(
-    Guid StudentId,
+    Guid UserId,
     Guid RoadmapId) : ICommand<bool>; 
