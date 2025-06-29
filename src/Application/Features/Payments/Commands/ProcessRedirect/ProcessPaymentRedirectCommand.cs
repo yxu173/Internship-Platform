@@ -5,4 +5,4 @@ namespace Application.Features.Payments.Commands.ProcessRedirect;
 
 public sealed record ProcessPaymentRedirectCommand(
     string OrderId,
-    string TransactionId) : ICommand; 
+    string TransactionId) : ICommand<Guid>; 

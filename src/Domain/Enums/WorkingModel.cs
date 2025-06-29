@@ -4,5 +4,5 @@ public enum WorkingModel
 {
     Hybrid,
     Remote,
-    InPerson
+    OnSite
 }

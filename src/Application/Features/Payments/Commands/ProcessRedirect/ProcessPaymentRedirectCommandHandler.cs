@@ -14,7 +14,7 @@ using Application.Features.Payments.Commands.InitiatePayment;
 
 namespace Application.Features.Payments.Commands.ProcessRedirect;
 
-public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<ProcessPaymentRedirectCommand>
+public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<ProcessPaymentRedirectCommand,Guid>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly ILogger<ProcessPaymentRedirectCommandHandler> _logger;
@@ -27,7 +27,7 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
         _logger = logger;
     }
 
-    public async Task<Result> Handle(ProcessPaymentRedirectCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(ProcessPaymentRedirectCommand request, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing payment redirect for OrderId: {OrderId}, TransactionId: {TransactionId}",
             request.OrderId, request.TransactionId);
@@ -37,7 +37,7 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
             if (string.IsNullOrEmpty(request.OrderId))
             {
                 _logger.LogWarning("Empty OrderId in payment redirect");
-                return Result.Failure(Error.BadRequest("Payment.InvalidOrderId", "Invalid order ID"));
+                return Result.Failure<Guid>(Error.BadRequest("Payment.InvalidOrderId", "Invalid order ID"));
             }
 
             // Try to find the most recent payment tracking information
@@ -49,7 +49,7 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
             {
                 _logger.LogWarning("No payment tracking information found for redirect. OrderId: {OrderId}, TransactionId: {TransactionId}",
                     request.OrderId, request.TransactionId);
-                return Result.Failure(Error.NotFound("Payment.NoTrackingInfo", 
+                return Result.Failure<Guid>(Error.NotFound("Payment.NoTrackingInfo", 
                     "No payment tracking information found for this payment."));
             }
 
@@ -62,7 +62,7 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
                 _logger.LogInformation("Enrollment already completed for Student {StudentId} in Roadmap {RoadmapId}",
                     paymentTracking.StudentId, paymentTracking.RoadmapId);
                 PaymentTrackingStore.RemovePayment(paymentTracking.RoadmapId, paymentTracking.UserId);
-                return Result.Success();
+                return Result.Success(existingEnrollment.RoadmapId);
             }
 
             // Create or complete the enrollment
@@ -73,7 +73,7 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
                 {
                     _logger.LogError("Failed to create enrollment for Student {StudentId} in Roadmap {RoadmapId}",
                         paymentTracking.StudentId, paymentTracking.RoadmapId);
-                    return Result.Failure(Error.Problem("Payment.EnrollmentCreation",
+                    return Result.Failure<Guid>(Error.Problem("Payment.EnrollmentCreation",
                         "Failed to create enrollment after successful payment"));
                 }
 
@@ -95,12 +95,12 @@ public sealed class ProcessPaymentRedirectCommandHandler : ICommandHandler<Proce
             // Remove the payment tracking information
             PaymentTrackingStore.RemovePayment(paymentTracking.RoadmapId, paymentTracking.UserId);
 
-            return Result.Success();
+            return Result.Success(existingEnrollment.RoadmapId);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing payment redirect: {Message}", ex.Message);
-            return Result.Failure(Error.Problem("Payment.Error", "An error occurred while processing payment"));
+            return Result.Failure<Guid>(Error.Problem("Payment.Error", "An error occurred while processing payment"));
         }
     }
 } 

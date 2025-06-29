@@ -89,7 +89,7 @@ public class PaymentController : BaseController
             return Redirect("/payment-failed");
         }
         
-        return Redirect("/payment-success");
+        return Redirect($"http://localhost:5173/roadmap/{result.Value}");
     }
     
     [HttpGet("/")]

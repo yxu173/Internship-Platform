@@ -8,7 +8,7 @@ public interface INotificationRepository
 {
     Task AddAsync(Notification notification);
     Task<IReadOnlyList<Notification>> GetUnreadNotificationsAsync(Guid userId);
-    Task<IEnumerable<Notification>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken); // New method
+    Task<IEnumerable<Notification>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken); 
     Task MarkAsReadAsync(Guid notificationId);
     Task<Notification?> GetByIdAsync(Guid id);
     Task DeleteAsync(Guid notificationId);

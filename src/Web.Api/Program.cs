@@ -114,7 +114,7 @@ app.UseRequestContextLogging();
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors("Policy");
 app.UseAuthentication();
