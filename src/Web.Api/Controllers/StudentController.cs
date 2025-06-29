@@ -1,4 +1,5 @@
 using Application.Abstractions.Services;
+using Application.Features.Internships.GetApplicationsByStudentId;
 using Application.Features.StudentProfile.Commands.CreateStudentExperience;
 using Application.Features.StudentProfile.Commands.CreateStudentProfile;
 using Application.Features.StudentProfile.Commands.CreateStudentProject;
@@ -321,6 +322,14 @@ public class StudentController : BaseController
     {
         var command = new RemoveStudentProjectCommand(id, projectId);
         var result = await _mediator.Send(command);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+
+    [HttpGet("applications")]
+    public async Task<IResult> GetMyApplications()
+    {
+        var query = new GetApplicationsByStudentIdQuery(UserId);
+        var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
 }
