@@ -332,4 +332,14 @@ public class StudentController : BaseController
         var result = await _mediator.Send(query);
         return result.Match(Results.Ok, CustomResults.Problem);
     }
+
+    [HttpGet("universities")]
+    [AllowAnonymous]
+    public IActionResult GetEgyptianUniversities()
+    {
+        var universities = Enum.GetValues(typeof(Domain.Enums.EgyptianUniversity))
+            .Cast<Domain.Enums.EgyptianUniversity>()
+            .Select(e => new { Name = e.ToString() });
+        return Ok(universities);
+    }
 }
