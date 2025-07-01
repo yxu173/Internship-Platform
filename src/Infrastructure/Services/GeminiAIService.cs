@@ -14,7 +14,7 @@ public class GeminiAIService : IGeminiAIService
     private readonly IConfiguration _configuration;
     private readonly ILogger<GeminiAIService> _logger;
     private readonly string _apiKey;
-    private readonly string _baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-preview-06-05:generateContent";
+    private readonly string _baseUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent";
 
     public GeminiAIService(HttpClient httpClient, IConfiguration configuration, ILogger<GeminiAIService> logger)
     {
@@ -201,6 +201,7 @@ public class GeminiAIService : IGeminiAIService
         prompt.AppendLine("5. Use clean, professional formatting that will look good when converted to PDF");
         prompt.AppendLine("6. Ensure all dates are formatted consistently");
         prompt.AppendLine("7. Make the resume tailored to the specific internship requirements");
+        prompt.AppendLine("8. Make Line breaks clear and consistent for readability");
         prompt.AppendLine();
         prompt.AppendLine("Please use the generate_resume_markdown function to create the complete markdown content.");
 
