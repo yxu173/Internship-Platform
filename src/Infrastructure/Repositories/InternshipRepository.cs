@@ -43,6 +43,7 @@ public sealed class InternshipRepository : IInternshipRepository
     {
         return await _context.Internships
             .Where(i => i.CompanyProfileId == companyId)
+            .Include(i => i.Applications)
             .ToListAsync();
     }
 
